@@ -594,7 +594,7 @@
   <div class="wrap">
     <div class="eyebrow">Статистика стаи</div>
     <h2>Стая в <span class="ice">цифрах</span></h2>
-    <p class="lead">У каждого волка — свой след на дистанции: все старты RussiaLoppet, стиль, скорость и рекорд по количеству марафонов за сезон.</p>
+    <p class="lead">У каждого волка — свой след на дистанции: все марафоны RussiaLoppet, стиль, скорость и рекорд по количеству марафонов за сезон.</p>
 
     <div class="wolf-stats-grid" id="wolfStatsGrid" aria-label="Личная статистика участников"></div>
   </div>
@@ -803,7 +803,7 @@ const WOLF_STATS = [
   { name:"Павел Сарин",        skate:14, classic:3,  fastest:"1:43:09", fastestEvent:"Токсово марафон КЛ",    fastestYear:"2026", seasonMax:4,  seasonYear:"2026" },
   { name:"Валерия Максименко", skate:14, classic:1,  fastest:"1:58:40", fastestEvent:"Нижегородский марафон", fastestYear:"2025", seasonMax:7,  seasonYear:"2026" },
   { name:"Елена Богданова",    skate:40, classic:21, fastest:"1:19:04", fastestEvent:"Токсово марафон",       fastestYear:"2025", seasonMax:15, seasonYear:"2025" },
-  { name:"Дмитрий Меньшаков",          skate:18, classic:4,  fastest:"1:57:06", fastestEvent:"Апатитский марафон",    fastestYear:"2026", seasonMax:6,  seasonYear:"2025" }
+  { name:"Дмитрий Меньшаков",          skate:18, classic:1,  fastest:"1:57:06", fastestEvent:"Апатитский марафон",    fastestYear:"2026", seasonMax:6,  seasonYear:"2025" }
 ];
 
 const ATHLETE_PROFILE_LINKS = {
@@ -1067,7 +1067,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
         <div>
           <div class="metric-kicker">Всего</div>
           <span class="wolf-stat-total">${total || "—"}</span>
-          <span class="wolf-stat-total-label">стартов</span>
+          <span class="wolf-stat-total-label">марафонов</span>
         </div>
         <div class="wolf-stat-split">
           <div><span>Коньком</span><b>${hasNumber(wolf.skate) ? skate : "—"}</b></div>
