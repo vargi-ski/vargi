@@ -462,8 +462,9 @@
     .pack{display:block; margin-top:30px}
     .pack .wolf,.wolf.alpha{width:100%; max-width:420px; height:auto; min-height:590px; margin-inline:auto}
     .pack .wolf.alpha{min-height:680px}
-    .pack .wolf .ph{height:320px; flex-basis:320px}
-    .pack .wolf.alpha .ph{height:380px; flex-basis:380px}
+    .pack .wolf .ph,.pack .wolf.alpha .ph{height:auto; min-height:0; flex:0 0 auto}
+    .pack .wolf .athlete-photo{height:auto; line-height:0}
+    .pack .wolf .ph img{height:auto; max-height:none; object-fit:contain; object-position:center top}
     .pack .wolf .name{font-size:20px}
     .pack .wolf .bio{font-size:14px}
     .pack-arrow{top:34%; width:42px; height:42px}
