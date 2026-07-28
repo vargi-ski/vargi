@@ -820,6 +820,7 @@ const RESULTS = [
   { year:"2026", athlete:"Артем Грязев", event:"Камчатский марафон", time:"2:21:39", absPlace:6, group:"М35–39", groupPlace:2 },
   { year:"2026", athlete:"Константин Нечаев", event:"Камчатский марафон", time:"2:44:00", absPlace:31, group:"М55–59", groupPlace:1 },
   { year:"2026", athlete:"Валерия Максименко", event:"Байкальский марафон", time:"2:35:04", absPlace:18, group:"Ж45–49", groupPlace:3 },
+  { year:"2026", athlete:"Елена Богданова", event:"Апатитский марафон", time:"2:54:55", absPlace:14, group:"Ж60–64", groupPlace:2 },
   { year:"2026", athlete:"Дмитрий Меньшаков", event:"Камчатский марафон", time:"2:36:27", absPlace:17, group:"М35–39", groupPlace:4 }
 ];
 
@@ -1092,13 +1093,13 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
 
 })();
 
-// Results — первые пять строк видимы, остальные раскрываются
+// Results — первые три строки видимы, остальные раскрываются
 (function(){
   const body=$("#resultsList");
   const table=body.closest(".results-table");
   const toggle=$("#resultsToggle");
   const label=toggle.querySelector(".results-toggle-label");
-  const initialLimit=5;
+  const initialLimit=3;
 
   RESULTS.forEach((r,index)=>{
     const profileUrl=ATHLETE_PROFILE_LINKS[r.athlete] || ROSTER.find(w=>w.name===r.athlete)?.rl || "";
