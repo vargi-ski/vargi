@@ -176,10 +176,44 @@
   .wolf .crown{position:absolute; top:10px; left:10px; background:#0a0d10; color:#fff;
     font-family:'Oswald'; text-transform:uppercase; letter-spacing:.14em; font-size:11px; padding:5px 10px; border-radius:6px}
 
-  /* ---------- COMPACT TEAM TABLES ---------- */
+  /* ---------- PACK STATS ---------- */
   .pack-stats-section{position:relative; overflow:hidden}
   .pack-stats-section:before{content:""; position:absolute; inset:10% -20% auto 35%; height:420px;
     background:radial-gradient(ellipse,rgba(62,155,214,.12),transparent 66%); pointer-events:none}
+  .wolf-stats-grid{position:relative; display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:10px; width:min(100%,1180px); margin:22px auto 0}
+  .wolf-stat-card{border:1px solid var(--line); border-radius:11px; background:
+    linear-gradient(145deg,rgba(23,34,43,.95),rgba(10,14,18,.97)); padding:8px 9px; overflow:hidden}
+  .wolf-stat-card.leader{border-color:var(--line2); background:
+    linear-gradient(135deg,rgba(62,155,214,.16),rgba(16,22,27,.97) 48%,rgba(143,208,239,.05));
+    box-shadow:0 16px 42px rgba(32,145,220,.08)}
+  .wolf-stat-head{display:flex; align-items:flex-start; justify-content:space-between; gap:6px}
+  .wolf-stat-name{font-family:'Oswald'; font-size:15px; font-weight:600; line-height:1.05;
+    text-transform:uppercase; letter-spacing:.02em}
+  .wolf-stat-role{flex:0 0 auto; border:1px solid var(--line); border-radius:99px; padding:3px 6px;
+    color:var(--muted2); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.12em; font-size:8px}
+  .wolf-stat-card.leader .wolf-stat-role{border-color:var(--line2); color:var(--ice)}
+  .wolf-stat-main{display:grid; grid-template-columns:auto minmax(0,1fr); gap:7px; align-items:end;
+    margin-top:6px}
+  .metric-kicker{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.16em; font-size:8px; color:var(--ice)}
+  .wolf-stat-total{display:block; margin-top:2px; font-family:'Oswald'; font-weight:700;
+    font-size:29px; line-height:.86; letter-spacing:-.035em; color:#fff}
+  .wolf-stat-total-label{display:block; margin-top:2px; color:var(--muted); font-size:9px}
+  .wolf-stat-split{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px}
+  .wolf-stat-split div{padding:4px 5px; border:1px solid var(--line); border-radius:7px;
+    background:rgba(7,11,14,.42)}
+  .wolf-stat-split span{display:block; color:var(--muted2); font-size:8px; text-transform:uppercase;
+    letter-spacing:.08em}
+  .wolf-stat-split b{display:block; margin-top:2px; color:var(--ink); font-family:'Oswald'; font-size:15px}
+  .wolf-stat-records{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:5px;
+    padding-top:5px; margin-top:5px; border-top:1px solid var(--line)}
+  .wolf-stat-record{min-width:0}
+  .wolf-stat-record span{display:block; color:var(--muted2); font-size:8px; text-transform:uppercase;
+    letter-spacing:.08em}
+  .wolf-stat-record b{display:block; margin-top:2px; font-family:'Oswald'; font-size:13px; color:var(--ink)}
+  .wolf-stat-record small{display:block; min-height:12px; margin-top:1px; color:var(--muted); font-size:8px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+  /* ---------- RESULTS TABLE ---------- */
   .team-table-wrap{position:relative; margin-top:22px; border:1px solid var(--line);
     border-radius:12px; overflow:auto; background:linear-gradient(145deg,rgba(18,27,34,.96),rgba(8,12,16,.98));
     box-shadow:0 18px 46px rgba(0,0,0,.18); scrollbar-color:var(--line2) transparent}
@@ -214,6 +248,19 @@
     color:var(--ice); font-family:'Oswald'; font-size:10px; text-transform:uppercase; transition:.18s}
   .team-table .profile-mini:hover{border-color:var(--ice); background:rgba(62,155,214,.1)}
   .results-table{min-width:800px}
+
+  .team-table th.center-head{text-align:center}
+  .result-extra{display:none}
+  .results-table.expanded .result-extra{display:table-row}
+  .results-toggle{display:flex; align-items:center; justify-content:center; gap:10px;
+    margin:16px auto 0; padding:10px 16px; border:1px solid var(--line2); border-radius:8px;
+    background:rgba(62,155,214,.08); color:var(--ice); cursor:pointer;
+    font-family:'Oswald'; font-size:12px; font-weight:600; letter-spacing:.08em;
+    text-transform:uppercase; transition:.2s}
+  .results-toggle:hover{border-color:var(--ice); background:rgba(62,155,214,.13)}
+  .results-toggle[hidden]{display:none}
+  .results-toggle-arrow{font-size:18px; line-height:1; transition:transform .22s}
+  .results-toggle[aria-expanded="true"] .results-toggle-arrow{transform:rotate(180deg)}
 
   /* ---------- CALENDAR ---------- */
   .cal{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:38px}
@@ -383,6 +430,7 @@
     .pack{gap:14px}
     .wolf.alpha{max-width:none}
     .training-services{grid-template-columns:1fr}
+    .wolf-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .team-table{font-size:11.5px}
   }
   @media(max-width:560px){
@@ -397,6 +445,8 @@
     .training-section{padding-top:0}
     .training-panel{padding:22px}
     .training-service{min-height:0}
+    .wolf-stats-grid{grid-template-columns:1fr}
+    .wolf-stat-card{padding:11px}
     .team-table-wrap{margin-top:18px; border-radius:10px}
     .team-table th{padding:8px 9px}
     .team-table td{padding:7px 9px}
@@ -544,22 +594,7 @@
     <h2>Стая в <span class="ice">цифрах</span></h2>
     <p class="lead">У каждого волка — свой след на дистанции: все старты RussiaLoppet, стиль, скорость и рекорд по количеству марафонов за сезон.</p>
 
-    <div class="team-table-wrap">
-      <table class="team-table pack-table" aria-label="Личная статистика участников">
-        <thead>
-          <tr>
-            <th>Спортсмен</th>
-            <th>Всего</th>
-            <th>Коньком</th>
-            <th>Классикой</th>
-            <th>Лучший марафон</th>
-            <th>Рекорд сезона</th>
-            <th>RL</th>
-          </tr>
-        </thead>
-        <tbody id="wolfStatsBody"></tbody>
-      </table>
-    </div>
+    <div class="wolf-stats-grid" id="wolfStatsGrid" aria-label="Личная статистика участников"></div>
   </div>
 </section>
 
@@ -576,7 +611,7 @@
         <thead>
           <tr>
             <th>Спортсмен</th>
-            <th>Год</th>
+            <th class="center-head">Год</th>
             <th>Марафон</th>
             <th>Время</th>
             <th>Абсолют</th>
@@ -587,6 +622,10 @@
         <tbody id="resultsList"></tbody>
       </table>
     </div>
+    <button class="results-toggle" id="resultsToggle" type="button" aria-expanded="false" aria-controls="resultsList" hidden>
+      <span class="results-toggle-label">Показать остальные результаты</span>
+      <span class="results-toggle-arrow" aria-hidden="true">⌄</span>
+    </button>
   </div>
 </section>
 
@@ -1003,11 +1042,11 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   addEventListener("resize", render);
 })();
 
-// Pack statistics — компактная строка для каждого участника
+// Pack statistics — личная карточка для каждого участника
 (function(){
   const hasNumber = value => value!==null && value!=="" && Number.isFinite(Number(value));
   const number = value => hasNumber(value) ? Number(value) : 0;
-  const body=$("#wolfStatsBody");
+  const grid=$("#wolfStatsGrid");
 
   WOLF_STATS.forEach(wolf=>{
     const skate=number(wolf.skate);
@@ -1015,32 +1054,56 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const total=skate+classic;
     const fastestDetail=[wolf.fastestEvent,wolf.fastestYear].filter(Boolean).join(" · ");
     const seasonDetail=wolf.seasonYear ? `Сезон ${wolf.seasonYear}` : "Данные собираются";
-    const profileUrl=ATHLETE_PROFILE_LINKS[wolf.name] || ROSTER.find(r=>r.name===wolf.name)?.rl || "";
-    const athlete=profileUrl
-      ? `<a href="${profileUrl}" target="_blank" rel="noopener noreferrer">${wolf.name}</a>`
-      : wolf.name;
-    const row=el("tr",wolf.name==="Артем Грязев" ? "leader-row" : "");
-    row.innerHTML=`
-      <td class="athlete-cell">${athlete}</td>
-      <td class="number-cell">${total || "—"}</td>
-      <td class="number-cell">${hasNumber(wolf.skate) ? skate : "—"}</td>
-      <td class="number-cell">${hasNumber(wolf.classic) ? classic : "—"}</td>
-      <td class="detail-cell"><b class="time-cell">${wolf.fastest || "—:—:—"}</b><small>${fastestDetail || "Данные собираются"}</small></td>
-      <td class="detail-cell"><b>${hasNumber(wolf.seasonMax) ? wolf.seasonMax + " мараф." : "—"}</b><small>${seasonDetail}</small></td>
-      <td>${profileUrl ? `<a class="profile-mini" href="${profileUrl}" target="_blank" rel="noopener noreferrer">↗</a>` : "—"}</td>`;
-    body.appendChild(row);
+    const roleTag=wolf.name==="Артем Грязев" ? `<span class="wolf-stat-role">Вожак</span>` : "";
+    const card=el("article",`wolf-stat-card reveal${wolf.name==="Артем Грязев" ? " leader" : ""}`);
+    card.innerHTML=`
+      <div class="wolf-stat-head">
+        <div class="wolf-stat-name">${wolf.name}</div>
+        ${roleTag}
+      </div>
+      <div class="wolf-stat-main">
+        <div>
+          <div class="metric-kicker">Всего</div>
+          <span class="wolf-stat-total">${total || "—"}</span>
+          <span class="wolf-stat-total-label">стартов</span>
+        </div>
+        <div class="wolf-stat-split">
+          <div><span>Коньком</span><b>${hasNumber(wolf.skate) ? skate : "—"}</b></div>
+          <div><span>Классикой</span><b>${hasNumber(wolf.classic) ? classic : "—"}</b></div>
+        </div>
+      </div>
+      <div class="wolf-stat-records">
+        <div class="wolf-stat-record">
+          <span>Лучший марафон</span>
+          <b>${wolf.fastest || "—:—:—"}</b>
+          <small>${fastestDetail || "Данные собираются"}</small>
+        </div>
+        <div class="wolf-stat-record">
+          <span>Рекорд за сезон</span>
+          <b>${hasNumber(wolf.seasonMax) ? wolf.seasonMax : "—"}</b>
+          <small>${seasonDetail}</small>
+        </div>
+      </div>`;
+    grid.appendChild(card);
   });
+
 })();
 
-// Results — компактная таблица крайних марафонов
+// Results — первые пять строк видимы, остальные раскрываются
 (function(){
   const body=$("#resultsList");
-  RESULTS.forEach(r=>{
+  const table=body.closest(".results-table");
+  const toggle=$("#resultsToggle");
+  const label=toggle.querySelector(".results-toggle-label");
+  const initialLimit=5;
+
+  RESULTS.forEach((r,index)=>{
     const profileUrl=ATHLETE_PROFILE_LINKS[r.athlete] || ROSTER.find(w=>w.name===r.athlete)?.rl || "";
     const athlete=profileUrl
       ? `<a href="${profileUrl}" target="_blank" rel="noopener noreferrer">${r.athlete}</a>`
       : r.athlete;
     const row=el("tr");
+    if(index>=initialLimit) row.classList.add("result-extra");
     row.innerHTML=`
       <td class="athlete-cell">${athlete}</td>
       <td class="number-cell">${r.year}</td>
@@ -1051,6 +1114,16 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       <td class="place-cell ${r.groupPlace<=3 ? "podium" : ""}">${r.groupPlace} место</td>`;
     body.appendChild(row);
   });
+
+  if(RESULTS.length>initialLimit){
+    toggle.hidden=false;
+    toggle.addEventListener("click",()=>{
+      const expanded=toggle.getAttribute("aria-expanded")==="true";
+      toggle.setAttribute("aria-expanded",String(!expanded));
+      table.classList.toggle("expanded",!expanded);
+      label.textContent=expanded ? "Показать остальные результаты" : "Скрыть дополнительные результаты";
+    });
+  }
 })();
 
 // Calendar
