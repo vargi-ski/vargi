@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
   ============================================================
-  САЙТ КОМАНДЫ «ВАРГИ» — лыжная марафонская стая
+  САЙТ СТАИ «ВАРГИ» — лыжная марафонская стая
   Один файл. Чтобы обновлять контент — правьте массивы DATA ниже
   (раздел <script> в самом верху JS): ROSTER, WOLF_STATS, RESULTS, CALENDAR,
   SHOP, PARTNERS. Вёрстку трогать не нужно.
@@ -14,7 +14,7 @@
    • Партнёры                                → массив PARTNERS
    • Ссылки соцсетей и Telegram              → константа LINKS
    • Фото в галерее                          → массив GALLERY (URL картинок)
-   • Текст «О команде» и цифры               → секция #about в HTML
+   • Текст «О стае» и цифры                  → секция #about в HTML
   ВАЖНО: форма «Вступить» сейчас только фронтенд (показывает успех локально).
   Для реальной отправки подключите бэкенд: Telegram-бот / Formspree / свой API.
   ============================================================
@@ -24,7 +24,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ВАРГИ — лыжная марафонская стая</title>
-<meta name="description" content="ВАРГИ — лыжная марафонская стая. Дисциплина, дистанция, характер. Состав, результаты, календарь стартов, магазин и набор в команду.">
+<meta name="description" content="ВАРГИ — лыжная марафонская стая. Дисциплина, дистанция, характер. Состав, результаты, календарь стартов, магазин и набор в стаю.">
 <meta property="og:title" content="ВАРГИ — лыжная марафонская стая">
 <meta property="og:description" content="Дисциплина. Дистанция. Стая. Присоединяйся к ВАРГИ.">
 <meta property="og:type" content="website">
@@ -366,6 +366,8 @@
   .consent a{color:var(--ice); text-decoration:underline}
   .form .btn[disabled]{opacity:.45; cursor:not-allowed}
   .form .ok{display:none; color:var(--ice); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.06em}
+  .join-motto{margin:0; color:var(--ice); font-family:'Oswald'; font-size:13px;
+    text-transform:uppercase; letter-spacing:.24em; text-align:center}
   .form .tg-hint{margin:-4px 0 0; color:var(--muted2); font-size:12.5px; text-align:center}
 
   /* ---------- PARTNERS ---------- */
@@ -482,7 +484,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
     <nav class="links" id="links">
-      <a href="#about">Команда</a>
+      <a href="#about">Стая</a>
       <a href="#roster">Состав</a>
       <a href="#results">Достижения</a>
       <a href="#calendar">Старты</a>
@@ -516,18 +518,18 @@
 <!-- ===== ABOUT ===== -->
 <section class="section" id="about">
   <div class="wrap">
-    <div class="eyebrow">О команде</div>
+    <div class="eyebrow">Север внутри</div>
     <h2>Здесь не ищут лёгких километров.<br><span class="ice">Здесь находят свою стаю.</span></h2>
     <div class="about-grid" style="margin-top:26px">
       <div>
-        <p class="lead"><b>ВАРГИ</b> — лыжная марафонская команда для тех, кто выходит на старт не ради фотографии с номером.</p>
+        <p class="lead"><b>ВАРГИ</b> — лыжная марафонская стая для тех, кто выходит на старт не ради фотографии с номером.</p>
         <p class="lead" style="margin-top:14px">Мы держим темп, когда заканчиваются силы. Идём до конца, когда остальные уже договариваются с собой. Здесь ценят характер, верность стае и готовность сражаться за каждый метр.</p>
         <p class="lead" style="margin-top:14px"><b>Если на последних километрах ты не отступаешь, а становишься опаснее — возможно, ты уже один из нас.</b></p>
         <!-- ЗАПИСЬ НА КЕМП. Когда будут даты/цена — заменить текст в .camp-meta и включить кнопку. -->
         <div class="camp reveal">
           <div class="camp-tag">Скоро</div>
           <div class="camp-title">Тестовый кэмп на первом снегу</div>
-          <p class="camp-meta">Знакомство с командой, совместные тренировки и возможность почувствовать темп стаи. Даты и место объявим скоро.</p>
+          <p class="camp-meta">Знакомство со стаей, совместные тренировки и возможность почувствовать её темп. Даты и место объявим скоро.</p>
           <button class="btn camp-btn" disabled>Скоро подробности</button>
         </div>
       </div>
@@ -536,7 +538,7 @@
         <div class="value"><b>Общий характер</b><p>Разный стаж, разное число марафонов. Но характер у всех один: биться до конца и не искать отговорок. ВАРГИ не сходят с дистанции.</p></div>
         <div class="value"><b>Вожак</b><p>Формирует стандарты подготовки, составляет индивидуальные планы, ведёт аналитику тренировок и гонит стаю вперёд.</p></div>
         <div class="value"><b>Стая вне гонки</b><p>Тренировки, сборы, кемпы. Вожак задаёт темп — стая держит темп.</p></div>
-        <div class="value"><b>Цифровая команда</b><p>Аналитика тренировок и планы подготовки с глубоким анализом на базе ИИ.</p></div>
+        <div class="value"><b>Цифровая стая</b><p>Аналитика тренировок и планы подготовки с глубоким анализом на базе ИИ.</p></div>
         <div class="value"><b>Нутрициолог стаи</b><p>Свой нутрициолог для всех: питание и рацион под тренировки и старты.</p></div>
       </div>
     </div>
@@ -690,14 +692,14 @@
 <!-- ===== JOIN ===== -->
 <section class="section" id="join">
   <div class="wrap">
-    <div class="eyebrow">Вступить в команду</div>
+    <div class="eyebrow">Вступить в стаю</div>
     <h2>Хочешь в <span class="ice">стаю?</span></h2>
     <div class="join-grid" style="margin-top:26px">
       <div>
         <p class="lead">Мы берём тех, кто готов к дистанции и к строю. Опыт марафонов желателен, но главное — характер и дисциплина. Оставь заявку — свяжемся и позовём на совместную тренировку.</p>
         <div class="values" style="margin-top:22px">
           <div class="value"><b>Кого ищем</b><p>Лыжников-марафонцев, готовых тренироваться системно.</p></div>
-          <div class="value"><b>Что даём</b><p>Команду, план, совместные старты под флагом ВАРГИ.</p></div>
+          <div class="value"><b>Что даём</b><p>Стаю, план, совместные старты под флагом ВАРГИ.</p></div>
         </div>
       </div>
       <div class="form" id="joinForm">
@@ -716,7 +718,8 @@
           <input type="checkbox" id="f-consent">
           <span>Я даю согласие на обработку персональных данных в соответствии с <a href="#" id="privacy">Политикой конфиденциальности</a> (152-ФЗ).</span>
         </label>
-        <button class="btn" id="submitBtn" disabled>Отправить в Telegram</button>
+        <button class="btn" id="submitBtn" disabled>Вступить в стаю</button>
+        <p class="join-motto">Стая держит темп</p>
         <p class="tg-hint">Откроется чат — нажми «отправить», и заявка придёт вожаку.</p>
         <div class="ok" id="formOk">Заявка сформирована. Отправь её в открывшемся чате Telegram — стая свяжется с тобой.</div>
       </div>
@@ -902,7 +905,7 @@ const SHOP = [
   { bg:"#111111", name:"Кепка «Прямой козырёк»", desc:"Чёрная. Прямой козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"Цена по запросу", img:CAP_STRAIGHT_IMAGE },
   { bg:"#111111", name:"Кепка «Спортивная классика»", desc:"Чёрная. Классический изогнутый козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"Цена по запросу", img:CAP_CLASSIC_IMAGE },
   { name:"Лыжный гоночный костюм", desc:"Гоночная разделка стаи. В разработке.", price:"Скоро", img:"", soon:true },
-  { name:"Пуховик", desc:"Тёплый командный пуховик. Ближе к сезону.", price:"Скоро", img:"", soon:true },
+  { name:"Пуховик", desc:"Тёплый пуховик стаи. Ближе к сезону.", price:"Скоро", img:"", soon:true },
   { name:"Разминка", desc:"Разминочный костюм стаи. Ближе к сезону.", price:"Скоро", img:"", soon:true },
   { name:"Шапка / бафф", desc:"Зимний комплект. Ближе к сезону.", price:"Скоро", img:"", soon:true }
 ];
@@ -1252,10 +1255,10 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
 
 // Socials links
 document.querySelectorAll('[data-link]').forEach(a=>{ a.href = LINKS[a.dataset.link]||"#"; if(a.dataset.link!=="email")a.target="_blank"; });
-const partnerText=encodeURIComponent("Здравствуйте, Артем! Хочу обсудить партнёрство с лыжной марафонской командой ВАРГИ.");
+const partnerText=encodeURIComponent("Здравствуйте, Артем! Хочу обсудить партнёрство с лыжной марафонской стаей ВАРГИ.");
 $("#partnerCta").href="https://t.me/"+TG_USER+"?text="+partnerText;
-const planText=encodeURIComponent("Здравствуйте, Артем! Хочу заказать индивидуальный план подготовки от команды ВАРГИ.");
-const aiText=encodeURIComponent("Здравствуйте, Артем! Хочу попробовать бесплатную ИИ-аналитику тренировок от команды ВАРГИ.");
+const planText=encodeURIComponent("Здравствуйте, Артем! Хочу заказать индивидуальный план подготовки от стаи ВАРГИ.");
+const aiText=encodeURIComponent("Здравствуйте, Артем! Хочу попробовать бесплатную ИИ-аналитику тренировок от стаи ВАРГИ.");
 const nutritionText=encodeURIComponent("Здравствуйте! Хочу узнать о плане работы с нутрициологом и индивидуальном сопровождении для тренировок и стартов.");
 $("#planCta").href="https://t.me/"+TG_USER+"?text="+planText;
 $("#aiCta").href="https://t.me/"+TG_USER+"?text="+aiText;
