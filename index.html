@@ -156,15 +156,22 @@
   .pack-arrow:hover{border-color:var(--ice); color:var(--ice)}
   .pack-arrow.prev{left:-6px} .pack-arrow.next{right:-6px}
   .wolf .body{padding:16px 16px 20px; display:flex; flex-direction:column; flex:1}
-  .wolf .role{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.14em; font-size:12px; color:var(--ice)}
-  .wolf .name{font-family:'Oswald'; font-weight:600; font-size:20px; margin:6px 0 6px}
-  .wolf .bio{color:var(--muted); font-size:14px; margin:0}
+  .wolf .role{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.14em;
+    font-size:clamp(10px,calc(.4vw + 7px),12px); line-height:1.25; color:var(--ice);
+    overflow-wrap:anywhere}
+  .wolf .name{font-family:'Oswald'; font-weight:600; font-size:clamp(16px,1.3vw,20px);
+    line-height:1.15; margin:6px 0; overflow-wrap:anywhere; hyphens:auto}
+  .wolf .athlete-name-link{display:block; color:inherit; text-decoration:none}
+  .wolf .athlete-name-link:hover{color:var(--ice)}
+  .wolf.alpha .athlete-name-link:hover{color:var(--ice-deep)}
+  .wolf .bio{color:var(--muted); font-size:clamp(12px,calc(.8vw + 4px),14px);
+    line-height:1.38; margin:0; overflow-wrap:anywhere; hyphens:auto}
   .wolf .wolf-quote{font-style:italic; color:var(--ice); font-size:14px; margin:0 0 8px; line-height:1.4}
   .wolf.alpha .wolf-quote{color:var(--ice-deep)}
   .wolf .soc{margin-top:12px; font-size:13px; color:var(--ice)}
-  .wolf .rl-link{display:inline-block; margin-top:10px; font-family:'Oswald'; text-transform:uppercase;
-    letter-spacing:.06em; font-size:12px; color:var(--ice); border:1px solid var(--line2);
-    padding:6px 12px; border-radius:6px; transition:.2s}
+  .wolf .rl-link{display:inline-block; max-width:100%; margin-top:10px; font-family:'Oswald'; text-transform:uppercase;
+    letter-spacing:.06em; font-size:12px; line-height:1.2; white-space:normal; text-align:center;
+    color:var(--ice); border:1px solid var(--line2); padding:6px 12px; border-radius:6px; transition:.2s}
   .wolf .body .rl-link{margin-top:auto; align-self:flex-start}
   .wolf .rl-link:hover{border-color:var(--ice); background:rgba(62,155,214,.1)}
   .wolf.alpha .rl-link{color:var(--ice-deep); border-color:rgba(32,91,126,.4)}
@@ -424,6 +431,8 @@
     .pack .wolf.alpha{min-height:680px}
     .pack .wolf .ph{height:320px; flex-basis:320px}
     .pack .wolf.alpha .ph{height:380px; flex-basis:380px}
+    .pack .wolf .name{font-size:20px}
+    .pack .wolf .bio{font-size:14px}
     .pack-arrow{top:34%; width:42px; height:42px}
     .pack-arrow.prev{left:6px}.pack-arrow.next{right:6px}
     .foot{flex-direction:column; align-items:flex-start}
@@ -880,10 +889,39 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const soc = r.soc ? `<div class="soc">${r.soc}</div>` : "";
     const rl = profileUrl ? `<a class="rl-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer">Профиль RussiaLoppet ↗</a>` : "";
     const quote = r.quote ? `<p class="wolf-quote">${r.quote}</p>` : "";
+    const athleteName = profileUrl
+      ? `<a class="name athlete-name-link" href="${profileUrl}" target="_blank" rel="noopener noreferrer" aria-label="Открыть профиль RussiaLoppet: ${r.name}">${r.name}</a>`
+      : `<div class="name">${r.name}</div>`;
     return `<div class="wolf${r.alpha?" alpha":""}">
       <div class="ph">${crown}${inner}</div>
-      <div class="body">${role}<div class="name">${r.name}</div>${quote}<p class="bio">${r.bio}</p>${soc}${rl}</div>
+      <div class="body">${role}${athleteName}${quote}<p class="bio">${r.bio}</p>${soc}${rl}</div>
     </div>`;
+  }
+
+  // Подгоняем типографику под доступную высоту карточки без обрезки текста.
+  function fitCardText(){
+    requestAnimationFrame(()=>{
+      wrap.querySelectorAll(".wolf").forEach(card=>{
+        const body=card.querySelector(".body");
+        const bio=card.querySelector(".bio");
+        const name=card.querySelector(".name");
+        const role=card.querySelector(".role");
+        if(!body || !bio || !name) return;
+        [bio,name,role].filter(Boolean).forEach(node=>node.style.fontSize="");
+        const overflow=()=>body.scrollHeight>body.clientHeight+1;
+        const shrink=(node,min)=>{
+          if(!node) return;
+          let size=parseFloat(getComputedStyle(node).fontSize);
+          while(overflow() && size>min){
+            size=Math.max(min,size-.5);
+            node.style.fontSize=`${size}px`;
+          }
+        };
+        shrink(bio,11);
+        shrink(name,15);
+        shrink(role,9);
+      });
+    });
   }
 
   // сколько боковых волков показывать с КАЖДОЙ стороны (desktop 2+2, планшет 1+1)
@@ -899,6 +937,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       const mobilePack = [alpha,...pack];
       mobileIndex = ((mobileIndex % mobilePack.length) + mobilePack.length) % mobilePack.length;
       wrap.innerHTML = cardHTML(mobilePack[mobileIndex]);
+      fitCardText();
       return;
     }
     const ps = perSide();
@@ -914,6 +953,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       left.map(cardHTML).join("") +
       cardHTML(alpha) +
       right.map(cardHTML).join("");
+    fitCardText();
   }
 
   function move(dir){
@@ -930,6 +970,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   }
 
   render();
+  if(document.fonts?.ready) document.fonts.ready.then(fitCardText);
 
   // стрелки
   if(pack.length > 1){
