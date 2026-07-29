@@ -125,6 +125,17 @@
   .camp-title{font-family:'Oswald'; font-weight:600; text-transform:uppercase; font-size:clamp(24px,3vw,32px); margin:8px 0 6px}
   .camp-meta{color:var(--muted); font-size:15px; margin:0 0 16px}
   .camp-btn[disabled]{opacity:.5; cursor:not-allowed}
+  .group-training{margin-top:14px; padding:22px 24px; border:1px solid var(--line); border-radius:14px;
+    background:linear-gradient(135deg,rgba(16,22,27,.94),rgba(62,155,214,.08))}
+  .group-training-title{font-family:'Oswald'; font-weight:600; text-transform:uppercase;
+    font-size:clamp(21px,2.5vw,27px); margin:7px 0}
+  .group-training-meta{color:var(--muted); font-size:14px; line-height:1.55; margin:0 0 14px}
+  .training-cities{display:flex; flex-wrap:wrap; gap:8px; margin:0 0 17px}
+  .training-city{padding:5px 10px; border:1px solid var(--line2); border-radius:99px;
+    color:var(--ice); font-family:'Oswald'; font-size:11px; letter-spacing:.08em; text-transform:uppercase}
+  .group-training .btn{justify-content:center; text-align:center; white-space:normal}
+  .city-options{display:grid; gap:10px; margin-top:16px}
+  .city-options .btn{width:100%; justify-content:center}
   .stat{border:1px solid var(--line); border-radius:12px; padding:22px; background:linear-gradient(180deg,var(--card),transparent)}
   .stat .num{font-family:'Oswald'; font-weight:700; font-size:clamp(30px,5vw,46px); color:var(--ink)}
   .stat .lbl{color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.12em; font-family:'Oswald'}
@@ -316,6 +327,12 @@
     display:grid; place-items:center; color:var(--muted2); font-size:12px; transition:.2s}
   .gal .cell:hover{border-color:var(--ice); color:var(--ice)}
   .gal .cell img{width:100%;height:100%;object-fit:cover}
+  .gallery-drawer{display:grid; grid-template-rows:0fr; opacity:0;
+    transition:grid-template-rows .34s ease,opacity .26s ease}
+  .gallery-drawer.open{grid-template-rows:1fr; opacity:1}
+  .gallery-drawer-inner{overflow:hidden}
+  .gallery-drawer .gal{margin-top:12px}
+  .gallery-toggle{margin-top:18px}
   .consent-note{color:var(--muted2); font-size:13px; margin-top:14px}
 
   /* ---------- SHOP ---------- */
@@ -457,6 +474,7 @@
     .team-table td{padding:7px 9px}
     .hero .cta{flex-direction:column; align-items:center; padding:0 8px}
     .hero .cta .btn{width:min(100%,360px); white-space:normal}
+    .group-training .btn{width:100%}
     .res{grid-template-columns:60px 1fr}
     .result-places{grid-column:2; grid-template-columns:repeat(2,minmax(0,1fr))}
     .pack{display:block; margin-top:30px}
@@ -532,6 +550,17 @@
           <div class="camp-title">Тестовый кэмп на первом снегу</div>
           <p class="camp-meta">Знакомство со стаей, совместные тренировки и возможность почувствовать её темп. Даты и место объявим скоро.</p>
           <button class="btn camp-btn" disabled>Скоро подробности</button>
+        </div>
+        <div class="group-training reveal">
+          <div class="camp-tag">Скоро · предварительная запись</div>
+          <div class="group-training-title">Групповые тренировки стаи</div>
+          <p class="group-training-meta">Открываем совместные тренировки в трёх городах. Выбери свой — сообщим первым, когда появятся даты.</p>
+          <div class="training-cities" aria-label="Города групповых тренировок">
+            <span class="training-city">Москва</span>
+            <span class="training-city">Воронеж</span>
+            <span class="training-city">Мурманск</span>
+          </div>
+          <button class="btn" id="groupTrainingCta" type="button">Записаться на групповую тренировку</button>
         </div>
       </div>
       <div class="values">
@@ -643,7 +672,7 @@
   <div class="wrap">
     <div class="eyebrow">Календарь</div>
     <h2>Ближайшие <span class="ice">старты</span></h2>
-    <p class="lead">Предварительный календарь марафонов RussiaLoppet сезона 2027. Старты расположены строго по датам.</p>
+    <p class="lead">Марафоны RussiaLoppet сезона 2027, на которых планирует выступать стая: только Центральный и Северо-Западный федеральные округа.</p>
     <div class="cal" id="calList"></div>
     <button class="calendar-toggle" id="calendarToggle" type="button" aria-expanded="false">
       <span class="calendar-toggle-label">Показать все старты</span>
@@ -671,6 +700,15 @@
     <div class="eyebrow">Галерея</div>
     <h2>Стая в <span class="ice">кадре</span></h2>
     <div class="gal" id="galList"></div>
+    <button class="calendar-toggle gallery-toggle" id="galleryToggle" type="button" aria-expanded="false" aria-controls="galleryDrawer" hidden>
+      <span class="gallery-toggle-label">Показать больше фото</span>
+      <span class="calendar-toggle-arrow" aria-hidden="true">⌄</span>
+    </button>
+    <div class="gallery-drawer" id="galleryDrawer">
+      <div class="gallery-drawer-inner">
+        <div class="gal" id="galMore"></div>
+      </div>
+    </div>
     <p class="consent-note">Фотографии публикуются с согласия участников.</p>
   </div>
 </section>
@@ -847,46 +885,25 @@ const RESULTS = [
 ];
 
 const CALENDAR = [
-  { group:"Январь", d:"23–24", m:"янв", year:"2027", name:"Вологда марафон «Кирики-Улита»", city:"Вологодская область, Болтино", status:"soon" },
-  { group:"Январь", d:"30", m:"янв", year:"2027", name:"Рязанский марафон «Экопарк Алмаз-Ski»", city:"Рязанская область, Рязань", status:"soon" },
-  { group:"Январь", d:"30–31", m:"янв", year:"2027", name:"Сокольи Горы", city:"Самарская область, Самара", status:"soon" },
+  { group:"Январь", d:"23–24", m:"янв", year:"2027", name:"Вологда-Марафон Кирики-Улита", city:"СЗФО · Вологодская область, д. Болтино", status:"soon" },
+  { group:"Январь", d:"30", m:"янв", year:"2027", name:"Экопарк-Алмаз-Ski", city:"ЦФО · Рязанская область, Рязань", status:"soon" },
 
-  { group:"Февраль", d:"07", m:"фев", year:"2027", name:"Московский лыжный марафон", city:"Москва", status:"soon" },
-  { group:"Февраль", d:"13–14", m:"фев", year:"2027", name:"Галичское Заозерье", city:"Костромская область, Галич", status:"soon" },
-  { group:"Февраль", d:"20", m:"фев", year:"2027", name:"Камский марафон", city:"Татарстан, Набережные Челны", status:"soon" },
-  { group:"Февраль", d:"20", m:"фев", year:"2027", name:"Красногорский марафон", city:"Московская область, Красногорск", status:"soon" },
-  { group:"Февраль", d:"20–21", m:"фев", year:"2027", name:"Веденинский марафон", city:"Тульская область, Тула", status:"soon" },
-  { group:"Февраль", d:"20–21", m:"фев", year:"2027", name:"Троицкий марафон", city:"Сахалинская область, Троицкое", status:"soon" },
-  { group:"Февраль", d:"21", m:"фев", year:"2027", name:"Марафон МВТУ", city:"Москва", status:"soon" },
-  { group:"Февраль", d:"21", m:"фев", year:"2027", name:"Европа–Азия", city:"Свердловская область, Первоуральск", status:"soon" },
-  { group:"Февраль", d:"27–28", m:"фев", year:"2027", name:"Сахалинский марафон", city:"Южно-Сахалинск", status:"soon" },
-  { group:"Февраль", d:"27", m:"фев", year:"2027", name:"Владимирский PROKU", city:"Владимирская область, Владимир", status:"soon" },
-  { group:"Февраль", d:"27", m:"фев", year:"2027", name:"Азия–Европа–Азия", city:"Свердловская область, Новоуральск", status:"soon" },
-  { group:"Февраль", d:"27", m:"фев", year:"2027", name:"Нижегородский марафон", city:"Нижний Новгород", status:"soon" },
-  { group:"Февраль", d:"27–28", m:"фев", year:"2027", name:"Токсово марафон", city:"Ленинградская область, Охта Парк", status:"soon" },
-  { group:"Февраль", d:"28", m:"фев", year:"2027", name:"БАМ Огоньки", city:"Иркутская область, ст. ВСЖД Огоньки", status:"soon" },
+  { group:"Февраль", d:"07", m:"фев", year:"2027", name:"Московский лыжный марафон", city:"ЦФО · Москва", status:"soon" },
+  { group:"Февраль", d:"13–14", m:"фев", year:"2027", name:"Галичское Заозерье", city:"ЦФО · Костромская область, Галич", status:"soon" },
+  { group:"Февраль", d:"20", m:"фев", year:"2027", name:"Красногорский марафон", city:"ЦФО · Московская область, Красногорск", status:"soon" },
+  { group:"Февраль", d:"20", m:"фев", year:"2027", name:"Котовский марафон", city:"ЦФО · Тамбовская область, Котовск", status:"soon" },
+  { group:"Февраль", d:"20–21", m:"фев", year:"2027", name:"Веденинский марафон", city:"ЦФО · Тульская область, Тула", status:"soon" },
+  { group:"Февраль", d:"21", m:"фев", year:"2027", name:"Марафон МВТУ", city:"ЦФО · Москва", status:"soon" },
+  { group:"Февраль", d:"27", m:"фев", year:"2027", name:"Владимирский Проку", city:"ЦФО · Владимирская область, Владимир", status:"soon" },
+  { group:"Февраль", d:"27–28", m:"фев", year:"2027", name:"Токсово Марафон", city:"СЗФО · Ленинградская область, Охта Парк", status:"soon" },
 
-  { group:"Март", d:"05–07", m:"мар", year:"2027", name:"Дёминский марафон", city:"Ярославская область, Рыбинск", status:"soon" },
-  { group:"Март", d:"06", m:"мар", year:"2027", name:"Тольяттинский марафон", city:"Самарская область, Тольятти", status:"soon" },
-  { group:"Март", d:"08", m:"мар", year:"2027", name:"Уфимский марафон", city:"Башкортостан, Уфа", status:"soon" },
-  { group:"Март", d:"13–14", m:"мар", year:"2027", name:"Марафон Кулаковой", city:"Удмуртия, Ижевск", status:"soon" },
-  { group:"Март", d:"13", m:"мар", year:"2027", name:"Казанский марафон", city:"Татарстан, Казань", status:"soon" },
-  { group:"Март", d:"13–14", m:"мар", year:"2027", name:"Томский марафон", city:"Томская область, Томск", status:"soon" },
-  { group:"Март", d:"13", m:"мар", year:"2027", name:"Марафон МГУ", city:"Москва", status:"soon" },
-  { group:"Март", d:"13–14", m:"мар", year:"2027", name:"Карельские фонтаны", city:"Карелия, Петрозаводск", status:"soon" },
-  { group:"Март", d:"13–14", m:"мар", year:"2027", name:"Праздник Севера", city:"Мурманская область, Мурманск", status:"soon" },
-  { group:"Март", d:"14", m:"мар", year:"2027", name:"БАМ Ангара", city:"Иркутская область, Иркутск", status:"soon" },
-  { group:"Март", d:"20–21", m:"мар", year:"2027", name:"Шижма", city:"Кировская область, Верхошижемье", status:"soon" },
-  { group:"Март", d:"20", m:"мар", year:"2027", name:"Апатитский марафон", city:"Мурманская область, Апатиты", status:"soon" },
-  { group:"Март", d:"20", m:"мар", year:"2027", name:"Кузбасс-SKI", city:"Кемеровская область, Кемерово", status:"soon" },
-  { group:"Март", d:"27", m:"мар", year:"2027", name:"Настоящий мужик", city:"Пермский край, Чусовой", status:"soon" },
-  { group:"Март", d:"27", m:"мар", year:"2027", name:"Кубок Устьи", city:"Архангельская область, Малиновка", status:"soon" },
-  { group:"Март", d:"27–28", m:"мар", year:"2027", name:"Поморский марафон", city:"Архангельская область, Архангельск", status:"soon" },
-  { group:"Март", d:"27–28", m:"мар", year:"2027", name:"Югорский марафон", city:"ХМАО, Ханты-Мансийск", status:"soon" },
-  { group:"Март", d:"28", m:"мар", year:"2027", name:"Сияние Севера", city:"Республика Коми, Ухта", status:"soon" },
-
-  { group:"Апрель", d:"11", m:"апр", year:"2027", name:"Камчатский марафон", city:"Камчатский край, Петропавловск-Камчатский", status:"soon" },
-  { group:"Апрель", d:"17", m:"апр", year:"2027", name:"Байкальский марафон", city:"Бурятия, п. Усть-Баргузин", status:"soon" }
+  { group:"Март", d:"05–07", m:"мар", year:"2027", name:"Дёминский марафон", city:"ЦФО · Ярославская область, Рыбинск", status:"soon" },
+  { group:"Март", d:"13", m:"мар", year:"2027", name:"Марафон МГУ", city:"ЦФО · Московская область, Красногорск", status:"soon" },
+  { group:"Март", d:"13–14", m:"мар", year:"2027", name:"Праздник Севера", city:"СЗФО · Мурманская область, Мурманск", status:"soon" },
+  { group:"Март", d:"20", m:"мар", year:"2027", name:"Апатитский марафон", city:"СЗФО · Мурманская область, Апатиты", status:"soon" },
+  { group:"Март", d:"27", m:"мар", year:"2027", name:"Кубок Устьи", city:"СЗФО · Архангельская область, Малиновка", status:"soon" },
+  { group:"Март", d:"27–28", m:"мар", year:"2027", name:"Поморский марафон", city:"СЗФО · Архангельская область, Архангельск", status:"soon" },
+  { group:"Март", d:"28", m:"мар", year:"2027", name:"Сияние Севера", city:"СЗФО · Республика Коми, Ухта", status:"soon" }
 ];
 
 const CALENDAR_POSTERS = [
@@ -1205,14 +1222,34 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
 
 // Gallery
 (function(){
-  const wrap = $("#galList");
-  GALLERY.forEach((src,i)=>{
+  const main = $("#galList");
+  const more = $("#galMore");
+  const drawer = $("#galleryDrawer");
+  const toggle = $("#galleryToggle");
+  const label = toggle.querySelector(".gallery-toggle-label");
+  const firstRowCount = matchMedia("(max-width:560px)").matches ? 2 : 4;
+
+  const makeCell=(src,i)=>{
     const cell = el("div","cell"); cell.classList.add("reveal");
     if(src){ const im=el("img"); im.src=src; im.alt="Фото стаи "+(i+1); cell.appendChild(im);
       cell.onclick=()=>openLightbox(src); }
     else cell.textContent = "ФОТО "+(i+1);
-    wrap.appendChild(cell);
+    return cell;
+  };
+
+  GALLERY.forEach((src,i)=>{
+    (i<firstRowCount ? main : more).appendChild(makeCell(src,i));
   });
+
+  if(GALLERY.length>firstRowCount){
+    toggle.hidden=false;
+    toggle.onclick=()=>{
+      const expanded=drawer.classList.toggle("open");
+      toggle.setAttribute("aria-expanded",String(expanded));
+      label.textContent=expanded ? "Скрыть дополнительные фото" : "Показать больше фото";
+      if(expanded) more.querySelectorAll(".reveal").forEach(item=>item.classList.add("in"));
+    };
+  }
 })();
 
 // Shop
@@ -1273,6 +1310,18 @@ const nutritionText=encodeURIComponent("Здравствуйте! Хочу уз�
 $("#planCta").href="https://t.me/"+TG_USER+"?text="+planText;
 $("#aiCta").href="https://t.me/"+TG_USER+"?text="+aiText;
 $("#nutritionCta").href="https://t.me/Gryazeva_A?text="+nutritionText;
+$("#groupTrainingCta").onclick=()=>{
+  const cityLink=city=>{
+    const text=encodeURIComponent("Здравствуйте, Артем! Хочу записаться на групповую тренировку ВАРГИ. Город: "+city+".");
+    return "https://t.me/"+TG_USER+"?text="+text;
+  };
+  showOverlay(`<div class="modal"><h3>Выбери город</h3><p>Оставь предварительную заявку — сообщим, когда появятся дата и место тренировки.</p>
+    <div class="city-options">
+      <a class="btn" href="${cityLink("Москва")}" target="_blank" rel="noopener noreferrer">Москва</a>
+      <a class="btn" href="${cityLink("Воронеж")}" target="_blank" rel="noopener noreferrer">Воронеж</a>
+      <a class="btn" href="${cityLink("Мурманск")}" target="_blank" rel="noopener noreferrer">Мурманск</a>
+    </div></div>`);
+};
 
 /* ============================================================
    INTERACTIONS
