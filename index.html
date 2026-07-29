@@ -398,8 +398,10 @@
     transition:border-color .2s,transform .2s,box-shadow .2s}
   a.partner:hover{border-color:var(--ice); transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,0,0,.28)}
   a.partner:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
-  .partner.logo-card{background:#fff; border-style:solid; borartner.logo-card:hover{border-color:var(--ice)}
-  .partner.lion:absolute; left:70%; math:72%; object-fit:contain; background:transparent}
+  .partner.logo-card{background:#fff; border-style:solid; border-color:#fff; position:relative}
+  .partner.logo-card:hover{border-color:var(--ice)}
+  .partner.logo-card img{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+    width:auto; height:70%; max-width:72%; object-fit:contain; background:transparent}
   .partner.logo-card.eqpt-card img{top:54%; width:82%; height:auto; max-width:82%; max-height:66%;
     object-fit:contain; object-position:center}
   .partner-cta{margin-top:26px; padding:26px 28px; border:1px solid var(--line2); border-radius:14px;
