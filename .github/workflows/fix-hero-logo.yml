@@ -1,0 +1,48 @@
+name: Fix hero logo
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-hero-logo.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix-logo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fix hero logo markup
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+
+          broken = '<img class="logo" src=window.VARGI_IMAGES.i01 alt="ВАРГИ — лыжная марафонская стая">'
+          fixed = '<img class="logo" id="heroLogo" alt="ВАРГИ — лыжная марафонская стая">'
+          if broken not in text:
+              raise SystemExit('Broken hero logo markup not found')
+          text = text.replace(broken, fixed, 1)
+
+          marker = '<script src="assets/image-data-08.js"></script>'
+          injection = marker + '\n<script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>'
+          if marker not in text:
+              raise SystemExit('Image data marker not found')
+          text = text.replace(marker, injection, 1)
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit fix
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Исправить загрузку центрального логотипа"
+          git push
