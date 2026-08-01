@@ -15,8 +15,6 @@
    • Ссылки соцсетей и Telegram              → константа LINKS
    • Фото в галерее                          → массив GALLERY (URL картинок)
    • Текст «О стае» и цифры                  → секция #about в HTML
-  ВАЖНО: форма «Вступить» сейчас только фронтенд (показывает успех локально).
-  Для реальной отправки подключите бэкенд: Telegram-бот / Formspree / свой API.
   ============================================================
 -->
 <html lang="ru">
@@ -36,14 +34,14 @@
 <meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="ВАРГИ — лыжная марафонская стая">
-<meta name="twitter:description" content="ВАРГИ — лыжная марафонская стая. Состав стаи, результаты RussiaLoppet, календарь стартов, тренировки, экипировка и вступление в стаю.">
+<meta name="twitter:description" content="ВАРГИ — лыжная марафонская стая. Состав, результаты RussiaLoppet, календарь стартов и подготовка к лыжным марафонам.">
 <meta name="twitter:image" content="https://xn----7sbbfg4a6clj5k.xn--p1ai/assets/og-vargi.png">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.svg">
 
-<meta name="description" content="ВАРГИ — лыжная марафонская стая. Дисциплина, дистанция, характер. Состав, результаты, календарь стартов, магазин и набор в стаю.">
+<meta name="description" content="ВАРГИ — лыжная марафонская стая. Состав, результаты, календарь стартов, групповые тренировки и индивидуальная подготовка к лыжным марафонам.">
 <meta property="og:title" content="ВАРГИ — лыжная марафонская стая">
-<meta property="og:description" content="Дисциплина. Дистанция. Стая. Присоединяйся к ВАРГИ.">
+<meta property="og:description" content="Дисциплина. Дистанция. Стая. Готовься к лыжным марафонам вместе с ВАРГИ.">
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -383,6 +381,7 @@
   .training-panel-head{max-width:850px}
   .training-panel h3{font-family:'Oswald'; text-transform:uppercase; font-size:clamp(26px,3vw,36px); margin:7px 0}
   .training-panel-head p{margin:0; color:var(--muted); font-size:16px}
+  .training-panel-head>.btn{margin-top:20px}
   .training-services{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:28px}
   .training-service{display:flex; flex-direction:column; min-height:220px; padding:22px;
     border:1px solid var(--line2); border-radius:12px; background:rgba(7,12,16,.62)}
@@ -395,23 +394,6 @@
   .training-service .training-more{display:block; margin-top:12px; color:var(--ice-hi); font-size:13px;
     text-align:center; transition:color .2s}
   .training-service .training-more:hover{color:#fff}
-
-  /* ---------- JOIN FORM ---------- */
-  .join-grid{display:grid; grid-template-columns:.9fr 1.1fr; gap:48px; align-items:start}
-  .form{display:grid; gap:14px; background:var(--card); border:1px solid var(--line); border-radius:14px; padding:26px}
-  .field{display:grid; gap:6px}
-  .field label{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.08em; font-size:12px; color:var(--muted)}
-  .field input,.field select,.field textarea{background:var(--bg2); border:1px solid var(--line2); color:var(--ink);
-    border-radius:8px; padding:12px 14px; font-family:'Inter'; font-size:15px; outline:none; transition:border-color .2s}
-  .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--ice)}
-  .consent{display:flex; gap:10px; align-items:flex-start; font-size:13px; color:var(--muted)}
-  .consent input{margin-top:3px; accent-color:var(--ice); width:16px;height:16px}
-  .consent a{color:var(--ice); text-decoration:underline}
-  .form .btn[disabled]{opacity:.45; cursor:not-allowed}
-  .form .ok{display:none; color:var(--ice); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.06em}
-  .join-motto{margin:0; color:var(--ice); font-family:'Oswald'; font-size:13px;
-    text-transform:uppercase; letter-spacing:.24em; text-align:center}
-  .form .tg-hint{margin:-4px 0 0; color:var(--muted2); font-size:12.5px; text-align:center}
 
   /* ---------- PARTNERS ---------- */
   .partners{display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-top:34px}
@@ -471,7 +453,7 @@
       background:rgba(7,8,10,.97); border-bottom:1px solid var(--line); padding:18px 22px; gap:16px}
     .nav .btn.head{display:none}
     .burger{display:block}
-    .about-grid,.join-grid{grid-template-columns:1fr; gap:30px}
+    .about-grid{grid-template-columns:1fr; gap:30px}
     .stats{grid-template-columns:repeat(2,1fr)}
     .cal,.shop{grid-template-columns:1fr 1fr}
     .partners{grid-template-columns:repeat(3,1fr)}
@@ -527,7 +509,7 @@
   "alternateName":"Лыжная марафонская стая ВАРГИ",
   "url":"https://xn----7sbbfg4a6clj5k.xn--p1ai/",
   "sport":"Cross-country skiing",
-  "description":"ВАРГИ — лыжная марафонская стая. Состав стаи, результаты RussiaLoppet, календарь стартов, тренировки, экипировка и вступление в стаю.",
+  "description":"ВАРГИ — лыжная марафонская стая. Состав стаи, результаты RussiaLoppet, календарь стартов, групповые тренировки и подготовка к лыжным марафонам.",
   "sameAs":["https://vk.com/vargi","https://t.me/TomMurman"]
 }
 </script>
@@ -594,15 +576,15 @@
           <button class="btn camp-btn" disabled>Скоро подробности</button>
         </div>
         <div class="group-training reveal">
-          <div class="camp-tag">Скоро · предварительная запись</div>
+          <div class="camp-tag">Открываем набор · лист ожидания</div>
           <div class="group-training-title">Групповые тренировки стаи</div>
-          <p class="group-training-meta">Открываем совместные тренировки в трёх городах. Выбери свой — сообщим первым, когда появятся даты.</p>
+          <p class="group-training-meta">Регулярные совместные занятия, работа по системе ВАРГИ и своё спортивное окружение. Выбери город — пришлём расписание и условия запуска группы.</p>
           <div class="training-cities" aria-label="Города групповых тренировок">
             <span class="training-city">Москва</span>
             <span class="training-city">Воронеж</span>
             <span class="training-city">Мурманск</span>
           </div>
-          <button class="btn" id="groupTrainingCta" type="button" data-goal="group_training_click">Записаться на групповую тренировку</button>
+          <button class="btn" id="groupTrainingCta" type="button" data-goal="group_training_click">Встать в лист ожидания</button>
         </div>
       </div>
       <div class="values">
@@ -623,8 +605,9 @@
     <div class="training-panel reveal">
       <div class="training-panel-head">
         <div class="camp-tag">Подготовка со стаей</div>
-        <h3>Начни с персональной работы</h3>
-        <p>Выбери подходящий формат и познакомься с системой подготовки ВАРГИ на практике.</p>
+        <h3>Готовься к марафонам вместе с ВАРГИ</h3>
+        <p>Индивидуальные планы подготовки к лыжным марафонам — от первого уверенного финиша до борьбы за высокие места. Система, аналитика и опыт действующих спортсменов RussiaLoppet.</p>
+        <a class="btn" href="/training-plan/" data-goal="training_primary_click">Начать подготовку со стаей</a>
       </div>
       <div class="training-services">
         <article class="training-service">
@@ -770,46 +753,6 @@
     <p class="lead">Носи знак стаи. Заказ — через Telegram, оплата и доставка обсуждаются индивидуально.</p>
     <div class="shop" id="shopList"></div>
     <p class="shop-note">Онлайн-оплата пока не подключена — заказы принимаем заявкой. Это сознательно: запускаем магазин без лишней юридической и операционной нагрузки.</p>
-  </div>
-</section>
-
-<hr class="track">
-
-<!-- ===== JOIN ===== -->
-<section class="section" id="join">
-  <div class="wrap">
-    <div class="eyebrow">Вступить в стаю</div>
-    <h2>Хочешь в <span class="ice">стаю?</span></h2>
-    <div class="join-grid" style="margin-top:26px">
-      <div>
-        <p class="lead">Мы берём тех, кто готов к дистанции и к строю. Опыт марафонов желателен, но главное — характер и дисциплина. Оставь заявку — свяжемся и позовём на совместную тренировку.</p>
-        <div class="values" style="margin-top:22px">
-          <div class="value"><b>Кого ищем</b><p>Лыжников-марафонцев, готовых тренироваться системно.</p></div>
-          <div class="value"><b>Что даём</b><p>Стаю, план, совместные старты под флагом ВАРГИ.</p></div>
-        </div>
-      </div>
-      <div class="form" id="joinForm">
-        <div class="field"><label>Имя</label><input id="f-name" type="text" placeholder="Как тебя зовут"></div>
-        <div class="field"><label>Контакт (телефон или Telegram)</label><input id="f-contact" type="text" placeholder="+7… или @username"></div>
-        <div class="field"><label>Дистанция / опыт</label>
-          <select id="f-exp">
-            <option>Новичок — до 30 км</option>
-            <option>Любитель — 30–50 км</option>
-            <option>Марафонец — 50 км+</option>
-            <option>Профи / разрядник</option>
-          </select>
-        </div>
-        <div class="field"><label>Сообщение</label><textarea id="f-msg" rows="3" placeholder="Пару слов о себе"></textarea></div>
-        <label class="consent">
-          <input type="checkbox" id="f-consent">
-          <span>Я даю согласие на обработку персональных данных в соответствии с <a href="privacy.html" id="privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a> (152-ФЗ).</span>
-        </label>
-        <button class="btn" id="submitBtn" data-goal="join_telegram_open" disabled>Вступить в стаю</button>
-        <p class="join-motto">Стая держит темп</p>
-        <p class="tg-hint">Откроется чат — нажми «отправить», и заявка придёт вожаку.</p>
-        <div class="ok" id="formOk">Заявка сформирована. Отправь её в открывшемся чате Telegram — стая свяжется с тобой.</div>
-      </div>
-    </div>
   </div>
 </section>
 
@@ -1405,10 +1348,10 @@ $("#aiCta").href="https://t.me/"+TG_USER+"?text="+aiText;
 $("#nutritionCta").href="https://t.me/Gryazeva_A?text="+nutritionText;
 $("#groupTrainingCta").onclick=()=>{
   const cityLink=city=>{
-    const text=encodeURIComponent("Здравствуйте, Артем! Хочу записаться на групповую тренировку ВАРГИ. Город: "+city+".");
+    const text=encodeURIComponent("Здравствуйте, Артем! Хочу встать в лист ожидания групповых тренировок ВАРГИ. Город: "+city+".");
     return "https://t.me/"+TG_USER+"?text="+text;
   };
-  showOverlay(`<div class="modal"><h3>Выбери город</h3><p>Оставь предварительную заявку — сообщим, когда появятся дата и место тренировки.</p>
+  showOverlay(`<div class="modal"><h3>Выбери город</h3><p>Встань в лист ожидания — пришлём расписание, условия и дату первой тренировки.</p>
     <div class="city-options">
       <a class="btn" href="${cityLink("Москва")}" target="_blank" rel="noopener noreferrer" data-goal="group_training_telegram">Москва</a>
       <a class="btn" href="${cityLink("Воронеж")}" target="_blank" rel="noopener noreferrer" data-goal="group_training_telegram">Воронеж</a>
@@ -1427,25 +1370,6 @@ addEventListener("scroll",()=>hdr.classList.toggle("scrolled", scrollY>20));
 $("#burger").onclick=()=>$("#links").classList.toggle("open");
 $("#links").querySelectorAll("a").forEach(a=>a.onclick=()=>$("#links").classList.remove("open"));
 
-// consent gate + отправка заявки в Telegram (без сервера: формируем сообщение, отправляет сам человек)
-const cb=$("#f-consent"), sb=$("#submitBtn");
-cb.onchange=()=>sb.disabled=!cb.checked;
-sb.onclick=()=>{
-  if(!cb.checked) return;
-  const name=($("#f-name").value||"").trim();
-  const contact=($("#f-contact").value||"").trim();
-  const exp=$("#f-exp").value||"";
-  const msg=($("#f-msg").value||"").trim();
-  // собираем текст заявки
-  let lines=["Заявка в стаю ВАРГИ","Имя: "+(name||"—"),"Контакт: "+(contact||"—"),"Опыт: "+exp];
-  if(msg) lines.push("О себе: "+msg);
-  const text=encodeURIComponent(lines.join("\n"));
-  // открываем Telegram с готовым сообщением — отправляет сам человек из своего аккаунта
-  window.open("https://t.me/"+TG_USER+"?text="+text, "_blank");
-  // показываем подтверждение
-  $("#joinForm").querySelectorAll("input,select,textarea,button,.consent").forEach(x=>x.style.display="none");
-  $("#formOk").style.display="block";
-};
 // overlay
 const overlay=$("#overlay"), oc=$("#overlayContent");
 function showOverlay(html){ oc.innerHTML=html; overlay.classList.add("show"); }
