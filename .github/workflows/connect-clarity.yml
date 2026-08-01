@@ -1,0 +1,40 @@
+name: Connect Microsoft Clarity
+
+on:
+  push:
+    paths:
+      - '.github/workflows/connect-clarity.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  connect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set Clarity project ID
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          p = Path('index.html')
+          s = p.read_text(encoding='utf-8')
+          old = 'clarityId: null'
+          new = "clarityId: 'xvfzqm6wc1'"
+          if old not in s and new not in s:
+              raise SystemExit('Clarity config marker not found')
+          s = s.replace(old, new)
+          p.write_text(s, encoding='utf-8')
+          PY
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No changes needed"
+          else
+            git commit -m "Подключить Microsoft Clarity xvfzqm6wc1"
+            git push
+          fi
