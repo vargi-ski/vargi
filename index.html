@@ -826,7 +826,6 @@
 <script src="assets/image-data-07.js"></script>
 <script src="assets/image-data-08.js"></script>
 <script src="assets/image-data-09.js"></script>
-<script src="assets/image-data-10.js"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script>
 /* ============================================================
@@ -940,7 +939,7 @@ const CALENDAR_POSTERS = [
 ];
 
 const PACK_IN_FRAME_PERM = window.VARGI_IMAGES.i18;
-const GALLERY = [PACK_IN_FRAME_PERM,"assets/pack-in-frame-ski-pair.webp","","","","","",""]; // '' = плейсхолдер
+const GALLERY = [PACK_IN_FRAME_PERM,"assets/pack-in-frame-ski-pair.webp"].filter(Boolean); // только рабочие изображения
 
 const CAP_STRAIGHT_IMAGE = window.VARGI_IMAGES.i19;
 const CAP_CLASSIC_IMAGE = window.VARGI_IMAGES.i20;
@@ -1431,6 +1430,15 @@ const cio=new IntersectionObserver(es=>es.forEach(en=>{
   cio.unobserve(node);
 }),{threshold:.6});
 document.querySelectorAll("[data-count]").forEach(n=>cio.observe(n));
+</script>
+
+<script>
+document.addEventListener("error", function(event){
+  const img = event.target;
+  if (!(img instanceof HTMLImageElement)) return;
+  const galleryCard = img.closest("#galList > *, #galMore > *");
+  if (galleryCard) galleryCard.remove();
+}, true);
 </script>
 </body>
 </html>
