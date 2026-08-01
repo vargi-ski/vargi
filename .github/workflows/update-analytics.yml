@@ -28,11 +28,13 @@ jobs:
           GSC_CLIENT_ID: ${{ secrets.GSC_CLIENT_ID }}
           GSC_CLIENT_SECRET: ${{ secrets.GSC_CLIENT_SECRET }}
           GSC_REFRESH_TOKEN: ${{ secrets.GSC_REFRESH_TOKEN }}
+          GSC_BRIDGE_URL: ${{ secrets.GSC_BRIDGE_URL }}
+          GSC_BRIDGE_KEY: ${{ secrets.GSC_BRIDGE_KEY }}
           DASHBOARD_PASSWORD: ${{ secrets.DASHBOARD_PASSWORD }}
         run: node scripts/update-analytics.mjs
       - name: Commit encrypted snapshot
         run: |
-          if [ -z "$(git status --porcelain -- analytics-dashboard/analytics.enc.json)" ]; then
+          if git diff --quiet -- analytics-dashboard/analytics.enc.json; then
             echo "No analytics changes"
             exit 0
           fi
