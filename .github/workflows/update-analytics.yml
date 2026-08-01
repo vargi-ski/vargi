@@ -4,6 +4,10 @@ on:
   schedule:
     - cron: '10 7 * * *'
   workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/update-analytics.mjs'
+      - '.github/workflows/update-analytics.yml'
 
 permissions:
   contents: write
