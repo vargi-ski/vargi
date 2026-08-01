@@ -9,7 +9,8 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const iso = d => d.toISOString().slice(0,10);
 const daysAgo = n => { const d=new Date(); d.setUTCDate(d.getUTCDate()-n); return iso(d); };
 const num = v => Number(v||0);
-const safe = (fn,fallback) => fn().catch(error=>({__error:error.message,...fallback}));
+const friendlyError = error => {const message=String(error?.message||error||'Неизвестная ошибка').replace(/\s+/g,' ').trim();if(/SERVICE_DISABLED|accessNotConfigured|has not been used in project|is disabled/i.test(message))return 'Search Console API подключается';if(/PERMISSION_DENIED|\b403\b/i.test(message))return 'Нет доступа к источнику';return message.slice(0,180)};
+const safe = (fn,fallback) => fn().catch(error=>({__error:friendlyError(error),...fallback}));
 
 async function json(url,options={}){let last;for(let i=0;i<3;i++){const r=await fetch(url,options);if(r.ok)return r.json();last=new Error(`${r.status} ${await r.text()}`);if(![429,500,502,503,504].includes(r.status))break;await sleep(800*(i+1));}throw last}
 function url(base,params){const u=new URL(base);Object.entries(params).forEach(([k,v])=>v!==undefined&&u.searchParams.set(k,String(v)));return u}
