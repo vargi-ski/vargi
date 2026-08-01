@@ -32,7 +32,7 @@ jobs:
         run: node scripts/update-analytics.mjs
       - name: Commit encrypted snapshot
         run: |
-          if git diff --quiet -- analytics-dashboard/analytics.enc.json; then
+          if [ -z "$(git status --porcelain -- analytics-dashboard/analytics.enc.json)" ]; then
             echo "No analytics changes"
             exit 0
           fi
