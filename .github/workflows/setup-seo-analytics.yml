@@ -1,0 +1,84 @@
+name: Setup SEO and analytics foundation
+
+on:
+  push:
+    paths:
+      - '.github/workflows/setup-seo-analytics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure site
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          index = Path('index.html')
+          s = index.read_text(encoding='utf-8')
+
+          canonical = 'https://xn----7sbbfg4a6clj5k.xn--p1ai/'
+          title = 'ВАРГИ — лыжная марафонская стая'
+          desc = 'ВАРГИ — лыжная марафонская стая. Состав команды, результаты RussiaLoppet, календарь стартов, тренировки, экипировка и вступление в стаю.'
+
+          def ensure_after(anchor, block):
+              nonlocal_s = None
+
+          # SEO meta
+          additions = f'''\n<link rel="canonical" href="{canonical}">\n<meta name="robots" content="index,follow,max-image-preview:large">\n<meta name="theme-color" content="#07080A">\n<meta name="author" content="ВАРГИ">\n<meta property="og:site_name" content="ВАРГИ">\n<meta property="og:url" content="{canonical}">\n<meta property="og:locale" content="ru_RU">\n<meta property="og:image" content="{canonical}assets/og-vargi.svg">\n<meta property="og:image:width" content="1200">\n<meta property="og:image:height" content="630">\n<meta name="twitter:card" content="summary_large_image">\n<meta name="twitter:title" content="{title}">\n<meta name="twitter:description" content="{desc}">\n<meta name="twitter:image" content="{canonical}assets/og-vargi.svg">\n<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">\n<link rel="apple-touch-icon" href="assets/apple-touch-icon.svg">\n'''
+          if '<link rel="canonical"' not in s:
+              s = s.replace('</title>', '</title>' + additions)
+
+          # verification placeholders
+          verification = '''\n<!-- Verification tokens: replace CONTENT values after adding the site to each service. -->\n<meta name="google-site-verification" content="GOOGLE_SEARCH_CONSOLE_TOKEN">\n<meta name="yandex-verification" content="YANDEX_WEBMASTER_TOKEN">\n'''
+          if 'GOOGLE_SEARCH_CONSOLE_TOKEN' not in s:
+              s = s.replace('</head>', verification + '\n</head>')
+
+          # JSON-LD
+          schema = f'''\n<script type="application/ld+json">\n{{\n  "@context":"https://schema.org",\n  "@type":"SportsOrganization",\n  "name":"ВАРГИ",\n  "alternateName":"Лыжная марафонская стая ВАРГИ",\n  "url":"{canonical}",\n  "sport":"Cross-country skiing",\n  "description":"{desc}",\n  "sameAs":["https://vk.com/vargi","https://t.me/TomMurman"]\n}}\n</script>\n'''
+          if '"@type":"SportsOrganization"' not in s:
+              s = s.replace('</head>', schema + '\n</head>')
+
+          # analytics config + universal event layer
+          analytics = '''\n<script>\nwindow.VARGI_ANALYTICS = {\n  yandexMetrikaId: null,\n  clarityId: null\n};\n(function(){\n  const cfg = window.VARGI_ANALYTICS || {};\n  if (cfg.yandexMetrikaId) {\n    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};\n    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');\n    ym(cfg.yandexMetrikaId,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});\n  }\n  if (cfg.clarityId) {\n    (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,'clarity','script',cfg.clarityId);\n  }\n  window.vargiTrack = function(name, params){\n    try { if (cfg.yandexMetrikaId && window.ym) ym(cfg.yandexMetrikaId,'reachGoal',name,params||{}); } catch(e) {}\n    try { if (window.clarity) clarity('event', name); } catch(e) {}\n    try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({event:name, ...(params||{})}); } catch(e) {}\n  };\n  document.addEventListener('click', function(e){\n    const a=e.target.closest('a,button'); if(!a) return;\n    const href=a.getAttribute('href')||'';\n    const text=(a.textContent||'').trim().toLowerCase();\n    let goal='';\n    if(href.includes('t.me')||text.includes('telegram')) goal='telegram_click';\n    else if(href.includes('russialoppet')) goal='russialoppet_click';\n    else if(text.includes('вступить')) goal='join_click';\n    else if(text.includes('план')) goal='training_plan_click';\n    else if(text.includes('нутрициолог')) goal='nutrition_click';\n    else if(text.includes('партн')) goal='partner_click';\n    else if(text.includes('магаз')) goal='shop_click';\n    else if(text.includes('календар')||text.includes('старт')) goal='calendar_click';\n    if(goal) window.vargiTrack(goal,{text:(a.textContent||'').trim(),href});\n  }, true);\n})();\n</script>\n'''
+          if 'window.VARGI_ANALYTICS' not in s:
+              s = s.replace('</body>', analytics + '\n</body>')
+
+          # performance improvements
+          s = s.replace('<img src="${r.photo}" alt="${r.name}" loading="${loading}">', '<img src="${r.photo}" alt="${r.name}" loading="${loading}" decoding="async">')
+          s = re.sub(r'<img(?![^>]*\bdecoding=)([^>]*\bloading="lazy"[^>]*)>', r'<img\1 decoding="async">', s)
+
+          index.write_text(s, encoding='utf-8')
+
+          Path('robots.txt').write_text('User-agent: *\nAllow: /\nSitemap: '+canonical+'sitemap.xml\nHost: xn----7sbbfg4a6clj5k.xn--p1ai\n', encoding='utf-8')
+          Path('sitemap.xml').write_text(f'''<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n  <url><loc>{canonical}</loc><changefreq>weekly</changefreq><priority>1.0</priority></url>\n</urlset>\n''', encoding='utf-8')
+
+          Path('assets').mkdir(exist_ok=True)
+          Path('assets/favicon.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="#07080A"/><path d="M32 8 39 24 56 27 43 39 46 56 32 47 18 56 21 39 8 27 25 24Z" fill="#3E9BD6"/><circle cx="32" cy="32" r="8" fill="#F2F5F8"/></svg>''', encoding='utf-8')
+          Path('assets/apple-touch-icon.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180"><rect width="180" height="180" rx="38" fill="#07080A"/><text x="90" y="112" text-anchor="middle" font-family="Arial" font-weight="700" font-size="76" fill="#F2F5F8">В</text><path d="M40 135h100" stroke="#3E9BD6" stroke-width="10"/></svg>''', encoding='utf-8')
+          Path('assets/og-vargi.svg').write_text('''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630"><rect width="1200" height="630" fill="#07080A"/><path d="M0 470 180 310 330 410 500 210 650 390 820 260 1200 500V630H0Z" fill="#10161B"/><text x="600" y="280" text-anchor="middle" font-family="Arial" font-weight="700" font-size="150" fill="#F2F5F8">ВАРГИ</text><text x="600" y="370" text-anchor="middle" font-family="Arial" font-size="42" fill="#3E9BD6">ЛЫЖНАЯ МАРАФОНСКАЯ СТАЯ</text><text x="600" y="435" text-anchor="middle" font-family="Arial" font-size="30" fill="#9BA8B3">СТАЯ ДЕРЖИТ ТЕМП</text></svg>''', encoding='utf-8')
+
+          Path('ANALYTICS_SETUP.md').write_text('''# Подключение аналитики ВАРГИ\n\n## Уже готово\n- Яндекс Метрика: код загрузится после установки `yandexMetrikaId` в `index.html`.\n- Microsoft Clarity: код загрузится после установки `clarityId`.\n- События: `telegram_click`, `russialoppet_click`, `join_click`, `training_plan_click`, `nutrition_click`, `partner_click`, `shop_click`, `calendar_click`.\n- Google Search Console и Яндекс Вебмастер: метатеги проверки уже добавлены с временными значениями.\n- Созданы `robots.txt` и `sitemap.xml`.\n\n## Что требуется от владельца\n1. Номер счётчика Яндекс Метрики.\n2. Project ID Microsoft Clarity.\n3. Verification token Google Search Console.\n4. Verification token Яндекс Вебмастера.\n\nПосле получения этих четырёх значений заменить временные значения в `index.html`.\n''', encoding='utf-8')
+          PY
+
+      - name: Commit changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html robots.txt sitemap.xml assets/favicon.svg assets/apple-touch-icon.svg assets/og-vargi.svg ANALYTICS_SETUP.md
+          if git diff --cached --quiet; then
+            echo "No changes"
+          else
+            git commit -m "Подключить SEO и фундамент аналитики"
+            git push origin main
+          fi
