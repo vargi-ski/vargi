@@ -863,6 +863,7 @@
 <script src="assets/image-data-07.js"></script>
 <script src="assets/image-data-08.js"></script>
 <script src="assets/image-data-09.js"></script>
+<script src="assets/image-data-10.js"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script>
 /* ============================================================
@@ -976,7 +977,7 @@ const CALENDAR_POSTERS = [
 ];
 
 const PACK_IN_FRAME_PERM = window.VARGI_IMAGES.i18;
-const GALLERY = [PACK_IN_FRAME_PERM,"assets/pack-in-frame-ski-pair.webp"].filter(Boolean); // только рабочие изображения
+const GALLERY = [PACK_IN_FRAME_PERM,"assets/pack-in-frame-ski-pair.webp",{src:window.VARGI_IMAGES.i30,pos:"center 35%"}].filter(Boolean); // только рабочие изображения
 
 const CAP_STRAIGHT_IMAGE = window.VARGI_IMAGES.i19;
 const CAP_CLASSIC_IMAGE = window.VARGI_IMAGES.i20;
@@ -1315,10 +1316,13 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   const label = toggle.querySelector(".gallery-toggle-label");
   const firstRowCount = matchMedia("(max-width:560px)").matches ? 2 : 4;
 
-  const makeCell=(src,i)=>{
+  const makeCell=(item,i)=>{
+    const src = typeof item==="string" ? item : item?.src;
+    const pos = typeof item==="object" ? item.pos : "";
     const cell = el("div","cell"); cell.classList.add("reveal");
-    if(src){ const im=el("img"); im.src=src; im.alt="Фото стаи "+(i+1); cell.appendChild(im);
-      cell.onclick=()=>openLightbox(src); }
+    if(src){ const im=el("img"); im.src=src; im.alt="Фото стаи "+(i+1);
+      if(pos) im.style.objectPosition=pos;
+      cell.appendChild(im); cell.onclick=()=>openLightbox(src); }
     else cell.textContent = "ФОТО "+(i+1);
     return cell;
   };
