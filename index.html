@@ -394,6 +394,9 @@
   .training-service p{margin:0 0 20px; color:var(--muted); font-size:14px; line-height:1.55}
   .training-service .btn{width:100%; min-height:48px; margin-top:auto; justify-content:center;
     text-align:center; white-space:normal; line-height:1.25; padding:10px 12px}
+  .training-service .training-more{display:block; margin-top:12px; color:var(--ice-hi); font-size:13px;
+    text-align:center; transition:color .2s}
+  .training-service .training-more:hover{color:#fff}
 
   /* ---------- JOIN FORM ---------- */
   .join-grid{display:grid; grid-template-columns:.9fr 1.1fr; gap:48px; align-items:start}
@@ -547,6 +550,7 @@
       <a href="#results">Достижения</a>
       <a href="#calendar">Старты</a>
       <a href="#gallery">Фото</a>
+      <a href="/training-plan/">Подготовка</a>
       <a href="#shop">Магазин</a>
     </nav>
   </div>
@@ -629,8 +633,9 @@
         <article class="training-service">
           <div class="training-service-tag">Персональная подготовка</div>
           <h4>План тренировок</h4>
-          <p>Индивидуальная программа под твои цели, уровень, график и календарь стартов.</p>
-          <a class="btn" id="planCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="training_plan_click">Заказать план</a>
+          <p>Индивидуальная программа под твои цели, уровень, график и календарь стартов. Отдельно — руководство по подготовке к 50 км.</p>
+          <a class="btn" id="planCta" href="/training-plan/" data-goal="training_plan_page_click">Узнать о плане</a>
+          <a class="training-more" href="/ski-marathon-50km/" data-goal="marathon_50_page_click">Как подготовиться к 50 км →</a>
         </article>
         <article class="training-service">
           <div class="training-service-tag">Первый шаг бесплатно</div>
@@ -1390,10 +1395,8 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
 document.querySelectorAll('[data-link]').forEach(a=>{ a.href = LINKS[a.dataset.link]||"#"; if(a.dataset.link!=="email")a.target="_blank"; });
 const partnerText=encodeURIComponent("Здравствуйте, Артем! Хочу обсудить партнёрство с лыжной марафонской стаей ВАРГИ.");
 $("#partnerCta").href="https://t.me/"+TG_USER+"?text="+partnerText;
-const planText=encodeURIComponent("Здравствуйте, Артем! Хочу заказать индивидуальный план подготовки от стаи ВАРГИ.");
 const aiText=encodeURIComponent("Здравствуйте, Артем! Хочу попробовать бесплатную ИИ-аналитику тренировок от стаи ВАРГИ.");
 const nutritionText=encodeURIComponent("Здравствуйте! Хочу узнать о плане работы с нутрициологом и индивидуальном сопровождении для тренировок и стартов.");
-$("#planCta").href="https://t.me/"+TG_USER+"?text="+planText;
 $("#aiCta").href="https://t.me/"+TG_USER+"?text="+aiText;
 $("#nutritionCta").href="https://t.me/Gryazeva_A?text="+nutritionText;
 $("#groupTrainingCta").onclick=()=>{
