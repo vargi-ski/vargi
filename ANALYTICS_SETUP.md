@@ -1,16 +1,22 @@
-# Подключение аналитики ВАРГИ
+# ВАРГИ: ежедневный приватный дашборд
 
-## Уже готово
-- Яндекс Метрика: код загрузится после установки `yandexMetrikaId` в `index.html`.
-- Microsoft Clarity: код загрузится после установки `clarityId`.
-- События: `telegram_click`, `russialoppet_click`, `join_click`, `training_plan_click`, `nutrition_click`, `partner_click`, `shop_click`, `calendar_click`.
-- Google Search Console и Яндекс Вебмастер: метатеги проверки уже добавлены с временными значениями.
-- Созданы `robots.txt` и `sitemap.xml`.
+Дашборд расположен в `/analytics-dashboard/`, не индексируется и не связан с главной. Файл данных шифруется AES-256-GCM; пароль и API-токены хранятся только в GitHub Actions Secrets.
 
-## Что требуется от владельца
-1. Номер счётчика Яндекс Метрики.
-2. Project ID Microsoft Clarity.
-3. Verification token Google Search Console.
-4. Verification token Яндекс Вебмастера.
+## Секреты репозитория
 
-После получения этих четырёх значений заменить временные значения в `index.html`.
+- `YANDEX_METRIKA_TOKEN` — OAuth только с правом `metrika:read`.
+- `CLARITY_API_TOKEN` — токен проекта из Settings → Data Export.
+- `GSC_CLIENT_ID` — OAuth client ID Google.
+- `GSC_CLIENT_SECRET` — OAuth client secret Google.
+- `GSC_REFRESH_TOKEN` — refresh token со scope `webmasters.readonly`.
+- `DASHBOARD_PASSWORD` — отдельный длинный пароль для открытия дашборда.
+
+Ни один секрет нельзя добавлять в код, issue, commit или сообщения. После добавления секретов запустить workflow `Update private analytics` вручную один раз. Далее он запускается ежедневно в 10:10 по Москве.
+
+## Локальная проверка
+
+```bash
+MOCK_MODE=1 DASHBOARD_PASSWORD=vargi-test node scripts/update-analytics.mjs
+```
+
+Открыть `analytics-dashboard/index.html` через локальный HTTP-сервер и использовать пароль `vargi-test`.
