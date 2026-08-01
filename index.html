@@ -40,6 +40,7 @@
 <meta name="twitter:image" content="https://xn----7sbbfg4a6clj5k.xn--p1ai/assets/og-vargi.png">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.svg">
+<link rel="preload" href="assets/vargi-hero.svg" as="image" type="image/svg+xml" fetchpriority="high">
 
 <meta name="description" content="ВАРГИ — лыжная марафонская стая. Дисциплина, дистанция, характер. Состав, результаты, календарь стартов, магазин и набор в стаю.">
 <meta property="og:title" content="ВАРГИ — лыжная марафонская стая">
@@ -129,6 +130,10 @@
     -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent}
   .hero .slogan .div{width:58px; height:2px; margin:13px 0 11px;
     background:linear-gradient(90deg,transparent,var(--ice),transparent)}
+  .hero-title{margin:20px auto 0; color:var(--muted); font-family:'Oswald',sans-serif;
+    font-size:clamp(15px,2.2vw,22px); font-weight:500; line-height:1.25; letter-spacing:.16em;
+    text-transform:uppercase}
+  .hero-title .ice{color:var(--ice-hi)}
   .hero .cta{display:flex; gap:12px; justify-content:center; margin-top:30px; flex-wrap:wrap}
   .hero .cta .btn{justify-content:center; text-align:center}
 
@@ -557,7 +562,9 @@
   <div class="ridge"></div>
   <div class="wrap inner">
     <div class="logo-stage">
-    <img class="logo" id="heroLogo" alt="ВАРГИ — лыжная марафонская стая">
+    <img class="logo" id="heroLogo" src="assets/vargi-hero.svg" width="900" height="271"
+      alt="Логотип ВАРГИ — пять волков лыжной марафонской стаи" loading="eager"
+      fetchpriority="high" decoding="async">
       <div class="wolf-eyes" aria-hidden="true">
         <i class="wolf-eye" style="left:9.9%;top:39.4%;--eye-delay:-.18s"></i><i class="wolf-eye" style="left:15%;top:39.4%;--eye-delay:-.18s"></i>
         <i class="wolf-eye" style="left:27.3%;top:35.8%;--eye-delay:-.09s"></i><i class="wolf-eye" style="left:32.6%;top:35.8%;--eye-delay:-.09s"></i>
@@ -566,7 +573,7 @@
         <i class="wolf-eye" style="left:84.8%;top:39.4%;--eye-delay:-.18s"></i><i class="wolf-eye" style="left:89.8%;top:39.4%;--eye-delay:-.18s"></i>
       </div>
     </div>
-    <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">ВАРГИ — лыжная марафонская стая</h1>
+    <h1 class="hero-title">Лыжная марафонская команда <span class="ice">ВАРГИ</span></h1>
     <div class="cta">
       <a href="#about" class="btn">Познакомиться со стаей</a>
     </div>
@@ -599,7 +606,7 @@
             <span class="training-city">Воронеж</span>
             <span class="training-city">Мурманск</span>
           </div>
-          <button class="btn" id="groupTrainingCta" type="button">Записаться на групповую тренировку</button>
+          <button class="btn" id="groupTrainingCta" type="button" data-goal="group_training_click">Записаться на групповую тренировку</button>
         </div>
       </div>
       <div class="values">
@@ -628,19 +635,19 @@
           <div class="training-service-tag">Персональная подготовка</div>
           <h4>План тренировок</h4>
           <p>Индивидуальная программа под твои цели, уровень, график и календарь стартов.</p>
-          <a class="btn" id="planCta" href="#" target="_blank" rel="noopener noreferrer">Заказать план</a>
+          <a class="btn" id="planCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="training_plan_click">Заказать план</a>
         </article>
         <article class="training-service">
           <div class="training-service-tag">Первый шаг бесплатно</div>
           <h4>ИИ-аналитика</h4>
           <p>Пробный разбор тренировок: нагрузка, динамика, слабые места и точки роста.</p>
-          <a class="btn ghost" id="aiCta" href="#" target="_blank" rel="noopener noreferrer">Попробовать бесплатно</a>
+          <a class="btn ghost" id="aiCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="ai_analysis_click">Попробовать бесплатно</a>
         </article>
         <article class="training-service">
           <div class="training-service-tag">Питание и восстановление</div>
           <h4>Нутрициолог</h4>
           <p>План питания под тренировки и старты либо персональное сопровождение специалиста.</p>
-          <a class="btn ghost" id="nutritionCta" href="#" target="_blank" rel="noopener noreferrer">Обсудить сопровождение</a>
+          <a class="btn ghost" id="nutritionCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="nutrition_click">Обсудить сопровождение</a>
         </article>
       </div>
     </div>
@@ -798,9 +805,9 @@
         <div class="field"><label>Сообщение</label><textarea id="f-msg" rows="3" placeholder="Пару слов о себе"></textarea></div>
         <label class="consent">
           <input type="checkbox" id="f-consent">
-          <span>Я даю согласие на обработку персональных данных в соответствии с <a href="#" id="privacy">Политикой конфиденциальности</a> (152-ФЗ).</span>
+          <span>Я даю согласие на обработку персональных данных в соответствии с <a href="privacy.html" id="privacy" target="_blank" rel="noopener">Политикой конфиденциальности</a> (152-ФЗ).</span>
         </label>
-        <button class="btn" id="submitBtn" disabled>Вступить в стаю</button>
+        <button class="btn" id="submitBtn" data-goal="join_telegram_open" disabled>Вступить в стаю</button>
         <p class="join-motto">Стая держит темп</p>
         <p class="tg-hint">Откроется чат — нажми «отправить», и заявка придёт вожаку.</p>
         <div class="ok" id="formOk">Заявка сформирована. Отправь её в открывшемся чате Telegram — стая свяжется с тобой.</div>
@@ -824,7 +831,7 @@
         <p>Экипировка, сервис, транспорт, финансовая поддержка или совместный проект — обсудим подходящий формат взаимодействия.</p>
       </div>
       <div class="partner-cta-actions">
-        <a class="btn" id="partnerCta" href="#" target="_blank" rel="noopener noreferrer">
+        <a class="btn" id="partnerCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="partner_click">
           Предложить партнёрство <span aria-hidden="true">→</span>
         </a>
         <span class="partner-cta-note">Связаться с Артемом Грязевым</span>
@@ -838,10 +845,11 @@
   <div class="wrap foot">
     <a href="#top" class="brand"><span class="mark">❅</span> ВАРГИ</a>
     <div class="socials">
-      <a href="#" data-link="telegram">Telegram</a>
+      <a href="#" data-link="telegram" data-goal="telegram_social_click">Telegram</a>
       <a href="#" data-link="vk">VK</a>
       <a href="#" data-link="email">E-mail</a>
     </div>
+    <a href="privacy.html">Политика конфиденциальности</a>
     <small>© 2026 ВАРГИ · Лыжная марафонская стая</small>
   </div>
 </footer>
@@ -853,7 +861,6 @@
 </div>
 
 <script>window.VARGI_IMAGES = window.VARGI_IMAGES || {};</script>
-<script src="assets/image-data-01.js"></script>
 <script src="assets/image-data-02.js"></script>
 <script src="assets/image-data-03.js"></script>
 <script src="assets/image-data-04.js"></script>
@@ -862,7 +869,6 @@
 <script src="assets/image-data-07.js"></script>
 <script src="assets/image-data-08.js"></script>
 <script src="assets/image-data-09.js"></script>
-<script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script>
 /* ============================================================
    DATA — правьте здесь. Вёрстка подхватит автоматически.
@@ -1402,9 +1408,9 @@ $("#groupTrainingCta").onclick=()=>{
   };
   showOverlay(`<div class="modal"><h3>Выбери город</h3><p>Оставь предварительную заявку — сообщим, когда появятся дата и место тренировки.</p>
     <div class="city-options">
-      <a class="btn" href="${cityLink("Москва")}" target="_blank" rel="noopener noreferrer">Москва</a>
-      <a class="btn" href="${cityLink("Воронеж")}" target="_blank" rel="noopener noreferrer">Воронеж</a>
-      <a class="btn" href="${cityLink("Мурманск")}" target="_blank" rel="noopener noreferrer">Мурманск</a>
+      <a class="btn" href="${cityLink("Москва")}" target="_blank" rel="noopener noreferrer" data-goal="group_training_telegram">Москва</a>
+      <a class="btn" href="${cityLink("Воронеж")}" target="_blank" rel="noopener noreferrer" data-goal="group_training_telegram">Воронеж</a>
+      <a class="btn" href="${cityLink("Мурманск")}" target="_blank" rel="noopener noreferrer" data-goal="group_training_telegram">Мурманск</a>
     </div></div>`);
 };
 
@@ -1438,8 +1444,6 @@ sb.onclick=()=>{
   $("#joinForm").querySelectorAll("input,select,textarea,button,.consent").forEach(x=>x.style.display="none");
   $("#formOk").style.display="block";
 };
-$("#privacy").onclick=e=>{e.preventDefault(); openModal("Политика конфиденциальности","Здесь будет текст политики обработки персональных данных. Замените на свой документ (152-ФЗ).");};
-
 // overlay
 const overlay=$("#overlay"), oc=$("#overlayContent");
 function showOverlay(html){ oc.innerHTML=html; overlay.classList.add("show"); }
@@ -1447,7 +1451,7 @@ function openLightbox(src){ showOverlay(`<img class="lb-img" src="${src}" alt=""
 function openModal(title,text){ showOverlay(`<div class="modal"><h3>${title}</h3><p>${text}</p></div>`); }
 function openOrder(name){
   showOverlay(`<div class="modal"><h3>Заказ</h3><p>Чтобы заказать «${name}», напишите нам в Telegram — обсудим размер, оплату и доставку.</p>
-    <a class="btn" href="${LINKS.telegram}" target="_blank">Написать в Telegram</a></div>`);
+    <a class="btn" href="${LINKS.telegram}" target="_blank" rel="noopener noreferrer" data-goal="shop_order_click">Написать в Telegram</a></div>`);
 }
 $("#overlayClose").onclick=()=>overlay.classList.remove("show");
 overlay.onclick=e=>{ if(e.target===overlay) overlay.classList.remove("show"); };
@@ -1501,15 +1505,12 @@ window.VARGI_ANALYTICS = {
     const a=e.target.closest('a,button'); if(!a) return;
     const href=a.getAttribute('href')||'';
     const text=(a.textContent||'').trim().toLowerCase();
-    let goal='';
-    if(href.includes('t.me')||text.includes('telegram')) goal='telegram_click';
-    else if(href.includes('russialoppet')) goal='russialoppet_click';
-    else if(text.includes('вступить')) goal='join_click';
-    else if(text.includes('план')) goal='training_plan_click';
-    else if(text.includes('нутрициолог')) goal='nutrition_click';
-    else if(text.includes('партн')) goal='partner_click';
-    else if(text.includes('магаз')) goal='shop_click';
-    else if(text.includes('календар')||text.includes('старт')) goal='calendar_click';
+    let goal=a.dataset.goal||'';
+    if(!goal && href.includes('russialoppet')) goal='russialoppet_click';
+    else if(!goal && (href.includes('t.me')||text.includes('telegram'))) goal='telegram_click';
+    else if(!goal && text.includes('вступить')) goal='join_click';
+    else if(!goal && text.includes('магаз')) goal='shop_click';
+    else if(!goal && (text.includes('календар')||text.includes('старт'))) goal='calendar_click';
     if(goal) window.vargiTrack(goal,{text:(a.textContent||'').trim(),href});
   }, true);
 })();
