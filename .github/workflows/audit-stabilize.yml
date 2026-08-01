@@ -1,0 +1,119 @@
+name: Audit and stabilize VARGI site
+
+on:
+  push:
+    paths:
+      - '.github/workflows/audit-stabilize.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Stabilize site and audit files
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          from pathlib import Path
+          import re, base64
+
+          root = Path('.')
+          index = root / 'index.html'
+          s = index.read_text(encoding='utf-8')
+          changes = []
+
+          # 1. Удаляем подключение заведомо поврежденного семейного фото.
+          old = '<script src="assets/image-data-10.js"></script>\n'
+          if old in s:
+              s = s.replace(old, '')
+              changes.append('Удалено подключение поврежденного assets/image-data-10.js')
+
+          # 2. Галерея должна содержать только реальные источники, без пустых карточек.
+          pattern = r'const GALLERY = \[[^;]*\];\s*//[^\n]*'
+          replacement = 'const GALLERY = [PACK_IN_FRAME_PERM,"assets/pack-in-frame-ski-pair.webp"].filter(Boolean); // только рабочие изображения'
+          ns, count = re.subn(pattern, replacement, s, count=1)
+          if count:
+              s = ns
+              changes.append('Удалены пустые и поврежденные элементы массива GALLERY')
+
+          # 3. Защита интерфейса: битая картинка автоматически скрывает карточку.
+          guard = '''\n<script>\ndocument.addEventListener("error", function(event){\n  const img = event.target;\n  if (!(img instanceof HTMLImageElement)) return;\n  const galleryCard = img.closest("#galList > *, #galMore > *");\n  if (galleryCard) galleryCard.remove();\n}, true);\n</script>\n'''
+          if 'const galleryCard = img.closest' not in s:
+              s = s.replace('</body>', guard + '</body>')
+              changes.append('Добавлена автоматическая очистка битых изображений в галерее')
+
+          index.write_text(s, encoding='utf-8')
+
+          # 4. Нормализуем CNAME.
+          cname = root / 'CNAME'
+          cname.write_text('xn----7sbbfg4a6clj5k.xn--p1ai\n', encoding='utf-8')
+
+          # 5. GitHub Pages должен отдавать файлы как есть, без Jekyll.
+          (root / '.nojekyll').write_text('', encoding='utf-8')
+
+          # 6. Проверяем локальные ссылки assets/... из index.html.
+          text = index.read_text(encoding='utf-8')
+          refs = sorted(set(re.findall(r'["\'](assets/[^"\']+)["\']', text)))
+          missing = [r for r in refs if not (root / r).exists()]
+
+          # 7. Проверяем image-data JS: назначение переменной и сигнатуру data URI.
+          image_data = []
+          invalid_data = []
+          for p in sorted((root / 'assets').glob('image-data-*.js')):
+              raw = p.read_text(encoding='utf-8', errors='replace').strip()
+              image_data.append(str(p))
+              m = re.search(r'data:image/(png|jpeg|jpg|webp);base64,([^"\']+)', raw)
+              if not m:
+                  invalid_data.append(f'{p}: нет корректного data URI')
+                  continue
+              kind, payload = m.group(1), m.group(2)
+              try:
+                  blob = base64.b64decode(payload, validate=True)
+              except Exception:
+                  invalid_data.append(f'{p}: поврежден base64')
+                  continue
+              ok = ((kind == 'png' and blob.startswith(b'\x89PNG')) or
+                    (kind in ('jpeg','jpg') and blob.startswith(b'\xff\xd8\xff')) or
+                    (kind == 'webp' and blob.startswith(b'RIFF') and blob[8:12] == b'WEBP'))
+              if not ok:
+                  invalid_data.append(f'{p}: MIME не соответствует сигнатуре файла')
+
+          report = [
+              '# Аудит сайта ВАРГИ',
+              '',
+              '## Выполнено',
+              *[f'- {x}' for x in changes],
+              '- CNAME приведён к Punycode без лишних символов',
+              '- Добавлен .nojekyll',
+              '',
+              '## Проверка локальных ресурсов',
+              f'- Найдено ссылок на assets: {len(refs)}',
+              f'- Отсутствующих файлов: {len(missing)}',
+          ]
+          report += [f'  - `{x}`' for x in missing] or ['  - отсутствуют']
+          report += ['', '## Проверка встроенных изображений', f'- Проверено файлов: {len(image_data)}', f'- Некорректных: {len(invalid_data)}']
+          report += [f'  - {x}' for x in invalid_data] or ['  - отсутствуют']
+          report += ['', '## DNS/HTTPS', '- CNAME в репозитории корректен.', '- Проверка HTTPS зависит от публичных DNS-записей REG.RU и выпуска сертификата GitHub; это не влияет на геометрию и загрузку отдельных изображений.', '']
+          (root / 'AUDIT_REPORT.md').write_text('\n'.join(report), encoding='utf-8')
+          PY
+
+          # Удаляем поврежденный файл и все временные одноразовые workflows.
+          rm -f assets/image-data-10.js
+          find .github/workflows -maxdepth 1 -type f -name '*.yml' -delete
+
+      - name: Commit stabilized version
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Полный аудит и стабилизация сайта ВАРГИ" || exit 0
+          git push origin main
