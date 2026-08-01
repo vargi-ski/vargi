@@ -197,6 +197,9 @@
     margin:0 0 8px; line-height:1.4; text-align:left}
   .wolf.alpha .wolf-quote{color:var(--ice-deep)}
   .wolf .soc{margin-top:12px; font-size:13px; color:var(--ice)}
+  .wolf .leader-story{display:inline-flex; margin-top:auto; padding-top:12px; color:var(--ice); font-family:'Oswald'; font-size:12px; font-weight:600; letter-spacing:.1em; text-transform:uppercase}
+  .wolf .leader-story:hover{color:var(--ice-hi)}
+  .wolf.alpha .leader-story{color:var(--ice-deep)}
   .wolf.alpha{flex:1.35 1 0; max-width:340px; height:680px; background:linear-gradient(180deg,#fff,#e8eef2); color:#0a0d10;
     border-color:#fff; box-shadow:0 0 0 1px #fff,0 18px 50px rgba(143,208,239,.18)}
   .wolf.alpha .ph{height:380px; flex-basis:380px;
@@ -880,7 +883,7 @@ const TG_USER = "TomMurman"; // куда приходят заявки из фо
 // Состав. alpha:true — вожак (белая карточка по центру). photo: '' → плейсхолдер.
 const ROSTER = [
   // ВОЖАК — alpha:true, всегда закреплён в центре. Фото вожака вшито.
-  { name:"Артем Грязев", role:"Вожак стаи", bio:"Мурманск. Мастер спорта по биатлону, лыжным гонкам и стрельбе. Обладатель Суперкубка RussiaLoppet 2025. В активе — 56 марафонов.", photo:window.VARGI_IMAGES.i02, soc:"", alpha:true },
+  { name:"Артем Грязев", role:"Вожак стаи", bio:"Родом из Мурманска. Трижды мастер спорта. Более 15 лет самостоятельно строит подготовку. Обладатель Суперкубка RussiaLoppet 2025.", photo:window.VARGI_IMAGES.i02, soc:"", page:"/athletes/artem-gryazev/", alpha:true },
   // БОКОВЫЕ ВОЛКИ — листаются стрелками. Добавляйте новых сюда.
   { name:"Екатерина Бурянина", role:"Кандидат в мастера RL", bio:"Мончегорск. Кандидат в мастера RussiaLoppet. 14 марафонских финишей: победа на «Празднике Севера» и призовые места на марафонах серии.", photo:"assets/ekaterina-buryanina.webp", rl:"https://russialoppet.ru/athletes/29563/", soc:"" },
   { name:"Константин Нечаев", role:"Клуб 50", bio:"Мурманск. Мастер спорта России по лыжным гонкам. Участник Клуба 50: 73 марафонских финиша.", photo:window.VARGI_IMAGES.i03, rl:"", soc:"" },
@@ -1038,10 +1041,11 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       : photo;
     const role = r.alpha ? "" : `<div class="role">${r.role}</div>`;
     const soc = r.soc ? `<div class="soc">${r.soc}</div>` : "";
+    const story = r.page ? `<a class="leader-story" href="${r.page}" data-goal="leader_story_click">Путь вожака →</a>` : "";
     const quote = r.quote ? `<p class="wolf-quote">${r.quote}</p>` : "";
     return `<div class="wolf${r.alpha?" alpha":""}">
       <div class="ph">${crown}${inner}</div>
-      <div class="body">${role}<div class="name">${r.name}</div>${quote}<p class="bio">${r.bio}</p>${soc}</div>
+      <div class="body">${role}<div class="name">${r.name}</div>${quote}<p class="bio">${r.bio}</p>${story}${soc}</div>
     </div>`;
   }
 
