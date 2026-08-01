@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
-
-Sitemap: https://vargi-ski.github.io/vargi/sitemap.xml
+Sitemap: https://xn----7sbbfg4a6clj5k.xn--p1ai/sitemap.xml
+Host: xn----7sbbfg4a6clj5k.xn--p1ai

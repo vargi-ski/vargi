@@ -24,6 +24,23 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ВАРГИ — лыжная марафонская стая</title>
+<link rel="canonical" href="https://xn----7sbbfg4a6clj5k.xn--p1ai/">
+<meta name="robots" content="index,follow,max-image-preview:large">
+<meta name="theme-color" content="#07080A">
+<meta name="author" content="ВАРГИ">
+<meta property="og:site_name" content="ВАРГИ">
+<meta property="og:url" content="https://xn----7sbbfg4a6clj5k.xn--p1ai/">
+<meta property="og:locale" content="ru_RU">
+<meta property="og:image" content="https://xn----7sbbfg4a6clj5k.xn--p1ai/assets/og-vargi.svg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="ВАРГИ — лыжная марафонская стая">
+<meta name="twitter:description" content="ВАРГИ — лыжная марафонская стая. Состав команды, результаты RussiaLoppet, календарь стартов, тренировки, экипировка и вступление в стаю.">
+<meta name="twitter:image" content="https://xn----7sbbfg4a6clj5k.xn--p1ai/assets/og-vargi.svg">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.svg">
+
 <meta name="description" content="ВАРГИ — лыжная марафонская стая. Дисциплина, дистанция, характер. Состав, результаты, календарь стартов, магазин и набор в стаю.">
 <meta property="og:title" content="ВАРГИ — лыжная марафонская стая">
 <meta property="og:description" content="Дисциплина. Дистанция. Стая. Присоединяйся к ВАРГИ.">
@@ -495,6 +512,25 @@
     .prod .pf .price,.prod .pf .btn{width:100%; justify-content:center; text-align:center}
   }
 </style>
+
+<!-- Verification tokens: replace CONTENT values after adding the site to each service. -->
+<meta name="google-site-verification" content="GOOGLE_SEARCH_CONSOLE_TOKEN">
+<meta name="yandex-verification" content="YANDEX_WEBMASTER_TOKEN">
+
+
+<script type="application/ld+json">
+{
+  "@context":"https://schema.org",
+  "@type":"SportsOrganization",
+  "name":"ВАРГИ",
+  "alternateName":"Лыжная марафонская стая ВАРГИ",
+  "url":"https://xn----7sbbfg4a6clj5k.xn--p1ai/",
+  "sport":"Cross-country skiing",
+  "description":"ВАРГИ — лыжная марафонская стая. Состав команды, результаты RussiaLoppet, календарь стартов, тренировки, экипировка и вступление в стаю.",
+  "sameAs":["https://vk.com/vargi","https://t.me/TomMurman"]
+}
+</script>
+
 </head>
 <body>
 
@@ -993,7 +1029,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const profileUrl = r.rl || ATHLETE_PROFILE_LINKS[r.name] || "";
     const loading = r.alpha ? "eager" : "lazy";
     const photo = r.photo
-      ? `<img src="${r.photo}" alt="${r.name}" loading="${loading}">`
+      ? `<img src="${r.photo}" alt="${r.name}" loading="${loading}" decoding="async">`
       : (r.alpha ? "ФОТО ВОЖАКА" : "ФОТО");
     const inner = r.photo && profileUrl
       ? `<a class="athlete-photo" href="${profileUrl}" target="_blank" rel="noopener noreferrer" aria-label="Открыть профиль RussiaLoppet: ${r.name}" title="Профиль RussiaLoppet">${photo}</a>`
@@ -1258,7 +1294,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     button.type="button";
     button.classList.add("reveal");
     button.setAttribute("aria-label","Открыть календарь: "+p.title);
-    button.innerHTML=`<img src="${p.src}" alt="${p.title}" loading="lazy"><span>${p.title}</span>`;
+    button.innerHTML=`<img src="${p.src}" alt="${p.title}" loading="lazy" decoding="async"><span>${p.title}</span>`;
     button.onclick=()=>openLightbox(p.src);
     wrap.appendChild(button);
   });
@@ -1307,7 +1343,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   SHOP.forEach((p,index)=>{
     const card = el("div","prod"+(p.soon?" soon":"")); card.classList.add("reveal");
     const cropClass = index===6 || index===7 ? " cap-crop" : "";
-    const productImage = `<img src="${p.img}" alt="${p.name}" loading="lazy">`;
+    const productImage = `<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">`;
     const imgInner = p.img
       ? (cropClass ? `<div class="crop-frame">${productImage}</div>` : productImage)
       : (p.soon?"В РАЗРАБОТКЕ":"ФОТО ТОВАРА");
@@ -1440,5 +1476,44 @@ document.addEventListener("error", function(event){
   if (galleryCard) galleryCard.remove();
 }, true);
 </script>
+
+<script>
+window.VARGI_ANALYTICS = {
+  yandexMetrikaId: null,
+  clarityId: null
+};
+(function(){
+  const cfg = window.VARGI_ANALYTICS || {};
+  if (cfg.yandexMetrikaId) {
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js','ym');
+    ym(cfg.yandexMetrikaId,'init',{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
+  }
+  if (cfg.clarityId) {
+    (function(c,l,a,r,i,t,y){c[a]=c[a]||function(){(c[a].q=c[a].q||[]).push(arguments)};t=l.createElement(r);t.async=1;t.src='https://www.clarity.ms/tag/'+i;y=l.getElementsByTagName(r)[0];y.parentNode.insertBefore(t,y)})(window,document,'clarity','script',cfg.clarityId);
+  }
+  window.vargiTrack = function(name, params){
+    try { if (cfg.yandexMetrikaId && window.ym) ym(cfg.yandexMetrikaId,'reachGoal',name,params||{}); } catch(e) {}
+    try { if (window.clarity) clarity('event', name); } catch(e) {}
+    try { window.dataLayer = window.dataLayer || []; window.dataLayer.push({event:name, ...(params||{})}); } catch(e) {}
+  };
+  document.addEventListener('click', function(e){
+    const a=e.target.closest('a,button'); if(!a) return;
+    const href=a.getAttribute('href')||'';
+    const text=(a.textContent||'').trim().toLowerCase();
+    let goal='';
+    if(href.includes('t.me')||text.includes('telegram')) goal='telegram_click';
+    else if(href.includes('russialoppet')) goal='russialoppet_click';
+    else if(text.includes('вступить')) goal='join_click';
+    else if(text.includes('план')) goal='training_plan_click';
+    else if(text.includes('нутрициолог')) goal='nutrition_click';
+    else if(text.includes('партн')) goal='partner_click';
+    else if(text.includes('магаз')) goal='shop_click';
+    else if(text.includes('календар')||text.includes('старт')) goal='calendar_click';
+    if(goal) window.vargiTrack(goal,{text:(a.textContent||'').trim(),href});
+  }, true);
+})();
+</script>
+
 </body>
 </html>
