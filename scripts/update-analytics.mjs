@@ -4,7 +4,7 @@ import { webcrypto } from 'node:crypto';
 
 const env = process.env;
 const OUT = resolve(env.ANALYTICS_OUTPUT || 'analytics-dashboard/analytics.enc.json');
-const required = ['YANDEX_METRIKA_TOKEN','CLARITY_API_TOKEN','GSC_CLIENT_ID','GSC_CLIENT_SECRET','GSC_REFRESH_TOKEN','DASHBOARD_PASSWORD'];
+const required = ['YANDEX_METRIKA_TOKEN','CLARITY_API_TOKEN','DASHBOARD_PASSWORD'];
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const iso = d => d.toISOString().slice(0,10);
 const daysAgo = n => { const d=new Date(); d.setUTCDate(d.getUTCDate()-n); return iso(d); };
