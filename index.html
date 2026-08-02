@@ -583,7 +583,7 @@
         <div class="training-service-tag">Питание и восстановление</div>
         <h4>Питание под вашу цель</h4>
         <p>Персональные рекомендации по рациону, тренировкам и марафонским стартам либо индивидуальное сопровождение нутрициолога.</p>
-        <a class="btn ghost" id="nutritionCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="nutrition_click">Обсудить сопровождение</a>
+        <a class="btn ghost" href="/nutrition/" data-goal="nutrition_page_click">Выстроить питание</a>
       </article>
     </div>
   </div>
@@ -1297,8 +1297,6 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
 document.querySelectorAll('[data-link]').forEach(a=>{ a.href = LINKS[a.dataset.link]||"#"; if(a.dataset.link!=="email")a.target="_blank"; });
 const partnerText=encodeURIComponent("Здравствуйте, Артем! Хочу обсудить партнёрство с лыжной марафонской стаей ВАРГИ.");
 $("#partnerCta").href="https://t.me/"+TG_USER+"?text="+partnerText;
-const nutritionText=encodeURIComponent("Здравствуйте! Хочу узнать о плане работы с нутрициологом и индивидуальном сопровождении для тренировок и стартов.");
-$("#nutritionCta").href="https://t.me/Gryazeva_A?text="+nutritionText;
 
 /* ============================================================
    INTERACTIONS
