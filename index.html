@@ -134,12 +134,6 @@
   .about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:stretch}
   .about-grid>div:first-child{display:flex; flex-direction:column}
   .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:18px; margin-top:auto; padding-top:40px}
-  .camp{margin-top:auto; padding:26px; border:1px solid var(--line2); border-radius:14px;
-    background:linear-gradient(180deg,rgba(62,155,214,.1),rgba(16,22,27,.6)); }
-  .camp-tag{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.28em; font-size:11px; color:var(--ice)}
-  .camp-title{font-family:'Oswald'; font-weight:600; text-transform:uppercase; font-size:clamp(24px,3vw,32px); margin:8px 0 6px}
-  .camp-meta{color:var(--muted); font-size:15px; margin:0 0 16px}
-  .camp-btn[disabled]{opacity:.5; cursor:not-allowed}
   .stat{border:1px solid var(--line); border-radius:12px; padding:22px; background:linear-gradient(180deg,var(--card),transparent)}
   .stat .num{font-family:'Oswald'; font-weight:700; font-size:clamp(30px,5vw,46px); color:var(--ink)}
   .stat .lbl{color:var(--muted); font-size:13px; text-transform:uppercase; letter-spacing:.12em; font-family:'Oswald'}
@@ -369,6 +363,7 @@
   .training-service{display:flex; flex-direction:column; min-height:220px; padding:22px;
     border:1px solid var(--line2); border-radius:12px; background:rgba(7,12,16,.62)}
   .training-service:first-child{border-color:rgba(143,208,239,.68); background:linear-gradient(180deg,rgba(62,155,214,.16),rgba(7,12,16,.7))}
+  .training-service.camp-service{background:linear-gradient(145deg,rgba(62,155,214,.1),rgba(7,12,16,.72))}
   .training-service-tag{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.18em; font-size:11px; color:var(--ice)}
   .training-service h4{font-family:'Oswald'; text-transform:uppercase; font-size:21px; margin:9px 0 7px}
   .training-service p{margin:0 0 20px; color:var(--muted); font-size:14px; line-height:1.55}
@@ -546,13 +541,6 @@
         <p class="lead" style="margin-top:14px">Мы держим темп, когда заканчиваются силы. Идём до конца, когда остальные уже договариваются с собой. Здесь ценят характер, верность стае и готовность сражаться за каждый метр.</p>
         <p class="lead" style="margin-top:14px">Мы берём темп на себя, ведём группу и постепенно заставляем соперников отпускать. Возможно, это не всегда самый расчётливый путь — но это наш характер.</p>
         <p class="lead" style="margin-top:14px"><b>Стая не ждёт, когда начнётся гонка. Стая начинает её сама.</b></p>
-        <!-- ЗАПИСЬ НА КЕМП. Когда будут даты/цена — заменить текст в .camp-meta и включить кнопку. -->
-        <div class="camp reveal">
-          <div class="camp-tag">Скоро</div>
-          <div class="camp-title">Тестовый кэмп на первом снегу</div>
-          <p class="camp-meta">Знакомство со стаей, совместные тренировки и возможность почувствовать её темп. Даты и место объявим скоро.</p>
-          <button class="btn camp-btn" disabled>Скоро подробности</button>
-        </div>
       </div>
       <div class="values">
         <div class="value"><b>Свой темп</b><p>На трассе каждый один на один с дистанцией. Свои километры, свой пульс, свой финиш.</p></div>
@@ -584,6 +572,18 @@
         <h4>Питание под вашу цель</h4>
         <p>Персональные рекомендации по рациону, тренировкам и марафонским стартам либо индивидуальное сопровождение нутрициолога.</p>
         <a class="btn ghost" href="/nutrition/" data-goal="nutrition_page_click">Выстроить питание</a>
+      </article>
+      <article class="training-service reveal">
+        <div class="training-service-tag">Москва · Мурманск · Воронеж</div>
+        <h4>Групповые тренировки</h4>
+        <p>Регулярная работа в небольшой группе: техника, выносливость и темп стаи. Запуск в каждом городе — от трёх участников.</p>
+        <a class="btn ghost" href="/group-training/" data-goal="group_training_page_click">Выбрать город</a>
+      </article>
+      <article class="training-service camp-service reveal">
+        <div class="training-service-tag">Сборы ВАРГИ</div>
+        <h4>Кэмпы</h4>
+        <p>Несколько дней полной концентрации на лыжах: совместные тренировки, разбор техники, восстановление и жизнь в ритме стаи.</p>
+        <a class="btn ghost" href="/camps/" data-goal="camps_page_click">Смотреть кэмпы</a>
       </article>
     </div>
   </div>
