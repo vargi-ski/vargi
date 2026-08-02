@@ -382,7 +382,9 @@
   .training-panel h3{font-family:'Oswald'; text-transform:uppercase; font-size:clamp(26px,3vw,36px); margin:7px 0}
   .training-panel-head p{margin:0; color:var(--muted); font-size:16px}
   .training-panel-head>.btn{margin-top:20px}
-  .training-services{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:16px; margin-top:28px}
+  .training-primary-more{display:block;width:max-content;max-width:100%;margin-top:16px;color:var(--ice);font-family:'Oswald';text-transform:uppercase;letter-spacing:.06em;font-size:14px;text-decoration:none}
+  .training-primary-more:hover{color:#fff}
+  .training-services{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:28px}
   .training-service{display:flex; flex-direction:column; min-height:220px; padding:22px;
     border:1px solid var(--line2); border-radius:12px; background:rgba(7,12,16,.62)}
   .training-service:first-child{border-color:rgba(143,208,239,.68); background:linear-gradient(180deg,rgba(62,155,214,.16),rgba(7,12,16,.7))}
@@ -608,15 +610,9 @@
         <h3>Готовься к марафонам вместе с ВАРГИ</h3>
         <p>Индивидуальные планы подготовки к лыжным марафонам — от первого уверенного финиша до борьбы за высокие места. Система, аналитика и опыт действующих спортсменов RussiaLoppet.</p>
         <a class="btn" href="/training-plan/" data-goal="training_primary_click">Начать подготовку со стаей</a>
+        <a class="training-primary-more" href="/ski-marathon-50km/" data-goal="marathon_50_page_click">Как подготовиться к 50 км →</a>
       </div>
       <div class="training-services">
-        <article class="training-service">
-          <div class="training-service-tag">Персональная подготовка</div>
-          <h4>План тренировок</h4>
-          <p>Индивидуальная программа под твои цели, уровень, график и календарь стартов. Отдельно — руководство по подготовке к 50 км.</p>
-          <a class="btn" id="planCta" href="/training-plan/" data-goal="training_plan_page_click">Узнать о плане</a>
-          <a class="training-more" href="/ski-marathon-50km/" data-goal="marathon_50_page_click">Как подготовиться к 50 км →</a>
-        </article>
         <article class="training-service">
           <div class="training-service-tag">Первый шаг бесплатно</div>
           <h4>ИИ-аналитика</h4>
