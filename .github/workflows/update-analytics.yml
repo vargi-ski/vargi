@@ -2,7 +2,9 @@ name: Update private analytics
 
 on:
   schedule:
-    - cron: '10 7 * * *'
+    # Четыре обновления в сутки: 04:10, 10:10, 16:10 и 22:10 МСК.
+    # Один запрос Clarity на запуск остаётся ниже лимита 10 запросов в сутки.
+    - cron: '10 1,7,13,19 * * *'
   workflow_dispatch:
   push:
     paths:
