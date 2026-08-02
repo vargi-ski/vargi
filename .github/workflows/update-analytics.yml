@@ -3,7 +3,7 @@ name: Update private analytics
 on:
   schedule:
     # Четыре обновления в сутки: 04:10, 10:10, 16:10 и 22:10 МСК.
-    # Один запрос Clarity на запуск остаётся ниже лимита 10 запросов в сутки.
+    # Clarity и Search Console запрашиваются один раз за запуск.
     - cron: '10 1,7,13,19 * * *'
   workflow_dispatch:
   push:
