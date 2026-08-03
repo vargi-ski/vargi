@@ -789,7 +789,7 @@ const ROSTER = [
   { name:"Артем Грязев", role:"Вожак стаи", bio:"Родом из Мурманска. Трижды мастер спорта. Более 15 лет самостоятельно строит подготовку. Обладатель Суперкубка RussiaLoppet 2025.", photo:window.VARGI_IMAGES.i02, soc:"", page:"/athletes/artem-gryazev/", alpha:true },
   // БОКОВЫЕ ВОЛКИ — листаются стрелками. Добавляйте новых сюда.
   { name:"Екатерина Бурянина", role:"Кандидат в мастера RL", bio:"Мончегорск. Кандидат в мастера RussiaLoppet. 14 марафонских финишей: победа на «Празднике Севера» и призовые места на марафонах серии.", photo:"assets/ekaterina-buryanina.webp", rl:"https://russialoppet.ru/athletes/29563/", soc:"" },
-  { name:"Константин Нечаев", role:"Клуб 50", bio:"Мурманск. Мастер спорта России по лыжным гонкам. Участник Клуба 50: 73 марафонских финиша.", photo:window.VARGI_IMAGES.i03, rl:"", soc:"" },
+  { name:"Константин Нечаев", role:"Клуб 50", bio:"Мурманск. Мастер спорта России по лыжным гонкам. Золотой мастер RussiaLoppet, участник Клуба 50: 62 марафона. Курирует мурманское направление тренировок стаи.", photo:window.VARGI_IMAGES.i03, rl:"https://russialoppet.ru/athletes/4143/", page:"/athletes/konstantin-nechaev/", pageLabel:"Тренер стаи", soc:"" },
   { name:"Валерия Максименко", role:"Золотой мастер RL", bio:"Москва. Золотой мастер RussiaLoppet, 15 марафонов. Волк не только на лыжне, но и в юриспруденции. В сезоне-2026 заняла 8-е место в Кубке мастеров RL.", photo:window.VARGI_IMAGES.i04, rl:"https://russialoppet.ru/athletes/341703/", soc:"" },
   { name:"Павел Сарин", role:"Золотой мастер RL", quote:"«Настоящий воин никогда не бросает начатое»", bio:"Петрозаводск. Мастер спорта России по лыжным гонкам. Прошёл 17 марафонских дистанций.", photo:window.VARGI_IMAGES.i05, rl:"", soc:"" },
   { name:"Елена Богданова", role:"Золотой мастер RL", bio:"Карелия, Чупа. 61 марафон, 6 федеральных округов и 20 регионов России и зарубежья. Победитель Кубка мастеров RL 2026.", photo:window.VARGI_IMAGES.i06, rl:"", soc:"" },
@@ -810,7 +810,7 @@ ROSTER[0].photo = LEADER_SEA_PHOTO;
 // seasonMax — максимум стартов RussiaLoppet за один сезон.
 const WOLF_STATS = [
   { name:"Артем Грязев",       skate:45, classic:11, fastest:"1:48:05", fastestEvent:"Деминский марафон",     fastestYear:"2025", seasonMax:19, seasonYear:"2025" },
-  { name:"Константин Нечаев",  skate:54, classic:19, fastest:"1:42:23", fastestEvent:"Красногорский марафон", fastestYear:"2006", seasonMax:19, seasonYear:"2025" },
+  { name:"Константин Нечаев",  skate:52, classic:10, fastest:"1:42:23", fastestEvent:"Красногорский марафон", fastestYear:"2006", seasonMax:19, seasonYear:"2025" },
   { name:"Павел Сарин",        skate:14, classic:3,  fastest:"2:00:07", fastestEvent:"Деминский марафон",     fastestYear:"2025", seasonMax:4,  seasonYear:"2026" },
   { name:"Валерия Максименко", skate:14, classic:1,  fastest:"2:35:04", fastestEvent:"Байкальский марафон",   fastestYear:"2026", seasonMax:7,  seasonYear:"2026" },
   { name:"Елена Богданова",    skate:40, classic:21, fastest:"2:53:57", fastestEvent:"Шижма",                 fastestYear:"2023", seasonMax:15, seasonYear:"2025" },
@@ -949,7 +949,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       : photo;
     const role = r.alpha ? "" : `<div class="role">${r.role}</div>`;
     const soc = r.soc ? `<div class="soc">${r.soc}</div>` : "";
-    const story = r.page ? `<a class="leader-story" href="${r.page}" data-goal="leader_story_click">Путь вожака →</a>` : "";
+    const story = r.page ? `<a class="leader-story" href="${r.page}" data-goal="${r.alpha ? "leader_story_click" : "athlete_story_click"}">${r.pageLabel || (r.alpha ? "Путь вожака" : "Подробнее")} →</a>` : "";
     const quote = r.quote ? `<p class="wolf-quote">${r.quote}</p>` : "";
     return `<div class="wolf${r.alpha?" alpha":""}">
       <div class="ph">${crown}${inner}</div>
