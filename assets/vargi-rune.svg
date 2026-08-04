@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Руна ВАРГИ">
+  <g fill="none" stroke="#8FD0EF" stroke-width="4.5" stroke-linecap="square">
+    <path d="M32 7v50"/>
+    <path d="M14 16l36 36"/>
+    <path d="M50 16L14 52"/>
+  </g>
+  <path d="M7 32l4.5-4.5L16 32l-4.5 4.5zM48 32l4.5-4.5L57 32l-4.5 4.5z" fill="#8FD0EF"/>
+</svg>
