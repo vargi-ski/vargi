@@ -2,9 +2,12 @@ name: Update private analytics
 
 on:
   schedule:
-    # Четыре обновления в сутки: 04:10, 10:10, 16:10 и 22:10 МСК.
-    # Clarity и Search Console запрашиваются один раз за запуск.
-    - cron: '10 1,7,13,19 * * *'
+    # Четыре независимых запуска в сутки: 04:10, 10:10, 16:10 и 22:10 МСК.
+    # Отдельные записи упрощают контроль каждого планового запуска.
+    - cron: '10 1 * * *'
+    - cron: '10 7 * * *'
+    - cron: '10 13 * * *'
+    - cron: '10 19 * * *'
   workflow_dispatch:
   push:
     paths:
@@ -24,6 +27,8 @@ jobs:
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -48,4 +53,10 @@ jobs:
           git config user.email "actions@users.noreply.github.com"
           git add analytics-dashboard/analytics.enc.json
           git commit -m "Update encrypted analytics snapshot"
-          git push
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin HEAD:main && exit 0
+            git rebase --abort 2>/dev/null || true
+            sleep $((attempt * 5))
+          done
+          echo "Не удалось опубликовать снимок после трёх попыток"
+          exit 1
