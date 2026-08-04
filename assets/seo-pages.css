@@ -16,7 +16,7 @@ p{margin:0}
 .site-header{position:sticky;top:0;z-index:20;border-bottom:1px solid var(--line);background:rgba(7,8,10,.9);backdrop-filter:blur(12px)}
 .nav{min-height:66px;display:flex;align-items:center;gap:24px}
 .brand{display:flex;align-items:center;gap:10px;font-family:Oswald,sans-serif;font-size:18px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
-.mark{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--ice);border-radius:7px;color:var(--ice)}
+.mark{width:30px;height:30px;display:grid;place-items:center;border:1px solid var(--ice);border-radius:7px;color:transparent;font-size:0;background:url('/assets/vargi-rune.svg') center/21px 21px no-repeat}
 .nav-links{margin-left:auto;display:flex;align-items:center;gap:20px;color:var(--muted);font-family:Oswald,sans-serif;font-size:13px;letter-spacing:.08em;text-transform:uppercase}
 .nav-links a:hover{color:var(--ice-hi)}
 .hero{position:relative;overflow:hidden;padding:70px 0 76px;background:radial-gradient(circle at 72% 18%,rgba(62,155,214,.17),transparent 36%),linear-gradient(180deg,#07080a,#0a1015)}
