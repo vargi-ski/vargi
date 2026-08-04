@@ -376,6 +376,9 @@
     color:var(--muted2); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.1em; font-size:13px;
     overflow:hidden; background:var(--card); padding:16px; text-align:center; line-height:1.45;
     transition:border-color .2s,transform .2s,box-shadow .2s}
+  .partner-slot{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:7px}
+  .partner-slot-kicker{color:var(--ice); font-size:9px; letter-spacing:.17em}
+  .partner-slot-name{color:var(--muted); font-size:13px; letter-spacing:.08em}
   a.partner:hover{border-color:var(--ice); transform:translateY(-3px); box-shadow:0 12px 30px rgba(0,0,0,.28)}
   a.partner:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
   .partner.logo-card{background:#fff; border-style:solid; border-color:#fff; position:relative}
@@ -920,9 +923,9 @@ const PARTNERS = [
     logo:window.VARGI_IMAGES.i28,
     className:"eqpt-card"
   },
-  { name:"Тут может быть ваша реклама" },
-  { name:"Тут может быть ваша реклама" },
-  { name:"Тут может быть ваша реклама" }
+  { name:"Экипировка стаи", slot:true },
+  { name:"Выезды и логистика", slot:true },
+  { name:"Партнёр сезона", slot:true }
 ];
 
 /* ============================================================
@@ -1295,6 +1298,13 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       img.alt="Логотип "+p.name;
       img.loading="lazy";
       card.appendChild(img);
+    }else if(p.slot){
+      card.classList.add("partner-slot");
+      const kicker=el("span","partner-slot-kicker");
+      kicker.textContent="Открыто для партнёрства";
+      const name=el("span","partner-slot-name");
+      name.textContent=p.name;
+      card.append(kicker,name);
     }else{
       card.textContent=p.name;
     }
