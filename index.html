@@ -85,7 +85,8 @@
   .brand{display:flex; align-items:center; gap:11px; font-family:'Oswald'; font-weight:700;
     text-transform:uppercase; letter-spacing:.18em; font-size:18px}
   .brand .mark{width:30px; height:30px; border:1.5px solid var(--ice); border-radius:6px;
-    display:grid; place-items:center; color:var(--ice); font-size:13px}
+    display:grid; place-items:center; color:transparent; font-size:0;
+    background:url('assets/vargi-rune.svg') center/21px 21px no-repeat}
   .nav .links{display:flex; gap:22px; margin-left:auto; font-size:14px; color:var(--muted);
     font-family:'Oswald'; text-transform:uppercase; letter-spacing:.08em}
   .nav .links a:hover{color:var(--ink)}
@@ -727,9 +728,9 @@
     <div class="partners" id="partnerList"></div>
     <div class="partner-cta reveal">
       <div class="partner-cta-copy">
-        <div class="partner-cta-kicker">Партнёрство с ВАРГИ</div>
-        <h3 class="partner-cta-title">Оставьте свой след <span class="ice">вместе со стаей</span></h3>
-        <p>Экипировка, сервис, транспорт, финансовая поддержка или совместный проект — обсудим подходящий формат взаимодействия.</p>
+        <div class="partner-cta-kicker">Открыты к сотрудничеству</div>
+        <h3 class="partner-cta-title">Ваш бренд <span class="ice">в движении стаи</span></h3>
+        <p>Предлагаем нативные интеграции в экипировку и контент ВАРГИ, присутствие на стартах и совместные проекты.</p>
       </div>
       <div class="partner-cta-actions">
         <a class="btn" id="partnerCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="partner_click">
@@ -897,14 +898,14 @@ const CAP_STRAIGHT_IMAGE = window.VARGI_IMAGES.i19;
 const CAP_CLASSIC_IMAGE = window.VARGI_IMAGES.i20;
 
 const SHOP = [
-  { name:"Футболка «Классика»", desc:"Чёрная. Флагманский логотип стаи на груди, руна между лопаток.", price:"Цена по запросу", img:window.VARGI_IMAGES.i21 },
-  { name:"Футболка «Минимализм»", desc:"Чёрная. Мини-логотип на груди, девиз «Стая держит темп» на спине.", price:"Цена по запросу", img:window.VARGI_IMAGES.i22 },
-  { bg:"#FFFFFF", name:"Футболка «Север внутри»", desc:"Белая. Логотип спереди, девиз «Север внутри» на спине.", price:"Цена по запросу", img:window.VARGI_IMAGES.i23 },
-  { bg:"#000000", name:"Футболка «Стая держит темп»", desc:"Белая. Логотип стаи на груди, крупный девиз «Стая держит темп» на спине.", price:"Цена по запросу", img:window.VARGI_IMAGES.i24 },
-  { name:"Гоночная футболка, реглан", desc:"Чёрная. Вертикальный девиз вдоль спины, руны на рукавах.", price:"Цена по запросу", img:window.VARGI_IMAGES.i25 },
-  { name:"Кепка с прямым козырьком", desc:"Белая с чёрным козырьком. Вышивка, регулируемый размер.", price:"Цена по запросу", img:window.VARGI_IMAGES.i26 }  ,
-  { bg:"#111111", name:"Кепка «Прямой козырёк»", desc:"Чёрная. Прямой козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"Цена по запросу", img:CAP_STRAIGHT_IMAGE },
-  { bg:"#111111", name:"Кепка «Спортивная классика»", desc:"Чёрная. Классический изогнутый козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"Цена по запросу", img:CAP_CLASSIC_IMAGE },
+  { name:"Футболка «Классика»", desc:"Чёрная. Флагманский логотип стаи на груди, руна между лопаток.", price:"от 2 900 ₽", img:window.VARGI_IMAGES.i21 },
+  { name:"Футболка «Минимализм»", desc:"Чёрная. Мини-логотип на груди, девиз «Стая держит темп» на спине.", price:"от 2 900 ₽", img:window.VARGI_IMAGES.i22 },
+  { bg:"#FFFFFF", name:"Футболка «Север внутри»", desc:"Белая. Логотип спереди, девиз «Север внутри» на спине.", price:"от 2 900 ₽", img:window.VARGI_IMAGES.i23 },
+  { bg:"#000000", name:"Футболка «Стая держит темп»", desc:"Белая. Логотип стаи на груди, крупный девиз «Стая держит темп» на спине.", price:"от 2 900 ₽", img:window.VARGI_IMAGES.i24 },
+  { name:"Гоночная футболка, реглан", desc:"Чёрная. Вертикальный девиз вдоль спины, руны на рукавах.", price:"от 2 900 ₽", img:window.VARGI_IMAGES.i25 },
+  { name:"Кепка вожака · 1 экземпляр", desc:"Белая с чёрным козырьком. Единственный экземпляр, вышивка и регулируемый размер.", price:"2 500 ₽", img:window.VARGI_IMAGES.i26 },
+  { bg:"#111111", name:"Кепка «Прямой козырёк»", desc:"Чёрная. Прямой козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"от 2 500 ₽", img:CAP_STRAIGHT_IMAGE },
+  { bg:"#111111", name:"Кепка «Спортивная классика»", desc:"Чёрная. Классический изогнутый козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"от 2 500 ₽", img:CAP_CLASSIC_IMAGE },
   { name:"Лыжный гоночный костюм", desc:"Гоночная разделка стаи. В разработке.", price:"Скоро", img:"", soon:true },
   { name:"Пуховик", desc:"Тёплый пуховик стаи. Ближе к сезону.", price:"Скоро", img:"", soon:true },
   { name:"Разминка", desc:"Разминочный костюм стаи. Ближе к сезону.", price:"Скоро", img:"", soon:true },
@@ -923,9 +924,9 @@ const PARTNERS = [
     logo:window.VARGI_IMAGES.i28,
     className:"eqpt-card"
   },
-  { name:"Экипировка стаи", slot:true },
-  { name:"Выезды и логистика", slot:true },
-  { name:"Партнёр сезона", slot:true }
+  { name:"Логотип на экипировке", slot:true },
+  { name:"Интеграции в контент", slot:true },
+  { name:"Совместные проекты", slot:true }
 ];
 
 /* ============================================================
@@ -1301,7 +1302,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     }else if(p.slot){
       card.classList.add("partner-slot");
       const kicker=el("span","partner-slot-kicker");
-      kicker.textContent="Открыто для партнёрства";
+      kicker.textContent="Возможности для бренда";
       const name=el("span","partner-slot-name");
       name.textContent=p.name;
       card.append(kicker,name);
