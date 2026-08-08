@@ -1286,7 +1286,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   const wrap = $("#shopList");
   SHOP.forEach((p,index)=>{
     const card = el("div","prod"+(p.soon?" soon":"")); card.classList.add("reveal");
-    const cropClass = index===6 || index===7 ? " cap-crop" : "";
+    const cropClass = p.img && (p.img===CAP_STRAIGHT_IMAGE || p.img===CAP_CLASSIC_IMAGE) ? " cap-crop" : "";
     const productImage = `<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">`;
     const imgInner = p.img
       ? (cropClass ? `<div class="crop-frame">${productImage}</div>` : productImage)
