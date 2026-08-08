@@ -420,10 +420,24 @@
   .overlay .x{position:fixed; top:18px; right:20px; background:none; border:0; color:#fff; font-size:30px; cursor:pointer; line-height:1}
   .lb-img{max-width:90vw; max-height:84vh; border-radius:10px}
 
+  /* ---------- MOBILE CTA ---------- */
+  .mobile-training-cta{
+    position:fixed; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom));
+    z-index:48; display:none; align-items:center; justify-content:center; min-height:50px;
+    padding:12px 18px; border:1px solid rgba(143,208,239,.72); border-radius:12px;
+    background:linear-gradient(135deg,#8FD0EF 0%,#3E9BD6 58%,#2B79A8 100%);
+    color:#05080B; box-shadow:0 10px 30px rgba(0,0,0,.42),0 0 24px rgba(62,155,214,.16);
+    font-family:'Oswald',sans-serif; font-weight:600; font-size:15px; letter-spacing:.09em;
+    text-transform:uppercase; text-align:center; opacity:0; transform:translateY(14px);
+    pointer-events:none; transition:opacity .22s ease,transform .22s ease,box-shadow .22s ease;
+  }
+  .mobile-training-cta:active{transform:translateY(1px)}
+  .mobile-training-cta:focus-visible{outline:3px solid #fff; outline-offset:2px}
+
   /* reveal */
   .reveal{opacity:0; transform:translateY(22px); transition:opacity .6s ease,transform .6s ease}
   .reveal.in{opacity:1; transform:none}
-  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} .wolf-eye{animation:none;opacity:.45}}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} .wolf-eye{animation:none;opacity:.45} .mobile-training-cta{transition:none}}
 
   /* ---------- RESPONSIVE ---------- */
   @media(max-width:960px){
@@ -463,6 +477,9 @@
     .team-table td{padding:7px 9px}
     .hero .cta{flex-direction:column; align-items:center; padding:0 8px}
     .hero .cta .btn{width:min(100%,360px); white-space:normal}
+    .mobile-training-cta{display:flex}
+    .mobile-training-cta.visible{opacity:1; transform:translateY(0); pointer-events:auto}
+    footer{padding-bottom:calc(70px + env(safe-area-inset-bottom))}
     .res{grid-template-columns:60px 1fr}
     .result-places{grid-column:2; grid-template-columns:repeat(2,minmax(0,1fr))}
     .pack{display:block; margin-top:30px}
@@ -521,7 +538,7 @@
   <div class="ridge"></div>
   <div class="wrap inner">
     <div class="logo-stage">
-    <img class="logo" id="heroLogo" alt="ВАРГИ — лыжная марафонская стая">
+    <img class="logo" id="heroLogo" alt="ВАРГИ — лыжная марафонская стая" decoding="async" fetchpriority="high">
       <div class="wolf-eyes" aria-hidden="true">
         <i class="wolf-eye" style="left:9.9%;top:39.4%;--eye-delay:-.18s"></i><i class="wolf-eye" style="left:15%;top:39.4%;--eye-delay:-.18s"></i>
         <i class="wolf-eye" style="left:27.3%;top:35.8%;--eye-delay:-.09s"></i><i class="wolf-eye" style="left:32.6%;top:35.8%;--eye-delay:-.09s"></i>
@@ -533,6 +550,7 @@
     <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">ВАРГИ — лыжная марафонская стая</h1>
     <div class="cta">
       <a href="#about" class="btn">Познакомиться со стаей</a>
+      <a href="/training-plan/" class="btn ghost" data-goal="hero_training_click">Начать подготовку →</a>
     </div>
   </div>
 </section>
@@ -756,6 +774,8 @@
   </div>
 </footer>
 
+<a class="mobile-training-cta" id="mobileTrainingCta" href="/training-plan/" target="_blank" rel="noopener noreferrer" data-goal="mobile_training_cta_click" aria-label="Написать Артему о подготовке к лыжному марафону">Начать подготовку →</a>
+
 <!-- ===== OVERLAY (lightbox + modal) ===== -->
 <div class="overlay" id="overlay">
   <button class="x" id="overlayClose" aria-label="Закрыть">×</button>
@@ -786,6 +806,20 @@ const LINKS = {
   email:     "mailto:team@vargi.ru"          // ← ваш e-mail (заменить)
 };
 const TG_USER = "TomMurman"; // куда приходят заявки из формы
+const mobileTrainingCta = document.getElementById("mobileTrainingCta");
+if (mobileTrainingCta) {
+  const trainingText = encodeURIComponent("Здравствуйте, Артем! Хочу узнать об индивидуальной подготовке с ВАРГИ.");
+  mobileTrainingCta.href = "https://t.me/" + TG_USER + "?text=" + trainingText;
+  const footer = document.querySelector("footer");
+  const updateMobileTrainingCta = () => {
+    const pastHero = scrollY > innerHeight * 0.62;
+    const footerIsNear = footer ? footer.getBoundingClientRect().top < innerHeight - 70 : false;
+    mobileTrainingCta.classList.toggle("visible", pastHero && !footerIsNear);
+  };
+  addEventListener("scroll", updateMobileTrainingCta, {passive:true});
+  addEventListener("resize", updateMobileTrainingCta);
+  updateMobileTrainingCta();
+}
 
 // Состав. alpha:true — вожак (белая карточка по центру). photo: '' → плейсхолдер.
 const ROSTER = [
@@ -1259,7 +1293,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const src = typeof item==="string" ? item : item?.src;
     const pos = typeof item==="object" ? item.pos : "";
     const cell = el("div","cell"); cell.classList.add("reveal");
-    if(src){ const im=el("img"); im.src=src; im.alt="Фото стаи "+(i+1);
+    if(src){ const im=el("img"); im.src=src; im.alt="Фото стаи "+(i+1); im.loading="lazy"; im.decoding="async";
       if(pos) im.style.objectPosition=pos;
       cell.appendChild(im); cell.onclick=()=>openLightbox(src); }
     else cell.textContent = "ФОТО "+(i+1);
