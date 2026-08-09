@@ -131,6 +131,9 @@
     background:linear-gradient(90deg,transparent,var(--ice),transparent)}
   .hero .cta{display:flex; gap:12px; justify-content:center; margin-top:30px; flex-wrap:wrap}
   .hero .cta .btn{justify-content:center; text-align:center}
+  .hero-arsenal{max-width:860px; margin:22px auto 0; padding:12px 18px; border:1px solid rgba(143,208,239,.34);
+    border-radius:999px; background:rgba(7,12,16,.68); color:var(--muted); font-size:13px; letter-spacing:.02em}
+  .hero-arsenal b{color:var(--ice-hi); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.08em}
 
   /* ---------- STATS ---------- */
   .about-grid{display:grid; grid-template-columns:1.1fr .9fr; gap:48px; align-items:stretch}
@@ -478,6 +481,7 @@
     .team-table td{padding:7px 9px}
     .hero .cta{flex-direction:column; align-items:center; padding:0 8px}
     .hero .cta .btn{width:min(100%,360px); white-space:normal}
+    .hero-arsenal{max-width:360px; border-radius:14px; line-height:1.55}
     .mobile-training-cta{display:flex}
     .mobile-training-cta.visible{opacity:1; transform:translateY(0); pointer-events:auto}
     footer{padding-bottom:calc(70px + env(safe-area-inset-bottom))}
@@ -553,6 +557,7 @@
       <a href="#about" class="btn">Познакомиться со стаей</a>
       <a href="/training-plan/" class="btn ghost" data-goal="hero_training_click">Начать подготовку →</a>
     </div>
+    <p class="hero-arsenal"><b>В арсенале ВАРГИ:</b> опыт действующих марафонцев · сильный ИИ-помощник · личный нутрициолог</p>
   </div>
 </section>
 
@@ -573,8 +578,8 @@
         <div class="value"><b>Общий характер</b><p>Разный стаж, разное число марафонов. Но характер у всех один: биться до конца и не искать отговорок. ВАРГИ не сходят с дистанции.</p></div>
         <div class="value"><b>Вожак</b><p>Формирует стандарты подготовки, составляет индивидуальные планы, ведёт аналитику тренировок и гонит стаю вперёд.</p></div>
         <div class="value"><b>Стая вне гонки</b><p>Тренировки, сборы, кемпы. Вожак задаёт темп — стая держит темп.</p></div>
-        <div class="value"><b>Цифровая стая</b><p>Аналитика тренировок и планы подготовки с глубоким анализом на базе ИИ.</p></div>
-        <div class="value"><b>Питание, которое ведёт к результату</b><p>Личный нутрициолог, индивидуальный рацион и стратегия питания на дистанции — от тренировочного дня до главного старта.</p></div>
+        <div class="value"><b>Сильный ИИ-помощник</b><p>Разбирает объём, интенсивность, регулярность, восстановление и динамику, помогает увидеть закономерности и слабые места. Решения остаются за человеком.</p></div>
+        <div class="value"><b>Личный нутрициолог</b><p>Индивидуальный рацион и стратегия питания на дистанции — от тренировочного дня до главного старта.</p></div>
       </div>
     </div>
   </div>
@@ -585,31 +590,31 @@
   <div class="wrap">
     <div class="eyebrow">Цифровая стая</div>
     <h2>Марафон начинается<br><span class="ice">задолго до старта.</span></h2>
-    <p class="lead">Индивидуальная система подготовки и питание — под вашу цель, уровень и календарь стартов.</p>
+    <p class="lead">Опыт действующих марафонцев, сильный ИИ-помощник и профильный нутрициолог работают как единая система — под вашу цель, уровень и календарь стартов.</p>
     <div class="training-services">
       <article class="training-service reveal">
-        <div class="training-service-tag">Индивидуальная система</div>
-        <h4>Подготовка на базе ИИ</h4>
-        <p>Персональный план, анализ нагрузки и корректировки по ходу сезона — от первого уверенного финиша до борьбы за высокие места.</p>
+        <div class="training-service-tag">Тренерский опыт + аналитика</div>
+        <h4>Тренер и ИИ-помощник</h4>
+        <p>ИИ глубоко разбирает тренировочные данные, нагрузку, регулярность и восстановление. Человек определяет стратегию, составляет план и принимает решения по ходу сезона.</p>
         <a class="btn ghost" href="/training-plan/" data-goal="training_primary_click">Начать подготовку</a>
       </article>
       <article class="training-service reveal">
         <div class="training-service-tag">Питание и восстановление</div>
-        <h4>Питание под вашу цель</h4>
-        <p>Персональные рекомендации по рациону, тренировкам и марафонским стартам либо индивидуальное сопровождение нутрициолога.</p>
+        <h4>Личный нутрициолог</h4>
+        <p>Профильный специалист выстраивает рацион, восстановление и питание на дистанции под ваши тренировки, переносимость и главные старты.</p>
         <a class="btn ghost" href="/nutrition/" data-goal="nutrition_page_click">Выстроить питание</a>
       </article>
       <article class="training-service reveal">
         <div class="training-service-tag">Москва · Мурманск · Воронеж</div>
         <h4>Групповые тренировки</h4>
-        <p>Регулярная работа в небольшой группе: техника, выносливость и темп стаи. Запуск в каждом городе — от трёх участников.</p>
+        <p>Формируем небольшие группы для работы над техникой, выносливостью и темпом. Запуск в каждом городе — от трёх участников.</p>
         <a class="btn ghost" href="/group-training/" data-goal="group_training_page_click">Выбрать город</a>
       </article>
       <article class="training-service camp-service reveal">
-        <div class="training-service-tag">Сборы ВАРГИ</div>
+        <div class="training-service-tag">Первый запуск готовится</div>
         <h4>Кэмпы</h4>
-        <p>Несколько дней полной концентрации на лыжах: совместные тренировки, разбор техники, восстановление и жизнь в ритме стаи.</p>
-        <a class="btn ghost" href="/camps/" data-goal="camps_page_click">Смотреть кэмпы</a>
+        <p>Выбираем локацию, даты и формат первого кэмпа. Предварительная заявка ни к чему не обязывает и даёт возможность в числе первых получить полный анонс.</p>
+        <a class="btn ghost" href="/camps/" data-goal="camps_page_click">Узнать о первом кэмпе</a>
       </article>
     </div>
   </div>
@@ -729,11 +734,11 @@
 <!-- ===== SHOP ===== -->
 <section class="section" id="shop">
   <div class="wrap">
-    <div class="eyebrow">Магазин</div>
+    <div class="eyebrow">Первый дроп</div>
     <h2>Экипировка <span class="ice">стаи</span></h2>
-    <p class="lead">Носи знак стаи. Заказ — через Telegram, оплата и доставка обсуждаются индивидуально.</p>
+    <p class="lead">Первый дроп ВАРГИ находится в производстве. После получения образцов покажем реальные материалы, посадку и детали. Сейчас можно отметить интерес и первым узнать о запуске.</p>
     <div class="shop" id="shopList"></div>
-    <p class="shop-note">Онлайн-оплата пока не подключена — заказы принимаем заявкой. Это сознательно: запускаем магазин без лишней юридической и операционной нагрузки.</p>
+    <p class="shop-note">Изображения на карточках показывают концепцию дизайна. Финальный вид, характеристики и условия заказа подтвердим после проверки готовых образцов.</p>
   </div>
 </section>
 
@@ -1318,7 +1323,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       : (p.soon?"В РАЗРАБОТКЕ":"ФОТО ТОВАРА");
     const btn = p.soon
       ? `<button class="btn ghost order" disabled>Скоро</button>`
-      : `<button class="btn ghost order">Заказать</button>`;
+      : `<button class="btn ghost order">Узнать о выходе</button>`;
     card.innerHTML = `<div class="img${cropClass}">${imgInner}</div>
       <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>
       <div class="pf"><div class="price">${p.price}</div>${btn}</div></div>`;
@@ -1383,8 +1388,9 @@ function showOverlay(html){ oc.innerHTML=html; overlay.classList.add("show"); }
 function openLightbox(src){ showOverlay(`<img class="lb-img" src="${src}" alt="">`); }
 function openModal(title,text){ showOverlay(`<div class="modal"><h3>${title}</h3><p>${text}</p></div>`); }
 function openOrder(name){
-  showOverlay(`<div class="modal"><h3>Заказ</h3><p>Чтобы заказать «${name}», напишите нам в Telegram — обсудим размер, оплату и доставку.</p>
-    <a class="btn" href="${LINKS.telegram}" target="_blank" rel="noopener noreferrer" data-goal="shop_order_click">Написать в Telegram</a></div>`);
+  const interestText=encodeURIComponent(`Здравствуйте! Хочу первым узнать о выходе «${name}» ВАРГИ и условиях заказа.`);
+  showOverlay(`<div class="modal"><h3>Первый дроп ВАРГИ</h3><p>Оставьте интерес к «${name}». Когда готовые образцы пройдут проверку, пришлём реальные фотографии, характеристики и условия заказа.</p>
+    <a class="btn" href="https://t.me/${TG_USER}?text=${interestText}" target="_blank" rel="noopener noreferrer" data-goal="shop_interest_click">Сообщить об интересе</a></div>`);
 }
 $("#overlayClose").onclick=()=>overlay.classList.remove("show");
 overlay.onclick=e=>{ if(e.target===overlay) overlay.classList.remove("show"); };
