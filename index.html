@@ -627,7 +627,7 @@
   <div class="wrap">
     <div class="eyebrow">Состав</div>
     <h2>Волки <span class="ice">стаи</span></h2>
-    <p class="lead">У каждого волка свой стаж, свои дистанции и свой темп на трассе. Нажмите на фотографию спортсмена, чтобы открыть его страницу на сайте RussiaLoppet.</p>
+    <p class="lead">У каждого волка свой стаж, свои дистанции и свой темп на трассе. Нажмите на фотографию спортсмена, чтобы открыть его официальный спортивный профиль.</p>
     <div class="pack-wrap"><div class="pack" id="pack"></div></div>
     <p class="consent-note">* Данные о спортсменах приведены по состоянию на август 2026 года.</p>
   </div>
@@ -835,6 +835,7 @@ const ROSTER = [
   { name:"Лариса Иванова", role:"Кандидат в мастера RL", bio:"Мелиоративный, Республика Карелия. С детства в лыжных гонках, входила в сборную Карелии. Вернулась в спорт в 2021 году; с 2023-го — 7 марафонов RussiaLoppet в 4 федеральных округах. Кандидат в мастера RL.", photo:"assets/larisa-ivanova.webp", rl:"https://russialoppet.ru/athletes/433930/", soc:"" },
   { name:"Алексей Кондратьев", role:"Кандидат в мастера RL", bio:"Петрозаводск. Кандидат в мастера RussiaLoppet. 19 марафонов в 2 федеральных округах и 5 регионах России.", photo:"assets/alexey-kondratyev.webp", rl:"https://russialoppet.ru/athletes/530678/", soc:"" },
   { name:"Полина Сероносова", role:"Кандидат в мастера RL", bio:"Петрозаводск. Кандидат в мастера RussiaLoppet. 16 марафонов в 4 федеральных округах. Победитель Апатитского марафона и «Праздника Севера» свободным и классическим стилем.", photo:"assets/polina-seronosova.webp", rl:"https://russialoppet.ru/athletes/29562/", soc:"" },
+  { name:"Климентий Агалаков", role:"Самый молодой волк стаи", bio:"24 года. КМС, член сборной Республики Карелия. Победитель 90-го Праздника Севера на 10 км классикой: после падения вернулся в гонку и выиграл. В ВАРГИ начинает путь к первому марафонскому финишу.", photo:"assets/klimentiy-agalakov.webp", rl:"https://flgr-results.ru/athletes/108848/", profileLabel:"ФЛГР", soc:"" },
 ];
 
 // Актуальный портрет вожака: исходный образ на фоне холодного моря.
@@ -859,7 +860,8 @@ const WOLF_STATS = [
   { name:"Максим Зубцов",                skate:8,  classic:0,  fastest:"1:57:51", fastestEvent:"Марафон МГУ",            fastestYear:"2019", seasonMax:4,  seasonYear:"2026" },
   { name:"Лариса Иванова",               skate:5,  classic:2,  fastest:"3:08:09", fastestEvent:"Томский марафон",        fastestYear:"2026", seasonMax:2,  seasonYear:"2026" },
   { name:"Алексей Кондратьев",           skate:17, classic:2,  fastest:"1:47:31", fastestEvent:"Токсово Марафон",         fastestYear:"2025", seasonMax:4,  seasonYear:"2025" },
-  { name:"Полина Сероносова",            skate:12, classic:4,  fastest:"2:06:57", fastestEvent:"Апатитский марафон",       fastestYear:"2026", seasonMax:4,  seasonYear:"2024" }
+  { name:"Полина Сероносова",            skate:12, classic:4,  fastest:"2:06:57", fastestEvent:"Апатитский марафон",       fastestYear:"2026", seasonMax:4,  seasonYear:"2024" },
+  { name:"Климентий Агалаков",           skate:0,  classic:0,  fastest:"",         fastestNote:"Первый марафон впереди", seasonMax:0, seasonNote:"Марафонный дебют впереди" }
 ];
 
 const ATHLETE_PROFILE_LINKS = {
@@ -875,7 +877,8 @@ const ATHLETE_PROFILE_LINKS = {
   "Максим Зубцов":"https://russialoppet.ru/athletes/230038/",
   "Лариса Иванова":"https://russialoppet.ru/athletes/433930/",
   "Алексей Кондратьев":"https://russialoppet.ru/athletes/530678/",
-  "Полина Сероносова":"https://russialoppet.ru/athletes/29562/"
+  "Полина Сероносова":"https://russialoppet.ru/athletes/29562/",
+  "Климентий Агалаков":"https://flgr-results.ru/athletes/108848/"
 };
 
 // Крайний марафон каждого действующего волка. Места — по протоколам RussiaLoppet.
@@ -893,7 +896,8 @@ const RESULTS = [
   { year:"2026", athlete:"Максим Зубцов", event:"Настоящий Мужик", time:"2:18:34", absPlace:4, group:"М30–34", groupPlace:2 },
   { year:"2026", athlete:"Лариса Иванова", event:"Томский марафон", time:"3:08:09", absPlace:6, group:"Ж50–54", groupPlace:1 },
   { year:"2026", athlete:"Алексей Кондратьев", event:"Апатитский марафон", time:"2:06:53", absPlace:22, group:"М55–59", groupPlace:2 },
-  { year:"2026", athlete:"Полина Сероносова", event:"Апатитский марафон", time:"2:06:57", absPlace:2, group:"Ж30–34", groupPlace:2 }
+  { year:"2026", athlete:"Полина Сероносова", event:"Апатитский марафон", time:"2:06:57", absPlace:2, group:"Ж30–34", groupPlace:2 },
+  { year:"—", athlete:"Климентий Агалаков", event:"Марафонный дебют впереди", time:"—", absPlace:null, group:"—", groupPlace:null }
 ];
 
 const CALENDAR = [
@@ -997,12 +1001,13 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   function cardHTML(r){
     const crown = r.alpha ? `<div class="crown">Вожак</div>` : "";
     const profileUrl = r.rl || ATHLETE_PROFILE_LINKS[r.name] || "";
+    const profileLabel = r.profileLabel || "RussiaLoppet";
     const loading = r.alpha ? "eager" : "lazy";
     const photo = r.photo
       ? `<img src="${r.photo}" alt="${r.name}" loading="${loading}" decoding="async">`
       : (r.alpha ? "ФОТО ВОЖАКА" : "ФОТО");
     const inner = r.photo && profileUrl
-      ? `<a class="athlete-photo" href="${profileUrl}" target="_blank" rel="noopener noreferrer" aria-label="Открыть профиль RussiaLoppet: ${r.name}" title="Профиль RussiaLoppet">${photo}</a>`
+      ? `<a class="athlete-photo" href="${profileUrl}" target="_blank" rel="noopener noreferrer" aria-label="Открыть профиль ${profileLabel}: ${r.name}" title="Профиль ${profileLabel}">${photo}</a>`
       : photo;
     const role = r.alpha ? "" : `<div class="role">${r.role}</div>`;
     const soc = r.soc ? `<div class="soc">${r.soc}</div>` : "";
@@ -1130,8 +1135,8 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const skate=number(wolf.skate);
     const classic=number(wolf.classic);
     const total=skate+classic;
-    const fastestDetail=[wolf.fastestEvent,wolf.fastestYear].filter(Boolean).join(" · ");
-    const seasonDetail=wolf.seasonYear ? `Сезон ${wolf.seasonYear}` : "Данные собираются";
+    const fastestDetail=wolf.fastestNote || [wolf.fastestEvent,wolf.fastestYear].filter(Boolean).join(" · ");
+    const seasonDetail=wolf.seasonNote || (wolf.seasonYear ? `Сезон ${wolf.seasonYear}` : "Данные собираются");
     const roleTag=wolf.name==="Артем Грязев" ? `<span class="wolf-stat-role">Вожак</span>` : "";
     const card=el("article",`wolf-stat-card reveal${wolf.name==="Артем Грязев" ? " leader" : ""}`);
     if(index>=initialLimit) card.classList.add("stat-extra");
@@ -1143,7 +1148,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       <div class="wolf-stat-main">
         <div>
           <div class="metric-kicker">Всего</div>
-          <span class="wolf-stat-total">${total || "—"}</span>
+          <span class="wolf-stat-total">${hasNumber(wolf.skate) || hasNumber(wolf.classic) ? total : "—"}</span>
           <span class="wolf-stat-total-label">марафонов</span>
         </div>
         <div class="wolf-stat-split">
