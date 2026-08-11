@@ -8,10 +8,10 @@
 - `CLARITY_API_TOKEN` — токен проекта из Settings → Data Export.
 - `GSC_CLIENT_ID` — OAuth client ID Google.
 - `GSC_CLIENT_SECRET` — OAuth client secret Google.
-- `GSC_REFRESH_TOKEN` — refresh token со scope `webmasters.readonly`.
+- `GSC_REFRESH_TOKEN` — refresh token со scope `webmasters.readonly`. Скрипт сам выбирает доступный URL- или доменный ресурс `варги-стая.рф` через список ресурсов Search Console.
 - `DASHBOARD_PASSWORD` — отдельный длинный пароль для открытия дашборда.
 
-Ни один секрет нельзя добавлять в код, issue, commit или сообщения. После добавления секретов запустить workflow `Update private analytics` вручную один раз. Далее он запускается ежедневно в 10:10 по Москве.
+Ни один секрет нельзя добавлять в код, issue, commit или сообщения. После добавления секретов запустить workflow `Update private analytics` вручную один раз. Далее он запускается четыре раза в сутки: 04:10, 10:10, 16:10 и 22:10 по Москве.
 
 ## Локальная проверка
 
