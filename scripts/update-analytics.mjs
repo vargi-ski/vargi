@@ -12,6 +12,7 @@ const num = v => Number(v||0);
 const friendlyError = error => {
   const message=String(error?.message||error||'Неизвестная ошибка').replace(/\s+/g,' ').trim();
   if(/invalid_grant|expired or revoked|token has been revoked/i.test(message))return 'Требуется повторная авторизация Google';
+  if(/Authorization is required|needs your permission|Требуется авторизация/i.test(message))return 'Требуется повторная авторизация Google Apps Script';
   if(/ACCESS_TOKEN_SCOPE_INSUFFICIENT|insufficient authentication scopes|insufficientPermissions/i.test(message))return 'OAuth Google выдан без права чтения Search Console';
   if(/GSC_PROPERTY_NOT_FOUND/i.test(message))return 'Google-аккаунт не имеет доступа к ресурсу варги-стая.рф';
   if(/SERVICE_DISABLED|accessNotConfigured|has not been used in project|is disabled/i.test(message)){
