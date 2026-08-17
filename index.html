@@ -736,9 +736,9 @@
   <div class="wrap">
     <div class="eyebrow">Первый дроп</div>
     <h2>Экипировка <span class="ice">стаи</span></h2>
-    <p class="lead">Первый дроп ВАРГИ находится в производстве. После получения образцов покажем реальные материалы, посадку и детали. Сейчас можно отметить интерес и первым узнать о запуске.</p>
+    <p class="lead">Часть экипировки ВАРГИ уже в наличии: спортивные футболки и кепки можно заказать напрямую у Артема Грязева. Остальные позиции готовятся к выпуску.</p>
     <div class="shop" id="shopList"></div>
-    <p class="shop-note">Изображения на карточках показывают концепцию дизайна. Финальный вид, характеристики и условия заказа подтвердим после проверки готовых образцов.</p>
+    <p class="shop-note">Наличие размеров и условия доставки уточняйте при заказе.</p>
   </div>
 </section>
 
@@ -946,10 +946,10 @@ const CAP_CLASSIC_IMAGE = window.VARGI_IMAGES.i20;
 
 const SHOP = [
   { name:"Футболка «Классика»", desc:"Чёрная. Флагманский логотип стаи на груди, руна между лопаток.", price:"от 2 900 ₽", img:window.VARGI_IMAGES.i21 },
-  { bg:"#FFFFFF", name:"Спортивная футболка «Север внутри»", desc:"Белая спортивная футболка. Логотип стаи спереди, руна и девиз «Север внутри» на спине.", price:"от 2 900 ₽", img:"assets/shop-sport-sever-vnutri-2026.webp" },
-  { bg:"#111111", name:"Тренировочная футболка «Минимализм»", desc:"Чёрная спортивная футболка. Флагманский логотип спереди, на спине — только руна.", price:"от 2 900 ₽", img:"assets/shop-training-minimalism-black-2026.webp" },
-  { bg:"#111111", name:"Кепка «Прямой козырёк»", desc:"Чёрная. Прямой козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"от 2 500 ₽", img:CAP_STRAIGHT_IMAGE },
-  { bg:"#111111", name:"Кепка «Спортивная классика»", desc:"Чёрная. Классический изогнутый козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"от 2 500 ₽", img:CAP_CLASSIC_IMAGE },
+  { bg:"#FFFFFF", name:"Спортивная футболка «Север внутри»", desc:"Белая спортивная футболка. Логотип стаи спереди, руна и девиз «Север внутри» на спине.", price:"от 2 900 ₽", img:"assets/shop-sport-sever-vnutri-2026.webp", available:true },
+  { bg:"#111111", name:"Тренировочная футболка «Минимализм»", desc:"Чёрная спортивная футболка. Флагманский логотип спереди, на спине — только руна.", price:"от 2 900 ₽", img:"assets/shop-training-minimalism-black-2026.webp", available:true },
+  { bg:"#111111", name:"Кепка «Прямой козырёк»", desc:"Чёрная. Прямой козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"от 2 500 ₽", img:CAP_STRAIGHT_IMAGE, available:true },
+  { bg:"#111111", name:"Кепка «Спортивная классика»", desc:"Чёрная. Классический изогнутый козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"от 2 500 ₽", img:CAP_CLASSIC_IMAGE, available:true },
   { name:"Лыжный гоночный костюм", desc:"Гоночная разделка стаи. В разработке.", price:"Скоро", img:"", soon:true },
   { name:"Пуховик", desc:"Тёплый пуховик стаи. Ближе к сезону.", price:"Скоро", img:"", soon:true },
   { name:"Разминка", desc:"Разминочный костюм стаи. Ближе к сезону.", price:"Скоро", img:"", soon:true },
@@ -1325,13 +1325,16 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const imgInner = p.img
       ? (cropClass ? `<div class="crop-frame">${productImage}</div>` : productImage)
       : (p.soon?"В РАЗРАБОТКЕ":"ФОТО ТОВАРА");
+    const orderText = encodeURIComponent(`Здравствуйте, Артем! Хочу заказать «${p.name}» ВАРГИ. Подскажите, пожалуйста, наличие размера и условия доставки.`);
     const btn = p.soon
       ? `<button class="btn ghost order" disabled>Скоро</button>`
-      : `<button class="btn ghost order">Узнать о выходе</button>`;
+      : p.available
+        ? `<a class="btn ghost order" href="https://t.me/${TG_USER}?text=${orderText}" target="_blank" rel="noopener noreferrer" data-goal="shop_order_click">Заказать</a>`
+        : `<button class="btn ghost order">Узнать о выходе</button>`;
     card.innerHTML = `<div class="img${cropClass}">${imgInner}</div>
       <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>
       <div class="pf"><div class="price">${p.price}</div>${btn}</div></div>`;
-    if(!p.soon) card.querySelector(".order").onclick=()=>openOrder(p.name);
+    if(!p.soon && !p.available) card.querySelector(".order").onclick=()=>openOrder(p.name);
     wrap.appendChild(card);
   });
 })();
