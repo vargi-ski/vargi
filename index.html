@@ -349,6 +349,8 @@
   .prod{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card); display:flex; flex-direction:column}
   .prod .img{aspect-ratio:1/1; background:#0B1115; display:grid; place-items:center; color:var(--muted2); font-size:13px; overflow:hidden}
   .prod .img img{width:100%; height:100%; object-fit:contain}
+  .prod .img.zoomable{cursor:zoom-in}
+  .prod .img.zoomable:focus-visible{outline:2px solid var(--ice); outline-offset:-2px}
   .prod .img.cap-crop .crop-frame{width:100%; height:67%; overflow:hidden}
   .prod .img.cap-crop .crop-frame img{width:100%; height:auto; max-width:none; object-fit:unset}
   .prod .pb{padding:16px; display:flex; flex-direction:column; gap:6px; flex:1}
@@ -1334,6 +1336,20 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     card.innerHTML = `<div class="img${cropClass}">${imgInner}</div>
       <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>
       <div class="pf"><div class="price">${p.price}</div>${btn}</div></div>`;
+    if(p.img){
+      const imageBox = card.querySelector(".img");
+      imageBox.classList.add("zoomable");
+      imageBox.tabIndex = 0;
+      imageBox.setAttribute("role","button");
+      imageBox.setAttribute("aria-label","Увеличить фотографию товара «"+p.name+"»");
+      imageBox.onclick=()=>openLightbox(p.img,p.name);
+      imageBox.onkeydown=e=>{
+        if(e.key==="Enter" || e.key===" "){
+          e.preventDefault();
+          openLightbox(p.img,p.name);
+        }
+      };
+    }
     if(!p.soon && !p.available) card.querySelector(".order").onclick=()=>openOrder(p.name);
     wrap.appendChild(card);
   });
@@ -1392,7 +1408,7 @@ $("#links").querySelectorAll("a").forEach(a=>a.onclick=()=>$("#links").classList
 // overlay
 const overlay=$("#overlay"), oc=$("#overlayContent");
 function showOverlay(html){ oc.innerHTML=html; overlay.classList.add("show"); }
-function openLightbox(src){ showOverlay(`<img class="lb-img" src="${src}" alt="">`); }
+function openLightbox(src,alt=""){ showOverlay(`<img class="lb-img" src="${src}" alt="${alt}">`); }
 function openModal(title,text){ showOverlay(`<div class="modal"><h3>${title}</h3><p>${text}</p></div>`); }
 function openOrder(name){
   const interestText=encodeURIComponent(`Здравствуйте! Хочу первым узнать о выходе «${name}» ВАРГИ и условиях заказа.`);
