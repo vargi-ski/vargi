@@ -973,8 +973,6 @@ if (aiDemoCta) {
 }
 const mobileTrainingCta = document.getElementById("mobileTrainingCta");
 if (mobileTrainingCta) {
-  const trainingText = encodeURIComponent("Здравствуйте, Артем! Хочу узнать об индивидуальной подготовке с ВАРГИ.");
-  mobileTrainingCta.href = "https://t.me/" + TG_USER + "?text=" + trainingText;
   const footer = document.querySelector("footer");
   const updateMobileTrainingCta = () => {
     const pastHero = scrollY > innerHeight * 0.62;
