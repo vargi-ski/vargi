@@ -26,7 +26,13 @@
   </url>
   <url>
     <loc>https://xn----7sbbfg4a6clj5k.xn--p1ai/ai-agent/</loc>
-    <lastmod>2026-08-19</lastmod>
+    <lastmod>2026-08-21</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://xn----7sbbfg4a6clj5k.xn--p1ai/lab/</loc>
+    <lastmod>2026-08-21</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.9</priority>
   </url>
