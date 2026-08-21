@@ -379,6 +379,87 @@
   .training-service .btn{width:100%; min-height:48px; margin-top:auto; justify-content:center;
     text-align:center; white-space:normal; line-height:1.25; padding:10px 12px}
 
+  /* ---------- AI DEMO ---------- */
+  .ai-demo{display:grid; grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr); gap:0; margin-top:18px;
+    overflow:hidden; border:1px solid rgba(143,208,239,.5); border-radius:16px;
+    background:linear-gradient(125deg,rgba(62,155,214,.16),rgba(10,15,20,.98) 42%,rgba(7,10,13,.98));
+    box-shadow:0 24px 70px rgba(0,0,0,.28)}
+  .ai-demo-copy{padding:30px; display:flex; flex-direction:column; align-items:flex-start}
+  .ai-demo-kicker{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.2em; font-size:11px; color:var(--ice)}
+  .ai-demo-copy h3{font-family:'Oswald'; text-transform:uppercase; font-size:clamp(25px,3.5vw,38px);
+    line-height:1.08; margin:11px 0 12px}
+  .ai-demo-copy>p{margin:0; color:var(--muted); font-size:15px}
+  .ai-demo-inputs{display:flex; flex-wrap:wrap; gap:7px; margin:22px 0 24px}
+  .ai-demo-inputs span{padding:6px 9px; border:1px solid var(--line2); border-radius:999px;
+    color:var(--muted); background:rgba(7,10,13,.46); font-size:11px}
+  .ai-demo-copy .btn{margin-top:auto; justify-content:center; text-align:center}
+  .ai-demo-panel{padding:26px; border-left:1px solid var(--line2); background:rgba(5,9,12,.72)}
+  .ai-demo-status{display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:16px}
+  .ai-demo-status span{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.15em; color:var(--ice); font-size:11px}
+  .ai-demo-status b{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.04em; font-size:14px; text-align:right}
+  .ai-demo-chart{position:relative; min-height:214px; overflow:hidden; border:1px solid var(--line);
+    border-radius:12px; background:
+      linear-gradient(rgba(36,53,65,.26) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(36,53,65,.22) 1px,transparent 1px),#091016;
+    background-size:100% 25%,16.66% 100%}
+  .ai-demo-chart svg{position:absolute; inset:0; width:100%; height:100%}
+  .ai-demo-chart .pulse-line{fill:none; stroke:#8FD0EF; stroke-width:4; stroke-linecap:round; filter:drop-shadow(0 0 7px rgba(143,208,239,.42))}
+  .ai-demo-chart .pace-line{fill:none; stroke:#3E9BD6; stroke-width:3; stroke-dasharray:8 8; opacity:.8}
+  .ai-demo-legend{position:absolute; left:14px; right:14px; bottom:11px; display:flex; justify-content:space-between;
+    color:var(--muted2); font-family:'Oswald'; font-size:10px; text-transform:uppercase; letter-spacing:.1em}
+  .ai-demo-marker{position:absolute; right:18%; top:26%; width:10px; height:10px; border-radius:50%;
+    background:var(--ice-hi); box-shadow:0 0 0 6px rgba(143,208,239,.12),0 0 18px rgba(143,208,239,.8)}
+  .ai-demo-insights{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:10px}
+  .ai-demo-insight{padding:12px; border:1px solid var(--line); border-radius:10px; background:rgba(16,22,27,.76)}
+  .ai-demo-insight span{display:block; color:var(--muted2); font-family:'Oswald'; text-transform:uppercase;
+    letter-spacing:.12em; font-size:9px}
+  .ai-demo-insight b{display:block; margin-top:5px; color:var(--ink); font-size:12px; line-height:1.45}
+  .ai-demo-note{display:block; margin-top:10px; color:var(--muted2); font-size:10px; line-height:1.45}
+
+  /* ---------- PACK GEOGRAPHY ---------- */
+  .geo-section{overflow:hidden; background:radial-gradient(circle at 38% 48%,rgba(62,155,214,.11),transparent 42%)}
+  .geo-map{position:relative; min-height:440px; margin-top:34px; overflow:hidden; border:1px solid var(--line2);
+    border-radius:16px; background:
+      linear-gradient(rgba(36,53,65,.12) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(36,53,65,.12) 1px,transparent 1px),
+      radial-gradient(circle at 34% 32%,rgba(62,155,214,.13),transparent 44%),#090e12;
+    background-size:52px 52px,52px 52px,auto,auto}
+  .geo-map:before{content:"СЕВЕРО-ЗАПАД  •  ЦЕНТР"; position:absolute; right:20px; bottom:14px;
+    color:rgba(111,126,137,.28); font-family:'Oswald'; letter-spacing:.24em; font-size:12px}
+  .geo-route{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+  .geo-route path{fill:none; stroke:rgba(62,155,214,.35); stroke-width:2; stroke-dasharray:8 8}
+  .geo-node{position:absolute; width:min(220px,25%); padding:13px 14px 13px 34px; border:1px solid var(--line2);
+    border-radius:11px; background:rgba(9,15,20,.94); color:var(--ink); text-align:left; cursor:pointer;
+    transition:transform .2s,border-color .2s,box-shadow .2s}
+  .geo-node:hover{transform:translateY(-3px); border-color:var(--ice); box-shadow:0 12px 30px rgba(0,0,0,.35)}
+  .geo-node:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
+  .geo-node:before{content:""; position:absolute; left:14px; top:18px; width:8px; height:8px; border-radius:50%;
+    background:var(--ice-hi); box-shadow:0 0 0 5px rgba(62,155,214,.13),0 0 16px rgba(62,155,214,.7)}
+  .geo-node strong{display:block; font-family:'Oswald'; text-transform:uppercase; font-size:15px; line-height:1.2}
+  .geo-node span{display:block; margin-top:4px; color:var(--muted); font-size:11px; line-height:1.4}
+  .geo-north{left:8%; top:11%}.geo-karelia{left:18%; top:49%}.geo-komi{left:49%; top:20%}
+  .geo-moscow{left:48%; top:68%}.geo-voronezh{right:5%; top:48%}
+  .geo-legend{display:flex; align-items:center; gap:9px; margin-top:13px; color:var(--muted2); font-size:12px}
+  .geo-legend:before{content:""; width:8px; height:8px; border-radius:50%; background:var(--ice)}
+
+  /* ---------- NEXT HUNT ---------- */
+  .hunt-section{padding-bottom:0}
+  .hunt-card{display:grid; grid-template-columns:220px minmax(0,1fr) auto; gap:28px; align-items:center;
+    margin-top:26px; padding:28px; border:1px solid rgba(143,208,239,.5); border-radius:16px;
+    background:linear-gradient(110deg,rgba(62,155,214,.2),rgba(16,22,27,.92) 44%,rgba(7,10,13,.98));
+    box-shadow:0 22px 60px rgba(0,0,0,.24)}
+  .hunt-count{padding-right:24px; border-right:1px solid var(--line2)}
+  .hunt-count span{display:block; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.16em; color:var(--ice); font-size:11px}
+  .hunt-count strong{display:block; margin-top:4px; font-family:'Oswald'; font-size:clamp(42px,6vw,70px); line-height:.95}
+  .hunt-count small{display:block; margin-top:4px; color:var(--muted); font-size:12px}
+  .hunt-main .hunt-date{color:var(--ice-hi); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.12em; font-size:12px}
+  .hunt-main h3{margin:7px 0 6px; font-family:'Oswald'; text-transform:uppercase; font-size:clamp(23px,3vw,34px)}
+  .hunt-main p{margin:0; color:var(--muted); font-size:14px}
+  .hunt-side{display:flex; flex-direction:column; align-items:stretch; gap:8px; min-width:190px}
+  .hunt-status{padding:7px 10px; border:1px solid var(--line2); border-radius:8px; color:var(--muted);
+    font-family:'Oswald'; text-align:center; text-transform:uppercase; letter-spacing:.08em; font-size:10px}
+  .hunt-side .btn{justify-content:center; text-align:center}
+
   /* ---------- PARTNERS ---------- */
   .partners{display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-top:34px}
   .partner{border:1px dashed var(--line2); border-radius:10px; aspect-ratio:16/9; display:grid; place-items:center;
@@ -461,6 +542,14 @@
     .pack{gap:14px}
     .wolf.alpha{max-width:none}
     .training-services{grid-template-columns:1fr}
+    .ai-demo{grid-template-columns:1fr}
+    .ai-demo-panel{border-left:0; border-top:1px solid var(--line2)}
+    .hunt-card{grid-template-columns:170px minmax(0,1fr)}
+    .hunt-side{grid-column:1/-1; flex-direction:row}
+    .hunt-side>*{flex:1}
+    .geo-node{width:230px}
+    .geo-north{left:4%}.geo-karelia{left:10%}.geo-komi{left:46%}
+    .geo-moscow{left:40%}.geo-voronezh{right:3%}
     .wolf-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .team-table{font-size:11.5px}
   }
@@ -479,6 +568,19 @@
     .partner-cta .btn{width:100%}
     .training-section{padding-top:0}
     .training-service{min-height:0}
+    .ai-demo-copy,.ai-demo-panel{padding:20px}
+    .ai-demo-copy .btn{width:100%}
+    .ai-demo-status{align-items:flex-start; flex-direction:column; gap:5px}
+    .ai-demo-status b{text-align:left}
+    .ai-demo-chart{min-height:180px}
+    .ai-demo-insights{grid-template-columns:1fr}
+    .geo-map{display:grid; grid-template-columns:1fr; gap:10px; min-height:0; padding:16px}
+    .geo-map:before,.geo-route{display:none}
+    .geo-node,.geo-north,.geo-karelia,.geo-komi,.geo-moscow,.geo-voronezh{
+      position:relative; inset:auto; width:100%; min-height:76px}
+    .hunt-card{grid-template-columns:1fr; gap:18px; padding:22px}
+    .hunt-count{padding:0 0 16px; border-right:0; border-bottom:1px solid var(--line2)}
+    .hunt-side{grid-column:auto; flex-direction:column; min-width:0}
     .wolf-stats-grid{grid-template-columns:1fr}
     .wolf-stat-card{padding:11px}
     .team-table-wrap{margin-top:18px; border-radius:10px}
@@ -623,6 +725,35 @@
         <a class="btn ghost" href="/camps/" data-goal="camps_page_click">Узнать о первом кэмпе</a>
       </article>
     </div>
+    <article class="ai-demo reveal" aria-labelledby="aiDemoTitle">
+      <div class="ai-demo-copy">
+        <div class="ai-demo-kicker">Демонстрационный разбор</div>
+        <h3 id="aiDemoTitle">Одна тренировка.<br><span class="ice">Несколько уровней анализа.</span></h3>
+        <p>Пример длительной равномерной работы: ИИ сопоставляет ход тренировки с историей спортсмена и показывает тренеру сигнал, который стоит проверить.</p>
+        <div class="ai-demo-inputs" aria-label="Источники анализа">
+          <span>Пульс</span><span>Темп</span><span>Рельеф</span><span>Самочувствие</span><span>История нагрузок</span>
+        </div>
+        <a class="btn" id="aiDemoCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="ai_demo_request_click">Разобрать мою тренировку →</a>
+      </div>
+      <div class="ai-demo-panel">
+        <div class="ai-demo-status"><span>Сигнал ИИ-агента</span><b>Проверить реакцию во второй половине работы</b></div>
+        <div class="ai-demo-chart" aria-label="Демонстрационный график изменения пульса и темпа по ходу тренировки">
+          <svg viewBox="0 0 620 220" preserveAspectRatio="none" aria-hidden="true">
+            <path class="pace-line" d="M12 142 C95 137,150 141,220 136 S345 139,420 134 S530 137,608 132"/>
+            <path class="pulse-line" d="M12 154 C75 143,120 137,175 132 S278 126,334 118 S428 105,475 90 S552 70,608 58"/>
+          </svg>
+          <span class="ai-demo-marker" aria-hidden="true"></span>
+          <div class="ai-demo-legend"><span>Начало</span><span>Середина</span><span>Финиш</span></div>
+        </div>
+        <div class="ai-demo-insights">
+          <div class="ai-demo-insight"><span>Что замечено</span><b>Темп остаётся ровным, а пульс постепенно растёт.</b></div>
+          <div class="ai-demo-insight"><span>Что проверяет тренер</span><b>Рельеф, погоду, питьё, самочувствие и восстановление.</b></div>
+          <div class="ai-demo-insight"><span>Почему важна история</span><b>Один график — эпизод. Повторяющийся сигнал — закономерность.</b></div>
+          <div class="ai-demo-insight"><span>Итог</span><b>Решение принимает тренер с учётом человека и цели.</b></div>
+        </div>
+        <small class="ai-demo-note">Иллюстрация принципа работы, а не данные конкретного спортсмена и не медицинское заключение.</small>
+      </div>
+    </article>
   </div>
 </section>
 
@@ -636,6 +767,38 @@
     <p class="lead">У каждого волка свой стаж, свои дистанции и свой темп на трассе. Нажмите на фотографию спортсмена, чтобы открыть его официальный спортивный профиль.</p>
     <div class="pack-wrap"><div class="pack" id="pack"></div></div>
     <p class="consent-note">* Данные о спортсменах приведены по состоянию на август 2026 года.</p>
+  </div>
+</section>
+
+<hr class="track">
+
+<!-- ===== PACK GEOGRAPHY ===== -->
+<section class="section geo-section" id="geography">
+  <div class="wrap">
+    <div class="eyebrow">География стаи</div>
+    <h2>От Заполярья<br><span class="ice">до центра России.</span></h2>
+    <p class="lead">ВАРГИ объединяет спортсменов из разных регионов. Нажмите на точку, чтобы увидеть, кто представляет стаю в этом направлении.</p>
+    <div class="geo-map reveal" aria-label="География участников и тренировочных направлений ВАРГИ">
+      <svg class="geo-route" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true">
+        <path d="M165 92 C205 150,225 195,280 255 S430 188,560 132 S520 292,530 334 S690 296,825 240"/>
+      </svg>
+      <button class="geo-node geo-north" type="button" data-geo-title="Мурманская область" data-geo-copy="Артем Грязев — родом из Мурманска. Регион также представляют Екатерина Бурянина, Константин Нечаев и Дмитрий Меньшаков.">
+        <strong>Мурманская область</strong><span>Мурманск · Мончегорск</span>
+      </button>
+      <button class="geo-node geo-karelia" type="button" data-geo-title="Республика Карелия" data-geo-copy="Павел Сарин, Елена Богданова, Лариса Иванова, Алексей Кондратьев, Полина Сероносова и Климентий Агалаков.">
+        <strong>Республика Карелия</strong><span>Петрозаводск · Чупа · Мелиоративный</span>
+      </button>
+      <button class="geo-node geo-komi" type="button" data-geo-title="Республика Коми" data-geo-copy="Республику Коми в стае представляют Людмила Удалова и Алексей Мошкин.">
+        <strong>Республика Коми</strong><span>Ухта · Сосногорск</span>
+      </button>
+      <button class="geo-node geo-moscow" type="button" data-geo-title="Москва и Московская область" data-geo-copy="Центральное направление ВАРГИ представляют Валерия Максименко и Максим Зубцов. В Москве формируется группа для совместных тренировок.">
+        <strong>Москва и область</strong><span>Москва · Зеленоград</span>
+      </button>
+      <button class="geo-node geo-voronezh" type="button" data-geo-title="Воронеж" data-geo-copy="Одно из направлений запуска групповых тренировок ВАРГИ. Группа формируется от трёх участников.">
+        <strong>Воронеж</strong><span>Тренировочное направление</span>
+      </button>
+    </div>
+    <div class="geo-legend">География действующих участников и направлений подготовки</div>
   </div>
 </section>
 
@@ -688,6 +851,26 @@
 </section>
 
 <hr class="track">
+
+<!-- ===== NEXT HUNT ===== -->
+<section class="section hunt-section" id="nextHunt">
+  <div class="wrap">
+    <div class="eyebrow">Пульс сезона</div>
+    <h2>Ближайшая <span class="ice">охота стаи</span></h2>
+    <div class="hunt-card reveal" aria-live="polite">
+      <div class="hunt-count"><span>До старта</span><strong id="nextHuntDays">—</strong><small id="nextHuntDayWord">дней</small></div>
+      <div class="hunt-main">
+        <div class="hunt-date" id="nextHuntDate">Календарь обновляется</div>
+        <h3 id="nextHuntName">Ближайший старт</h3>
+        <p id="nextHuntCity">Состав выезда уточняется</p>
+      </div>
+      <div class="hunt-side">
+        <div class="hunt-status" id="nextHuntStatus">Состав выезда уточняется</div>
+        <a class="btn ghost" href="#calendar" data-goal="next_hunt_calendar_click">Смотреть календарь →</a>
+      </div>
+    </div>
+  </div>
+</section>
 
 <!-- ===== CALENDAR ===== -->
 <section class="section" id="calendar">
@@ -806,6 +989,11 @@ const LINKS = {
   email:     "mailto:artemgruazev@yandex.ru"        // Написать Артему по e-mail
 };
 const TG_USER = "TomMurman"; // куда приходят заявки из формы
+const aiDemoCta = document.getElementById("aiDemoCta");
+if (aiDemoCta) {
+  const aiDemoText = encodeURIComponent("Здравствуйте, Артем! Хочу получить демонстрационный разбор одной тренировки с ИИ-агентом ВАРГИ.");
+  aiDemoCta.href = "https://t.me/" + TG_USER + "?text=" + aiDemoText;
+}
 const mobileTrainingCta = document.getElementById("mobileTrainingCta");
 if (mobileTrainingCta) {
   const trainingText = encodeURIComponent("Здравствуйте, Артем! Хочу узнать об индивидуальной подготовке с ВАРГИ.");
@@ -1238,6 +1426,34 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   }
 })();
 
+// Ближайшая охота стаи — автоматически берёт первый будущий старт из календаря.
+(function(){
+  const monthIndex={янв:0,фев:1,мар:2,апр:3,май:4,июн:5,июл:6,авг:7,сен:8,окт:9,ноя:10,дек:11};
+  const raceDate=r=>new Date(Number(r.year),monthIndex[r.m],parseInt(r.d,10),9,0,0);
+  const now=new Date();
+  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
+  const upcoming=CALENDAR.map(r=>({race:r,date:raceDate(r)})).find(item=>item.date>=today);
+  const daysNode=$("#nextHuntDays");
+  if(!upcoming){
+    daysNode.textContent="—";
+    $("#nextHuntDayWord").textContent="сезон завершён";
+    $("#nextHuntDate").textContent="Новый календарь появится после публикации";
+    $("#nextHuntName").textContent="Следующая охота готовится";
+    $("#nextHuntCity").textContent="Следите за обновлениями ВАРГИ";
+    return;
+  }
+  const days=Math.max(0,Math.ceil((upcoming.date-now)/86400000));
+  const lastTwo=days%100;
+  const last=days%10;
+  const dayWord=lastTwo>=11&&lastTwo<=14 ? "дней" : last===1 ? "день" : last>=2&&last<=4 ? "дня" : "дней";
+  daysNode.textContent=days;
+  $("#nextHuntDayWord").textContent=dayWord;
+  $("#nextHuntDate").textContent=`${upcoming.race.d} ${upcoming.race.m} ${upcoming.race.year}`;
+  $("#nextHuntName").textContent=upcoming.race.name;
+  $("#nextHuntCity").textContent=upcoming.race.city;
+  $("#nextHuntStatus").textContent="Состав выезда уточняется";
+})();
+
 // Calendar
 (function(){
   const wrap = $("#calList");
@@ -1417,6 +1633,12 @@ const overlay=$("#overlay"), oc=$("#overlayContent");
 function showOverlay(html){ oc.innerHTML=html; overlay.classList.add("show"); }
 function openLightbox(src,alt=""){ showOverlay(`<img class="lb-img" src="${src}" alt="${alt}">`); }
 function openModal(title,text){ showOverlay(`<div class="modal"><h3>${title}</h3><p>${text}</p></div>`); }
+document.querySelectorAll(".geo-node").forEach(node=>{
+  node.addEventListener("click",()=>{
+    openModal(node.dataset.geoTitle,node.dataset.geoCopy);
+    if(window.vargiTrack) window.vargiTrack("geography_region_click",{region:node.dataset.geoTitle});
+  });
+});
 function openOrder(name){
   const interestText=encodeURIComponent(`Здравствуйте! Хочу первым узнать о выходе «${name}» ВАРГИ и условиях заказа.`);
   showOverlay(`<div class="modal"><h3>Первый дроп ВАРГИ</h3><p>Оставьте интерес к «${name}». Когда готовые образцы пройдут проверку, пришлём реальные фотографии, характеристики и условия заказа.</p>
