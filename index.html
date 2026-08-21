@@ -397,23 +397,21 @@
   .ai-demo-status{display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:16px}
   .ai-demo-status span{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.15em; color:var(--ice); font-size:11px}
   .ai-demo-status b{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.04em; font-size:14px; text-align:right}
-  .ai-demo-chart{position:relative; min-height:214px; overflow:hidden; border:1px solid var(--line);
-    border-radius:12px; background:
-      linear-gradient(rgba(36,53,65,.26) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(36,53,65,.22) 1px,transparent 1px),#091016;
-    background-size:100% 25%,16.66% 100%}
-  .ai-demo-chart svg{position:absolute; inset:0; width:100%; height:100%}
-  .ai-demo-chart .pulse-line{fill:none; stroke:#8FD0EF; stroke-width:4; stroke-linecap:round; filter:drop-shadow(0 0 7px rgba(143,208,239,.42))}
-  .ai-demo-chart .pace-line{fill:none; stroke:#3E9BD6; stroke-width:3; stroke-dasharray:8 8; opacity:.8}
-  .ai-demo-legend{position:absolute; left:14px; right:14px; bottom:11px; display:flex; justify-content:space-between;
-    color:var(--muted2); font-family:'Oswald'; font-size:10px; text-transform:uppercase; letter-spacing:.1em}
-  .ai-demo-marker{position:absolute; right:18%; top:26%; width:10px; height:10px; border-radius:50%;
-    background:var(--ice-hi); box-shadow:0 0 0 6px rgba(143,208,239,.12),0 0 18px rgba(143,208,239,.8)}
-  .ai-demo-insights{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; margin-top:10px}
-  .ai-demo-insight{padding:12px; border:1px solid var(--line); border-radius:10px; background:rgba(16,22,27,.76)}
-  .ai-demo-insight span{display:block; color:var(--muted2); font-family:'Oswald'; text-transform:uppercase;
-    letter-spacing:.12em; font-size:9px}
-  .ai-demo-insight b{display:block; margin-top:5px; color:var(--ink); font-size:12px; line-height:1.45}
+  .ai-demo-flow{display:grid; grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr) 34px minmax(0,1fr);
+    align-items:stretch; margin-top:18px}
+  .ai-flow-step{min-width:0; padding:18px 15px; border:1px solid var(--line); border-radius:11px;
+    background:rgba(16,22,27,.78)}
+  .ai-flow-step span{display:block; color:var(--ice); font-family:'Oswald'; text-transform:uppercase;
+    letter-spacing:.14em; font-size:9px}
+  .ai-flow-step strong{display:block; margin-top:8px; font-family:'Oswald'; text-transform:uppercase;
+    font-size:15px; line-height:1.25}
+  .ai-flow-step p{margin:7px 0 0; color:var(--muted); font-size:11px; line-height:1.45}
+  .ai-flow-arrow{display:grid; place-items:center; color:var(--ice); font-family:'Oswald'; font-size:24px}
+  .ai-demo-conclusion{margin-top:12px; padding:16px 18px; border:1px solid rgba(143,208,239,.45);
+    border-radius:11px; background:linear-gradient(100deg,rgba(62,155,214,.16),rgba(16,22,27,.78))}
+  .ai-demo-conclusion span{display:block; color:var(--ice-hi); font-family:'Oswald'; text-transform:uppercase;
+    letter-spacing:.14em; font-size:9px}
+  .ai-demo-conclusion strong{display:block; margin-top:6px; font-size:13px; line-height:1.5}
   .ai-demo-note{display:block; margin-top:10px; color:var(--muted2); font-size:10px; line-height:1.45}
 
   /* ---------- PACK GEOGRAPHY ---------- */
@@ -572,8 +570,8 @@
     .ai-demo-copy .btn{width:100%}
     .ai-demo-status{align-items:flex-start; flex-direction:column; gap:5px}
     .ai-demo-status b{text-align:left}
-    .ai-demo-chart{min-height:180px}
-    .ai-demo-insights{grid-template-columns:1fr}
+    .ai-demo-flow{grid-template-columns:1fr; gap:8px}
+    .ai-flow-arrow{height:22px; transform:rotate(90deg)}
     .geo-map{display:grid; grid-template-columns:1fr; gap:10px; min-height:0; padding:16px}
     .geo-map:before,.geo-route{display:none}
     .geo-node,.geo-north,.geo-karelia,.geo-komi,.geo-moscow,.geo-voronezh{
@@ -736,20 +734,29 @@
         <a class="btn" id="aiDemoCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="ai_demo_request_click">Разобрать мою тренировку →</a>
       </div>
       <div class="ai-demo-panel">
-        <div class="ai-demo-status"><span>Сигнал ИИ-агента</span><b>Проверить реакцию во второй половине работы</b></div>
-        <div class="ai-demo-chart" aria-label="Демонстрационный график изменения пульса и темпа по ходу тренировки">
-          <svg viewBox="0 0 620 220" preserveAspectRatio="none" aria-hidden="true">
-            <path class="pace-line" d="M12 142 C95 137,150 141,220 136 S345 139,420 134 S530 137,608 132"/>
-            <path class="pulse-line" d="M12 154 C75 143,120 137,175 132 S278 126,334 118 S428 105,475 90 S552 70,608 58"/>
-          </svg>
-          <span class="ai-demo-marker" aria-hidden="true"></span>
-          <div class="ai-demo-legend"><span>Начало</span><span>Середина</span><span>Финиш</span></div>
+        <div class="ai-demo-status"><span>Как работает анализ</span><b>От данных — к решению тренера</b></div>
+        <div class="ai-demo-flow" aria-label="Этапы демонстрационного анализа тренировки">
+          <div class="ai-flow-step">
+            <span>01 · Данные</span>
+            <strong>Темп остаётся ровным</strong>
+            <p>ИИ рассматривает тренировку целиком, а не отдельную цифру.</p>
+          </div>
+          <div class="ai-flow-arrow" aria-hidden="true">→</div>
+          <div class="ai-flow-step">
+            <span>02 · Сигнал</span>
+            <strong>Пульс постепенно растёт</strong>
+            <p>Агент отмечает изменение реакции во второй половине работы.</p>
+          </div>
+          <div class="ai-flow-arrow" aria-hidden="true">→</div>
+          <div class="ai-flow-step">
+            <span>03 · Контекст</span>
+            <strong>Причину нужно проверить</strong>
+            <p>Рельеф, погода, питьё, самочувствие и восстановление.</p>
+          </div>
         </div>
-        <div class="ai-demo-insights">
-          <div class="ai-demo-insight"><span>Что замечено</span><b>Темп остаётся ровным, а пульс постепенно растёт.</b></div>
-          <div class="ai-demo-insight"><span>Что проверяет тренер</span><b>Рельеф, погоду, питьё, самочувствие и восстановление.</b></div>
-          <div class="ai-demo-insight"><span>Почему важна история</span><b>Один график — эпизод. Повторяющийся сигнал — закономерность.</b></div>
-          <div class="ai-demo-insight"><span>Итог</span><b>Решение принимает тренер с учётом человека и цели.</b></div>
+        <div class="ai-demo-conclusion">
+          <span>Решение тренера</span>
+          <strong>Сравнить сигнал с похожими тренировками и состоянием спортсмена, а затем сохранить план или скорректировать нагрузку.</strong>
         </div>
         <small class="ai-demo-note">Иллюстрация принципа работы, а не данные конкретного спортсмена и не медицинское заключение.</small>
       </div>
