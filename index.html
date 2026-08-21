@@ -380,39 +380,29 @@
     text-align:center; white-space:normal; line-height:1.25; padding:10px 12px}
 
   /* ---------- AI DEMO ---------- */
-  .ai-demo{display:grid; grid-template-columns:minmax(0,.82fr) minmax(0,1.18fr); gap:0; margin-top:18px;
+  .ai-demo{display:grid; grid-template-columns:minmax(0,1.05fr) minmax(380px,.95fr); min-height:410px;
+    gap:0; margin-top:18px;
     overflow:hidden; border:1px solid rgba(143,208,239,.5); border-radius:16px;
-    background:linear-gradient(125deg,rgba(62,155,214,.16),rgba(10,15,20,.98) 42%,rgba(7,10,13,.98));
+    background:linear-gradient(125deg,rgba(62,155,214,.14),rgba(10,15,20,.98) 48%,rgba(7,10,13,.98));
     box-shadow:0 24px 70px rgba(0,0,0,.28)}
-  .ai-demo-copy{padding:30px; display:flex; flex-direction:column; align-items:flex-start}
+  .ai-demo-copy{position:relative; z-index:2; padding:42px; display:flex; flex-direction:column; align-items:flex-start}
   .ai-demo-kicker{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.2em; font-size:11px; color:var(--ice)}
-  .ai-demo-copy h3{font-family:'Oswald'; text-transform:uppercase; font-size:clamp(25px,3.5vw,38px);
-    line-height:1.08; margin:11px 0 12px}
-  .ai-demo-copy>p{margin:0; color:var(--muted); font-size:15px}
-  .ai-demo-inputs{display:flex; flex-wrap:wrap; gap:7px; margin:22px 0 24px}
-  .ai-demo-inputs span{padding:6px 9px; border:1px solid var(--line2); border-radius:999px;
-    color:var(--muted); background:rgba(7,10,13,.46); font-size:11px}
-  .ai-demo-copy .btn{margin-top:auto; justify-content:center; text-align:center}
-  .ai-demo-panel{padding:26px; border-left:1px solid var(--line2); background:rgba(5,9,12,.72)}
-  .ai-demo-status{display:flex; align-items:center; justify-content:space-between; gap:18px; margin-bottom:16px}
-  .ai-demo-status span{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.15em; color:var(--ice); font-size:11px}
-  .ai-demo-status b{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.04em; font-size:14px; text-align:right}
-  .ai-demo-flow{display:grid; grid-template-columns:minmax(0,1fr) 34px minmax(0,1fr) 34px minmax(0,1fr);
-    align-items:stretch; margin-top:18px}
-  .ai-flow-step{min-width:0; padding:18px 15px; border:1px solid var(--line); border-radius:11px;
-    background:rgba(16,22,27,.78)}
-  .ai-flow-step span{display:block; color:var(--ice); font-family:'Oswald'; text-transform:uppercase;
-    letter-spacing:.14em; font-size:9px}
-  .ai-flow-step strong{display:block; margin-top:8px; font-family:'Oswald'; text-transform:uppercase;
-    font-size:15px; line-height:1.25}
-  .ai-flow-step p{margin:7px 0 0; color:var(--muted); font-size:11px; line-height:1.45}
-  .ai-flow-arrow{display:grid; place-items:center; color:var(--ice); font-family:'Oswald'; font-size:24px}
-  .ai-demo-conclusion{margin-top:12px; padding:16px 18px; border:1px solid rgba(143,208,239,.45);
-    border-radius:11px; background:linear-gradient(100deg,rgba(62,155,214,.16),rgba(16,22,27,.78))}
-  .ai-demo-conclusion span{display:block; color:var(--ice-hi); font-family:'Oswald'; text-transform:uppercase;
-    letter-spacing:.14em; font-size:9px}
-  .ai-demo-conclusion strong{display:block; margin-top:6px; font-size:13px; line-height:1.5}
-  .ai-demo-note{display:block; margin-top:10px; color:var(--muted2); font-size:10px; line-height:1.45}
+  .ai-demo-copy h3{font-family:'Oswald'; text-transform:uppercase; font-size:clamp(34px,4.4vw,54px);
+    line-height:1.02; margin:13px 0 16px; max-width:680px}
+  .ai-demo-copy>p{max-width:60ch; margin:0; color:var(--muted); font-size:16px; line-height:1.65}
+  .ai-demo-data{margin:25px 0 28px; padding-left:14px; border-left:2px solid var(--ice)}
+  .ai-demo-data span{display:block; color:var(--ice); font-family:'Oswald'; text-transform:uppercase;
+    letter-spacing:.16em; font-size:9px}
+  .ai-demo-data strong{display:block; margin-top:5px; color:var(--ink); font-size:12px; line-height:1.5}
+  .ai-demo-actions{display:flex; align-items:center; flex-wrap:wrap; gap:11px; margin-top:auto}
+  .ai-demo-actions .btn{justify-content:center; text-align:center}
+  .ai-demo-visual{position:relative; min-height:410px; border-left:1px solid var(--line2);
+    background:
+      linear-gradient(90deg,#091016 0%,rgba(9,16,22,.7) 12%,rgba(7,10,13,.08) 56%),
+      linear-gradient(0deg,rgba(7,10,13,.58),transparent 52%),
+      url('/assets/camps-ski-sunrise.webp') 63% center/cover no-repeat}
+  .ai-demo-visual:after{content:"ТРЕНЕР  ×  ДАННЫЕ  ×  ХАРАКТЕР"; position:absolute; left:24px; right:24px; bottom:20px;
+    color:rgba(242,245,248,.82); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.18em; font-size:10px}
 
   /* ---------- PACK GEOGRAPHY ---------- */
   .geo-section{overflow:hidden; background:radial-gradient(circle at 38% 48%,rgba(62,155,214,.11),transparent 42%)}
@@ -541,7 +531,7 @@
     .wolf.alpha{max-width:none}
     .training-services{grid-template-columns:1fr}
     .ai-demo{grid-template-columns:1fr}
-    .ai-demo-panel{border-left:0; border-top:1px solid var(--line2)}
+    .ai-demo-visual{border-left:0; border-top:1px solid var(--line2)}
     .hunt-card{grid-template-columns:170px minmax(0,1fr)}
     .hunt-side{grid-column:1/-1; flex-direction:row}
     .hunt-side>*{flex:1}
@@ -566,12 +556,13 @@
     .partner-cta .btn{width:100%}
     .training-section{padding-top:0}
     .training-service{min-height:0}
-    .ai-demo-copy,.ai-demo-panel{padding:20px}
-    .ai-demo-copy .btn{width:100%}
-    .ai-demo-status{align-items:flex-start; flex-direction:column; gap:5px}
-    .ai-demo-status b{text-align:left}
-    .ai-demo-flow{grid-template-columns:1fr; gap:8px}
-    .ai-flow-arrow{height:22px; transform:rotate(90deg)}
+    .ai-demo{grid-template-columns:1fr}
+    .ai-demo-copy{padding:24px}
+    .ai-demo-copy h3{font-size:clamp(31px,11vw,45px)}
+    .ai-demo-actions{width:100%; align-items:stretch; flex-direction:column}
+    .ai-demo-actions .btn{width:100%}
+    .ai-demo-visual{min-height:250px; order:-1; border-left:0; border-top:0; border-bottom:1px solid var(--line2);
+      background-position:62% center}
     .geo-map{display:grid; grid-template-columns:1fr; gap:10px; min-height:0; padding:16px}
     .geo-map:before,.geo-route{display:none}
     .geo-node,.geo-north,.geo-karelia,.geo-komi,.geo-moscow,.geo-voronezh{
@@ -725,41 +716,19 @@
     </div>
     <article class="ai-demo reveal" aria-labelledby="aiDemoTitle">
       <div class="ai-demo-copy">
-        <div class="ai-demo-kicker">Демонстрационный разбор</div>
-        <h3 id="aiDemoTitle">Одна тренировка.<br><span class="ice">Несколько уровней анализа.</span></h3>
-        <p>Пример длительной равномерной работы: ИИ сопоставляет ход тренировки с историей спортсмена и показывает тренеру сигнал, который стоит проверить.</p>
-        <div class="ai-demo-inputs" aria-label="Источники анализа">
-          <span>Пульс</span><span>Темп</span><span>Рельеф</span><span>Самочувствие</span><span>История нагрузок</span>
+        <div class="ai-demo-kicker">ИИ-агент ВАРГИ</div>
+        <h3 id="aiDemoTitle">Покажи тренировку.<br><span class="ice">Увидим больше.</span></h3>
+        <p>Передай одну тренировку — разберём её в контексте твоей подготовки. ИИ найдёт сигналы и закономерности, а тренер объяснит, что они значат именно для тебя.</p>
+        <div class="ai-demo-data">
+          <span>В анализе</span>
+          <strong>Пульс · темп · рельеф · самочувствие · история нагрузок</strong>
         </div>
-        <a class="btn" id="aiDemoCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="ai_demo_request_click">Разобрать мою тренировку →</a>
+        <div class="ai-demo-actions">
+          <a class="btn" id="aiDemoCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="ai_demo_request_click">Разобрать мою тренировку →</a>
+          <a class="btn ghost" href="/ai-agent/" data-goal="ai_agent_demo_more_click">Как работает ИИ-агент</a>
+        </div>
       </div>
-      <div class="ai-demo-panel">
-        <div class="ai-demo-status"><span>Как работает анализ</span><b>От данных — к решению тренера</b></div>
-        <div class="ai-demo-flow" aria-label="Этапы демонстрационного анализа тренировки">
-          <div class="ai-flow-step">
-            <span>01 · Данные</span>
-            <strong>Темп остаётся ровным</strong>
-            <p>ИИ рассматривает тренировку целиком, а не отдельную цифру.</p>
-          </div>
-          <div class="ai-flow-arrow" aria-hidden="true">→</div>
-          <div class="ai-flow-step">
-            <span>02 · Сигнал</span>
-            <strong>Пульс постепенно растёт</strong>
-            <p>Агент отмечает изменение реакции во второй половине работы.</p>
-          </div>
-          <div class="ai-flow-arrow" aria-hidden="true">→</div>
-          <div class="ai-flow-step">
-            <span>03 · Контекст</span>
-            <strong>Причину нужно проверить</strong>
-            <p>Рельеф, погода, питьё, самочувствие и восстановление.</p>
-          </div>
-        </div>
-        <div class="ai-demo-conclusion">
-          <span>Решение тренера</span>
-          <strong>Сравнить сигнал с похожими тренировками и состоянием спортсмена, а затем сохранить план или скорректировать нагрузку.</strong>
-        </div>
-        <small class="ai-demo-note">Иллюстрация принципа работы, а не данные конкретного спортсмена и не медицинское заключение.</small>
-      </div>
+      <div class="ai-demo-visual" role="img" aria-label="Лыжник ВАРГИ на тренировке в горах"></div>
     </article>
   </div>
 </section>
