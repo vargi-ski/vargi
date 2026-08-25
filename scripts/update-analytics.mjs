@@ -9,8 +9,19 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const iso = d => d.toISOString().slice(0,10);
 const daysAgo = n => { const d=new Date(); d.setUTCDate(d.getUTCDate()-n); return iso(d); };
 const num = v => Number(v||0);
+const googleAppsScriptAccessError = message => {
+  const value=String(message||'');
+  if(!/\b403\b/i.test(value))return '';
+  if(/Authorization is required|needs your permission|Требуется авторизация/i.test(value))return 'Требуется повторная авторизация Google Apps Script';
+  if(/accounts\.google\.com|ServiceLogin|Sign in with Google|Войдите в аккаунт/i.test(value))return 'Google Apps Script требует повторный вход владельца';
+  if(/You need access|Request access|Access denied|permission to access|нет доступа|запросить доступ/i.test(value))return 'Закрыт доступ к веб-приложению Google Apps Script';
+  if(/<!doctype html|<html/i.test(value))return 'Google Apps Script отклонил вызов до запуска моста (403)';
+  return '';
+};
 const friendlyError = error => {
   const message=String(error?.message||error||'Неизвестная ошибка').replace(/\s+/g,' ').trim();
+  const appsScriptError=googleAppsScriptAccessError(message);
+  if(appsScriptError)return appsScriptError;
   if(/invalid_grant|expired or revoked|token has been revoked/i.test(message))return 'Требуется повторная авторизация Google';
   if(/Authorization is required|needs your permission|Требуется авторизация/i.test(message))return 'Требуется повторная авторизация Google Apps Script';
   if(/ACCESS_TOKEN_SCOPE_INSUFFICIENT|insufficient authentication scopes|insufficientPermissions/i.test(message))return 'OAuth Google выдан без права чтения Search Console';
