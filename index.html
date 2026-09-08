@@ -358,6 +358,7 @@
   .prod .pb{padding:16px; display:flex; flex-direction:column; gap:6px; flex:1}
   .prod .pn{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.05em; font-size:17px}
   .prod .pd{color:var(--muted); font-size:14px; flex:1}
+  .prod .material{color:var(--ice); font-family:'Oswald'; font-size:12px; line-height:1.35; text-transform:uppercase; letter-spacing:.09em}
   .prod .pf{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:10px}
   .prod .pf .btn{padding:9px 14px; font-size:13px}
   .prod .price{font-family:'Oswald'; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
@@ -1117,7 +1118,8 @@ const CAP_STRAIGHT_IMAGE = window.VARGI_IMAGES.i19;
 const CAP_CLASSIC_IMAGE = window.VARGI_IMAGES.i20;
 
 const SHOP = [
-  { name:"Футболка «Классика»", desc:"Чёрная. Флагманский логотип стаи на груди, руна между лопаток.", price:"от 2 800 ₽", img:window.VARGI_IMAGES.i21 },
+  { name:"Футболка «Классика»", desc:"Чёрная. Флагманский логотип стаи на груди, руна между лопаток.", material:"Турецкий хлопок", price:"от 2 800 ₽", img:window.VARGI_IMAGES.i21 },
+  { name:"Футболка «Белая классика»", desc:"Белая. Флагманский логотип стаи на груди, девиз «Север внутри» на спине.", material:"Турецкий хлопок", price:"от 2 800 ₽", img:"assets/vargi-shirt-white-classic-2026.jpg" },
   { bg:"#FFFFFF", name:"Спортивная футболка «Север внутри»", desc:"Белая спортивная футболка. Логотип стаи спереди, руна и девиз «Север внутри» на спине.", price:"от 2 900 ₽", img:"assets/shop-sport-sever-vnutri-2026.webp", available:true },
   { bg:"#111111", name:"Тренировочная футболка «Минимализм»", desc:"Чёрная спортивная футболка. Флагманский логотип спереди, на спине — только руна.", price:"от 2 900 ₽", img:"assets/shop-training-minimalism-black-2026.webp", available:true },
   { bg:"#111111", name:"Кепка «Прямой козырёк»", desc:"Чёрная. Прямой козырёк, герб ВАРГИ спереди и девиз «Стая держит темп» сзади.", price:"от 2 500 ₽", img:CAP_STRAIGHT_IMAGE, available:true },
@@ -1531,8 +1533,9 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       : p.available
         ? `<a class="btn ghost order" href="https://t.me/${TG_USER}?text=${orderText}" target="_blank" rel="noopener noreferrer" data-goal="shop_order_click">Заказать</a>`
         : `<button class="btn ghost order">Узнать о выходе</button>`;
+    const material = p.material ? `<div class="material">${p.material}</div>` : "";
     card.innerHTML = `<div class="img${cropClass}">${imgInner}</div>
-      <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>
+      <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>${material}
       <div class="pf"><div class="price">${p.price}</div>${btn}</div></div>`;
     if(p.img){
       const imageBox = card.querySelector(".img");
