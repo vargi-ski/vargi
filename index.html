@@ -341,8 +341,6 @@
   .prod .img img{width:100%; height:100%; object-fit:contain}
   .prod .img.zoomable{cursor:zoom-in}
   .prod .img.zoomable:focus-visible{outline:2px solid var(--ice); outline-offset:-2px}
-  .prod .img.cap-crop .crop-frame{width:100%; height:67%; overflow:hidden}
-  .prod .img.cap-crop .crop-frame img{width:100%; height:auto; max-width:none; object-fit:unset}
   .prod .pb{padding:16px; display:flex; flex-direction:column; gap:6px; flex:1}
   .prod .pn{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.05em; font-size:17px}
   .prod .pd{color:var(--muted); font-size:14px; flex:1}
@@ -1090,8 +1088,8 @@ const GALLERY = [
   {src:"assets/gallery-sergey-2026.webp",pos:"center 43%"}
 ].filter(Boolean); // только рабочие изображения
 
-const CAP_STRAIGHT_IMAGE = window.VARGI_IMAGES.i19;
-const CAP_CLASSIC_IMAGE = window.VARGI_IMAGES.i20;
+const CAP_STRAIGHT_IMAGE = "assets/shop-cap-straight-clean-2026.webp";
+const CAP_CLASSIC_IMAGE = "assets/shop-cap-classic-clean-2026.webp";
 
 const SHOP = [
   { name:"Футболка «Классика»", desc:"Чёрная. Флагманский логотип стаи на груди, руна между лопаток.", material:"100% турецкий хлопок", price:"от 2 800 ₽", img:window.VARGI_IMAGES.i21, available:true },
@@ -1478,10 +1476,9 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   const wrap = $("#shopList");
   SHOP.forEach((p,index)=>{
     const card = el("div","prod"+(p.soon?" soon":"")); card.classList.add("reveal");
-    const cropClass = p.img && (p.img===CAP_STRAIGHT_IMAGE || p.img===CAP_CLASSIC_IMAGE) ? " cap-crop" : "";
     const productImage = `<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">`;
     const imgInner = p.img
-      ? (cropClass ? `<div class="crop-frame">${productImage}</div>` : productImage)
+      ? productImage
       : (p.soon?"В РАЗРАБОТКЕ":"ФОТО ТОВАРА");
     const orderText = encodeURIComponent(`Здравствуйте, Артем! Хочу заказать «${p.name}» ВАРГИ. Подскажите, пожалуйста, наличие размера и условия доставки.`);
     const btn = p.soon
@@ -1490,7 +1487,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
         ? `<a class="btn ghost order" href="https://t.me/${TG_USER}?text=${orderText}" target="_blank" rel="noopener noreferrer" data-goal="shop_order_click">Заказать</a>`
         : `<button class="btn ghost order">Узнать о выходе</button>`;
     const material = p.material ? `<div class="material">${p.material}</div>` : "";
-    card.innerHTML = `<div class="img${cropClass}">${imgInner}</div>
+    card.innerHTML = `<div class="img">${imgInner}</div>
       <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>${material}
       <div class="pf"><div class="price">${p.price}</div>${btn}</div></div>`;
     if(p.img){
