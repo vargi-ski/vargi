@@ -19,7 +19,7 @@ window.VARGI_IMAGES = Object.assign(window.VARGI_IMAGES || {}, {
   i18: "/assets/migrated-images/vargi-i18.webp",
   i19: "/assets/migrated-images/vargi-i19.jpg",
   i20: "/assets/migrated-images/vargi-i20.jpg",
-  i21: "/assets/migrated-images/vargi-i21.jpg",
+  i21: "/assets/vargi-shirt-classic-2026.jpg",
   i22: "/assets/migrated-images/vargi-i22.jpg",
   i23: "/assets/migrated-images/vargi-i23.jpg",
   i24: "/assets/migrated-images/vargi-i24.webp",
