@@ -1,0 +1,31 @@
+{
+  "generatedAt": "2026-09-14T10:00:00.000Z",
+  "period": {
+    "yandex": "7 дней, включая сегодня",
+    "google": "7 последних доступных дней",
+    "clarity": "последние 72 часа"
+  },
+  "yandex": {
+    "summary": {"visits": 120, "users": 95, "pageviews": 260, "conversionRate": 4.2, "previousVisits": 100, "previousUsers": 82, "previousPageviews": 220, "previousConversionRate": 3.8},
+    "timeline": [{"date": "2026-09-13", "visits": 18}],
+    "sources": [{"name": "Прямые заходы", "visits": 50}],
+    "pages": [{"name": "/", "views": 100}],
+    "goals": [{"name": "telegram_click", "reaches": 5}],
+    "meta": {"period": "7 дней, включая сегодня", "lastDataAt": "2026-09-13", "lastSuccessfulAt": "2026-09-14T10:00:00.000Z"}
+  },
+  "google": {
+    "summary": {"clicks": 12, "impressions": 340, "previousClicks": 9, "previousImpressions": 280},
+    "queries": [{"name": "варги лыжи", "clicks": 4, "impressions": 30, "ctr": 13.3, "position": 3.2}],
+    "meta": {"period": "7 последних доступных дней", "lastDataAt": "2026-09-12", "lastSuccessfulAt": "2026-09-14T10:00:00.000Z"}
+  },
+  "clarity": {
+    "summary": {"sessions": 70, "deadClicks": 2, "rageClicks": 1, "quickbacks": 3, "scriptErrors": 0},
+    "raw": [],
+    "meta": {"period": "последние 72 часа", "lastDataAt": "2026-09-14T10:00:00.000Z", "lastSuccessfulAt": "2026-09-14T10:00:00.000Z"}
+  },
+  "health": {
+    "yandex": {"ok": true, "stale": false, "message": "Данные получены", "period": "7 дней, включая сегодня", "lastDataAt": "2026-09-13"},
+    "google": {"ok": true, "stale": false, "message": "Данные получены", "period": "7 последних доступных дней", "lastDataAt": "2026-09-12"},
+    "clarity": {"ok": true, "stale": false, "message": "Данные получены", "period": "последние 72 часа", "lastDataAt": "2026-09-14T10:00:00.000Z"}
+  }
+}
