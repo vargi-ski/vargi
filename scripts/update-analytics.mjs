@@ -61,6 +61,7 @@ async function fetchYandex(){
 }
 
 const GSC_HOST='xn----7sbbfg4a6clj5k.xn--p1ai';
+const GA4_PROPERTY_ID='554020457';
 async function googleAccessToken(){const body=new URLSearchParams({client_id:env.GSC_CLIENT_ID,client_secret:env.GSC_CLIENT_SECRET,refresh_token:env.GSC_REFRESH_TOKEN,grant_type:'refresh_token'});const r=await json('https://oauth2.googleapis.com/token',{method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body});return r.access_token}
 const b64url=value=>Buffer.from(value).toString('base64url');
 function serviceAccountCredentials(){
@@ -78,7 +79,7 @@ async function googleServiceAccountAccessToken(){
   const now=Math.floor(Date.now()/1000);
   const tokenUrl=credentials.token_uri||'https://oauth2.googleapis.com/token';
   const header=b64url(JSON.stringify({alg:'RS256',typ:'JWT'}));
-  const claims=b64url(JSON.stringify({iss:credentials.client_email,scope:'https://www.googleapis.com/auth/webmasters.readonly',aud:tokenUrl,iat:now,exp:now+3600}));
+  const claims=b64url(JSON.stringify({iss:credentials.client_email,scope:'https://www.googleapis.com/auth/webmasters.readonly https://www.googleapis.com/auth/analytics.readonly',aud:tokenUrl,iat:now,exp:now+3600}));
   const unsigned=`${header}.${claims}`;
   const signer=createSign('RSA-SHA256');
   signer.update(unsigned);
@@ -117,6 +118,24 @@ async function fetchGoogle(){
   throw new Error(errors.join('; '));
 }
 
+async function ga4Report(token,body){return json(`https://analyticsdata.googleapis.com/v1beta/properties/${GA4_PROPERTY_ID}:runReport`,{method:'POST',headers:{Authorization:`Bearer ${token}`,'content-type':'application/json'},body:JSON.stringify(body)})}
+const ga4Metric=(row,index=0)=>num(row?.metricValues?.[index]?.value);
+async function fetchGa4(){
+  if(!env.GSC_SERVICE_ACCOUNT_JSON)throw new Error('Для GA4 не подключён сервисный аккаунт');
+  const token=await googleServiceAccountAccessToken();
+  const metrics=['activeUsers','sessions','screenPageViews','eventCount'].map(name=>({name}));
+  const [current,previous,timeline,sources,pages]=await Promise.all([
+    ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],metrics}),
+    ga4Report(token,{dateRanges:[{startDate:'13daysAgo',endDate:'7daysAgo'}],metrics}),
+    ga4Report(token,{dateRanges:[{startDate:'13daysAgo',endDate:'today'}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
+    ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],dimensions:[{name:'sessionDefaultChannelGroup'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:'8'}),
+    ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],dimensions:[{name:'pagePathPlusQueryString'}],metrics:[{name:'screenPageViews'}],orderBys:[{metric:{metricName:'screenPageViews'},desc:true}],limit:'10'})
+  ]);
+  const cur=current.rows?.[0],prev=previous.rows?.[0];
+  console.log('GA4: авторизация через service account работает');
+  return {summary:{users:ga4Metric(cur,0),sessions:ga4Metric(cur,1),views:ga4Metric(cur,2),events:ga4Metric(cur,3),previousUsers:ga4Metric(prev,0),previousSessions:ga4Metric(prev,1),previousViews:ga4Metric(prev,2),previousEvents:ga4Metric(prev,3)},timeline:(timeline.rows||[]).map(x=>({date:String(x.dimensionValues?.[0]?.value||'').replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3'),sessions:ga4Metric(x)})),sources:(sources.rows||[]).map(x=>({name:x.dimensionValues?.[0]?.value||'Не определено',sessions:ga4Metric(x)})),pages:(pages.rows||[]).map(x=>({name:x.dimensionValues?.[0]?.value||'/',views:ga4Metric(x)})),meta:{period:'7 дней, включая сегодня',lastDataAt:new Date().toISOString()}};
+}
+
 async function fetchClarity(){const raw=await json('https://www.clarity.ms/export-data/api/v1/project-live-insights?numOfDays=3&dimension1=Device&dimension2=Source',{headers:{Authorization:`Bearer ${env.CLARITY_API_TOKEN}`,'content-type':'application/json'}});const total=(patterns,fields)=>{const blocks=(raw||[]).filter(x=>patterns.some(pattern=>pattern.test(String(x.metricName||''))));return blocks.reduce((sum,block)=>sum+(block.information||[]).reduce((s,row)=>s+fields.reduce((n,k)=>n+num(row[k]),0),0),0)};return{summary:{deadClicks:total([/dead click/i],['deadClickCount','DeadClickCount']),rageClicks:total([/rage click/i],['rageClickCount','RageClickCount']),quickbacks:total([/quickback/i],['quickbackClickCount','QuickbackClickCount']),scriptErrors:total([/script error/i],['scriptErrorCount','ScriptErrorCount']),sessions:total([/^traffic$/i,/traffic/i],['totalSessionCount','TotalSessionCount'])},raw,meta:{period:'последние 72 часа',lastDataAt:new Date().toISOString()}}}
 
 async function mock(){return JSON.parse(await readFile(new URL('../tests/mock-data.json',import.meta.url),'utf8'))}
@@ -134,7 +153,7 @@ async function* payloadCandidates(password){
   }
 }
 async function restoreLastSuccessful(payload,password){
-  const failed=['yandex','google','clarity'].filter(name=>!payload.health[name]?.ok);
+  const failed=['yandex','google','ga4','clarity'].filter(name=>!payload.health[name]?.ok);
   if(!failed.length)return payload;
   const pending=new Set(failed);
   for await(const previous of payloadCandidates(password)){
@@ -153,6 +172,6 @@ async function restoreLastSuccessful(payload,password){
   return payload;
 }
 
-async function main(){let payload;const password=env.DASHBOARD_PASSWORD||(env.MOCK_MODE==='1'?'vargi-test':'');if(env.MOCK_MODE==='1'){payload=await mock()}else{const missing=required.filter(k=>!env[k]);if(missing.length)throw new Error(`Missing secrets: ${missing.join(', ')}`);const [yandex,google,clarity]=await Promise.all([safe(fetchYandex,{summary:{},timeline:[],sources:[],pages:[],goals:[],meta:{period:'7 дней, включая сегодня'}}),safe(fetchGoogle,{summary:{},queries:[],meta:{period:'7 последних доступных дней'}}),safe(fetchClarity,{summary:{},raw:[],meta:{period:'последние 72 часа'}})]);const generatedAt=new Date().toISOString();for(const source of [yandex,google,clarity])if(!source.__error)source.meta={...source.meta,lastSuccessfulAt:generatedAt};const healthFor=source=>({ok:!source.__error,stale:false,message:source.__error||'Данные получены',period:source.meta?.period||'',lastDataAt:source.meta?.lastDataAt||null,lastSuccessfulAt:source.meta?.lastSuccessfulAt||null,dataLagSeconds:source.meta?.dataLagSeconds||0});payload={generatedAt,period:{yandex:yandex.meta?.period,google:google.meta?.period,clarity:clarity.meta?.period},yandex,google,clarity,health:{yandex:healthFor(yandex),google:healthFor(google),clarity:healthFor(clarity)}};payload=await restoreLastSuccessful(payload,password)}
+async function main(){let payload;const password=env.DASHBOARD_PASSWORD||(env.MOCK_MODE==='1'?'vargi-test':'');if(env.MOCK_MODE==='1'){payload=await mock()}else{const missing=required.filter(k=>!env[k]);if(missing.length)throw new Error(`Missing secrets: ${missing.join(', ')}`);const [yandex,google,ga4,clarity]=await Promise.all([safe(fetchYandex,{summary:{},timeline:[],sources:[],pages:[],goals:[],meta:{period:'7 дней, включая сегодня'}}),safe(fetchGoogle,{summary:{},queries:[],meta:{period:'7 последних доступных дней'}}),safe(fetchGa4,{summary:{},timeline:[],sources:[],pages:[],meta:{period:'7 дней, включая сегодня'}}),safe(fetchClarity,{summary:{},raw:[],meta:{period:'последние 72 часа'}})]);const generatedAt=new Date().toISOString();for(const source of [yandex,google,ga4,clarity])if(!source.__error)source.meta={...source.meta,lastSuccessfulAt:generatedAt};const healthFor=source=>({ok:!source.__error,stale:false,message:source.__error||'Данные получены',period:source.meta?.period||'',lastDataAt:source.meta?.lastDataAt||null,lastSuccessfulAt:source.meta?.lastSuccessfulAt||null,dataLagSeconds:source.meta?.dataLagSeconds||0});payload={generatedAt,period:{yandex:yandex.meta?.period,google:google.meta?.period,ga4:ga4.meta?.period,clarity:clarity.meta?.period},yandex,google,ga4,clarity,health:{yandex:healthFor(yandex),google:healthFor(google),ga4:healthFor(ga4),clarity:healthFor(clarity)}};payload=await restoreLastSuccessful(payload,password)}
   await mkdir(dirname(OUT),{recursive:true});await writeFile(OUT,JSON.stringify(await encrypt(payload,password),null,2)+'\n');console.log(`Encrypted analytics written to ${OUT}`)}
 main().catch(e=>{console.error(e);process.exit(1)});
