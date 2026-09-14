@@ -43,6 +43,7 @@ jobs:
           GSC_CLIENT_ID: ${{ secrets.GSC_CLIENT_ID }}
           GSC_CLIENT_SECRET: ${{ secrets.GSC_CLIENT_SECRET }}
           GSC_REFRESH_TOKEN: ${{ secrets.GSC_REFRESH_TOKEN }}
+          GSC_SERVICE_ACCOUNT_JSON: ${{ secrets.GSC_SERVICE_ACCOUNT_JSON }}
           GSC_BRIDGE_URL: ${{ secrets.GSC_BRIDGE_URL }}
           GSC_BRIDGE_KEY: ${{ secrets.GSC_BRIDGE_KEY }}
           DASHBOARD_PASSWORD: ${{ secrets.DASHBOARD_PASSWORD }}
