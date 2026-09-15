@@ -13,6 +13,23 @@ const sleep = ms => new Promise(r=>setTimeout(r,ms));
 const iso = d => d.toISOString().slice(0,10);
 const daysAgo = n => { const d=new Date(); d.setUTCDate(d.getUTCDate()-n); return iso(d); };
 const num = v => Number(v||0);
+const normalizePagePath = value => {
+  let path=String(value||'/').split(/[?#]/)[0]||'/';
+  try{path=decodeURIComponent(path)}catch{}
+  if(!path.startsWith('/'))path='/'+path;
+  path=path.replace(/\/{2,}/g,'/');
+  if(path!=='/'&&!path.endsWith('/'))path+='/';
+  return path;
+};
+const aggregatePages = (rows, readName, readViews, limit=10) => {
+  const totals=new Map();
+  for(const row of rows||[]){
+    const name=normalizePagePath(readName(row));
+    if(name.startsWith('/analytics-dashboard/'))continue;
+    totals.set(name,(totals.get(name)||0)+num(readViews(row)));
+  }
+  return [...totals].map(([name,views])=>({name,views})).sort((a,b)=>b.views-a.views).slice(0,limit);
+};
 const googleAppsScriptAccessError = message => {
   const value=String(message||'');
   if(!/\b403\b/i.test(value))return '';
@@ -57,7 +74,7 @@ async function fetchYandex(){
   if(goals.length){const names=goals.map(g=>`ym:s:goal${g.id}reaches`).join(',');const [gr,prevGr]=await Promise.all([yandexReport({date1:'6daysAgo',date2:'today',metrics:names}),yandexReport({date1:'13daysAgo',date2:'7daysAgo',metrics:names})]);goalRows=goals.map((g,i)=>({name:g.name,reaches:num(gr.totals?.[i])})).sort((a,b)=>b.reaches-a.reaches);previousReaches=(prevGr.totals||[]).reduce((s,x)=>s+num(x),0)}
   const reaches=goalRows.reduce((s,x)=>s+x.reaches,0),previousVisits=metric(previous,0);
   const timelineRows=(timeline.data||[]).map(x=>({date:x.dimensions[0].name,visits:num(x.metrics[0])}));
-  return {summary:{visits:metric(current,0),users:metric(current,1),pageviews:metric(current,2),bounceRate:metric(current,3),avgDuration:metric(current,4),conversionRate:metric(current,0)?reaches/metric(current,0)*100:0,previousVisits,previousUsers:metric(previous,1),previousPageviews:metric(previous,2),previousConversionRate:previousVisits?previousReaches/previousVisits*100:0},timeline:timelineRows,sources:(sources.data||[]).slice(0,8).map(x=>({name:x.dimensions[0].name,visits:num(x.metrics[0])})),pages:(pages.data||[]).slice(0,10).map(x=>({name:x.dimensions[0].name,views:num(x.metrics[0])})),goals:goalRows,meta:{period:'7 дней, включая сегодня',dataLagSeconds:num(current.data_lag),lastDataAt:timelineRows.at(-1)?.date||iso(new Date())}};
+  return {summary:{visits:metric(current,0),users:metric(current,1),pageviews:metric(current,2),bounceRate:metric(current,3),avgDuration:metric(current,4),conversionRate:metric(current,0)?reaches/metric(current,0)*100:0,previousVisits,previousUsers:metric(previous,1),previousPageviews:metric(previous,2),previousConversionRate:previousVisits?previousReaches/previousVisits*100:0},timeline:timelineRows,sources:(sources.data||[]).slice(0,8).map(x=>({name:x.dimensions[0].name,visits:num(x.metrics[0])})),pages:aggregatePages(pages.data||[],x=>x.dimensions[0].name,x=>x.metrics[0],10),goals:goalRows,meta:{period:'7 дней, включая сегодня',dataLagSeconds:num(current.data_lag),lastDataAt:timelineRows.at(-1)?.date||iso(new Date())}};
 }
 
 const GSC_HOST='xn----7sbbfg4a6clj5k.xn--p1ai';
@@ -129,11 +146,11 @@ async function fetchGa4(){
     ga4Report(token,{dateRanges:[{startDate:'13daysAgo',endDate:'7daysAgo'}],metrics}),
     ga4Report(token,{dateRanges:[{startDate:'13daysAgo',endDate:'today'}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
     ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],dimensions:[{name:'sessionDefaultChannelGroup'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:'8'}),
-    ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],dimensions:[{name:'pagePath'}],metrics:[{name:'screenPageViews'}],orderBys:[{metric:{metricName:'screenPageViews'},desc:true}],limit:'10'})
+    ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],dimensions:[{name:'pagePath'}],metrics:[{name:'screenPageViews'}],orderBys:[{metric:{metricName:'screenPageViews'},desc:true}],limit:'50'})
   ]);
   const cur=current.rows?.[0],prev=previous.rows?.[0];
   console.log('GA4: авторизация через service account работает');
-  return {summary:{users:ga4Metric(cur,0),sessions:ga4Metric(cur,1),views:ga4Metric(cur,2),events:ga4Metric(cur,3),previousUsers:ga4Metric(prev,0),previousSessions:ga4Metric(prev,1),previousViews:ga4Metric(prev,2),previousEvents:ga4Metric(prev,3)},timeline:(timeline.rows||[]).map(x=>({date:String(x.dimensionValues?.[0]?.value||'').replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3'),sessions:ga4Metric(x)})),sources:(sources.rows||[]).map(x=>({name:x.dimensionValues?.[0]?.value||'Не определено',sessions:ga4Metric(x)})),pages:(pages.rows||[]).map(x=>({name:x.dimensionValues?.[0]?.value||'/',views:ga4Metric(x)})),meta:{period:'7 дней, включая сегодня',lastDataAt:new Date().toISOString()}};
+  return {summary:{users:ga4Metric(cur,0),sessions:ga4Metric(cur,1),views:ga4Metric(cur,2),events:ga4Metric(cur,3),previousUsers:ga4Metric(prev,0),previousSessions:ga4Metric(prev,1),previousViews:ga4Metric(prev,2),previousEvents:ga4Metric(prev,3)},timeline:(timeline.rows||[]).map(x=>({date:String(x.dimensionValues?.[0]?.value||'').replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3'),sessions:ga4Metric(x)})),sources:(sources.rows||[]).map(x=>({name:x.dimensionValues?.[0]?.value||'Не определено',sessions:ga4Metric(x)})),pages:aggregatePages(pages.rows||[],x=>x.dimensionValues?.[0]?.value||'/',x=>ga4Metric(x),10),meta:{period:'7 дней, включая сегодня',lastDataAt:new Date().toISOString()}};
 }
 
 async function fetchClarity(){const raw=await json('https://www.clarity.ms/export-data/api/v1/project-live-insights?numOfDays=3&dimension1=Device&dimension2=Source',{headers:{Authorization:`Bearer ${env.CLARITY_API_TOKEN}`,'content-type':'application/json'}});const total=(patterns,fields)=>{const blocks=(raw||[]).filter(x=>patterns.some(pattern=>pattern.test(String(x.metricName||''))));return blocks.reduce((sum,block)=>sum+(block.information||[]).reduce((s,row)=>s+fields.reduce((n,k)=>n+num(row[k]),0),0),0)};return{summary:{deadClicks:total([/dead click/i],['deadClickCount','DeadClickCount']),rageClicks:total([/rage click/i],['rageClickCount','RageClickCount']),quickbacks:total([/quickback/i],['quickbackClickCount','QuickbackClickCount']),scriptErrors:total([/script error/i],['scriptErrorCount','ScriptErrorCount']),sessions:total([/^traffic$/i,/traffic/i],['totalSessionCount','TotalSessionCount'])},raw,meta:{period:'последние 72 часа',lastDataAt:new Date().toISOString()}}}
