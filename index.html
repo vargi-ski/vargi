@@ -449,31 +449,83 @@
       linear-gradient(0deg,rgba(7,10,13,.58),transparent 52%),
       url('/assets/camps-ski-sunrise.webp') 63% center/cover no-repeat}
   /* ---------- PACK GEOGRAPHY ---------- */
-  .geo-section{overflow:hidden; background:radial-gradient(circle at 38% 48%,rgba(62,155,214,.11),transparent 42%)}
-  .geo-map{position:relative; min-height:520px; margin-top:34px; overflow:hidden; border:1px solid var(--line2);
-    border-radius:16px; background:
-      linear-gradient(rgba(36,53,65,.12) 1px,transparent 1px),
-      linear-gradient(90deg,rgba(36,53,65,.12) 1px,transparent 1px),
-      radial-gradient(circle at 34% 32%,rgba(62,155,214,.13),transparent 44%),#090e12;
-    background-size:52px 52px,52px 52px,auto,auto}
-  .geo-map:before{content:"СЕВЕРО-ЗАПАД  •  ЦЕНТР"; position:absolute; right:20px; bottom:14px;
-    color:rgba(111,126,137,.28); font-family:'Oswald'; letter-spacing:.24em; font-size:12px}
-  .geo-route{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
-  .geo-route path{fill:none; stroke:rgba(62,155,214,.35); stroke-width:2; stroke-dasharray:8 8}
-  .geo-node{position:absolute; width:min(220px,25%); padding:13px 14px 13px 34px; border:1px solid var(--line2);
-    border-radius:11px; background:rgba(9,15,20,.94); color:var(--ink); text-align:left; cursor:pointer;
-    transition:transform .2s,border-color .2s,box-shadow .2s}
-  .geo-node:hover{transform:translateY(-3px); border-color:var(--ice); box-shadow:0 12px 30px rgba(0,0,0,.35)}
+  .geo-section{overflow:hidden; background:
+    radial-gradient(circle at 29% 50%,rgba(62,155,214,.13),transparent 39%),
+    linear-gradient(180deg,transparent,rgba(12,23,31,.34) 52%,transparent)}
+  .geo-map{position:relative; margin-top:34px; padding:16px; overflow:hidden; border:1px solid var(--line2);
+    border-radius:18px; background:
+      linear-gradient(rgba(36,53,65,.1) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(36,53,65,.1) 1px,transparent 1px),
+      radial-gradient(circle at 26% 38%,rgba(62,155,214,.12),transparent 42%),#080d11;
+    background-size:48px 48px,48px 48px,auto,auto; box-shadow:0 28px 80px rgba(0,0,0,.32)}
+  .geo-eye{cursor:pointer;fill:#c4f2ff;filter:drop-shadow(0 0 3px #7bdbff) drop-shadow(0 0 7px #38bfff)}
+  .geo-eye circle:not(:first-of-type){fill:white}
+  .geo-eye:hover,.geo-eye:focus{filter:drop-shadow(0 0 4px white) drop-shadow(0 0 12px #38bfff);outline:none}
+  .geo-eye:focus-visible circle:first-of-type{stroke:#fff;stroke-width:1}
+  .geo-eye-label{display:none;fill:#d6ebf4;font:7px Arial,sans-serif;paint-order:stroke;stroke:#08121a;stroke-width:2px;stroke-linejoin:round;pointer-events:none}
+  .geo-russia.is-near .geo-eye-label{display:block}
+  .geo-russia.is-near .geo-eye path{transform:scale(.65)}
+  .geo-russia.is-near .geo-eye circle:not(:first-of-type){display:none}
+  .geo-map-controls{position:absolute;z-index:4;left:18px;top:42px;display:flex;gap:6px}
+  .geo-map-controls button{min-height:36px;padding:6px 10px;border:1px solid #315263;border-radius:7px;background:#0b1720;color:#b4ccda;font:11px Arial,sans-serif;cursor:pointer}
+  .geo-map-controls button[aria-pressed="true"]{color:#e8faff;background:#194052;border-color:#72c7ec}
+  .geo-map-controls button:focus-visible{outline:2px solid white;outline-offset:2px}
+  .geo-source{margin-top:12px;font-size:11px;color:var(--muted2)}
+  .geo-source summary{cursor:pointer}
+  .geo-source a{text-decoration:underline}
+  .geo-dashboard{display:grid; grid-template-columns:minmax(0,1.28fr) minmax(390px,.92fr); gap:14px}
+  .geo-russia{position:relative; min-height:458px; overflow:hidden; border:1px solid rgba(72,119,145,.3);
+    border-radius:13px; background:linear-gradient(145deg,rgba(14,27,36,.92),rgba(5,9,12,.98))}
+  .geo-russia:after{content:""; position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg,rgba(6,10,13,.05),rgba(6,10,13,.56)),
+      radial-gradient(circle at 25% 36%,rgba(118,201,239,.12),transparent 34%)}
+  .geo-russia-map{position:absolute; z-index:1; inset:85px 17px 62px; width:calc(100% - 34px); height:calc(100% - 147px);
+    object-fit:contain; filter:drop-shadow(0 13px 24px rgba(0,0,0,.46))}
+  .geo-map-kicker{position:absolute; z-index:3; left:18px; top:16px; display:flex; align-items:center; gap:9px;
+    color:var(--ice-hi); font-family:'Oswald'; font-size:10px; letter-spacing:.18em; text-transform:uppercase}
+  .geo-map-kicker:before{content:""; width:7px; height:7px; border-radius:50%; background:var(--ice-hi);
+    box-shadow:0 0 0 5px rgba(62,155,214,.11),0 0 18px rgba(62,155,214,.56)}
+  .geo-map-kicker small{color:var(--muted2); font-size:9px; letter-spacing:.12em}
+  .geo-crimea-tag{position:absolute; z-index:3; left:8.5%; bottom:12%; display:flex; align-items:center; gap:5px;
+    color:rgba(143,208,239,.78); font-family:'Oswald'; font-size:9px; letter-spacing:.15em; text-transform:uppercase}
+  .geo-crimea-tag:before{content:""; width:5px; height:5px; border-radius:50%; background:var(--ice-hi);
+    box-shadow:0 0 10px rgba(118,201,239,.8)}
+  .geo-map-summary{position:absolute; z-index:3; left:18px; right:18px; bottom:15px; display:flex; align-items:flex-end; gap:13px;
+    padding-top:12px; border-top:1px solid rgba(75,118,140,.28)}
+  .geo-map-summary strong{color:#fff; font-family:'Oswald'; font-size:34px; line-height:.85}
+  .geo-map-summary span{max-width:235px; color:var(--muted); font-size:11px; line-height:1.35}
+  .geo-map-summary em{margin-left:auto; color:var(--ice); font-family:'Oswald'; font-size:10px; font-style:normal;
+    letter-spacing:.13em; text-transform:uppercase}
+  .geo-regions{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px}
+  .geo-node{position:relative; min-width:0; min-height:102px; padding:14px; overflow:hidden; border:1px solid var(--line2);
+    border-radius:12px; background:linear-gradient(135deg,rgba(12,21,27,.98),rgba(7,11,15,.96)); color:var(--ink);
+    text-align:left; cursor:pointer; transition:transform .2s,border-color .2s,box-shadow .2s}
+  .geo-node:after{content:""; position:absolute; z-index:0; inset:0; pointer-events:none;
+    background:linear-gradient(90deg,rgba(6,11,15,.98) 0%,rgba(6,11,15,.86) 58%,rgba(6,11,15,.18) 100%)}
+  .geo-node:hover{transform:translateY(-3px); border-color:rgba(143,208,239,.72); box-shadow:0 12px 30px rgba(0,0,0,.4)}
   .geo-node:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
-  .geo-node:before{content:""; position:absolute; left:14px; top:18px; width:8px; height:8px; border-radius:50%;
-    background:var(--ice-hi); box-shadow:0 0 0 5px rgba(62,155,214,.13),0 0 16px rgba(62,155,214,.7)}
-  .geo-node strong{display:block; font-family:'Oswald'; text-transform:uppercase; font-size:15px; line-height:1.2}
-  .geo-node span{display:block; margin-top:4px; color:var(--muted); font-size:11px; line-height:1.4}
-  .geo-north{left:4%; top:7%}.geo-arkhangelsk{left:29%; top:30%}.geo-karelia{left:7%; top:62%}
-  .geo-komi{left:57%; top:8%}.geo-moscow{right:4%; top:40%}.geo-kostroma{left:38%; top:68%}
-  .geo-voronezh{right:5%; top:76%}
+  .geo-node:nth-child(7){grid-column:1/-1; min-height:82px}
+  .geo-crest{position:absolute; z-index:0; right:-5px; top:-10px; width:96px; height:112px; object-fit:contain;
+    opacity:.32; filter:grayscale(1) saturate(.25) contrast(1.12); transition:opacity .2s,transform .2s}
+  .geo-node:hover .geo-crest{opacity:.45; transform:scale(1.035)}
+  .geo-node-copy{position:relative; z-index:2; display:flex; min-height:72px; flex-direction:column; align-items:flex-start}
+  .geo-node strong{display:block; max-width:85%; font-family:'Oswald'; text-transform:uppercase; font-size:14px; line-height:1.16}
+  .geo-node-copy>span:not(.geo-pack-count){display:block; max-width:84%; margin-top:4px; color:var(--muted); font-size:10px; line-height:1.35}
+  .geo-pack-count{display:flex; align-items:center; gap:7px; margin-top:auto; padding-top:8px}
+  .geo-wolves{display:flex; align-items:center}
+  .geo-wolf{display:block; width:16px; height:16px; margin-right:-2px; filter:drop-shadow(0 0 5px rgba(62,155,214,.28))}
+  .geo-pack-count em{color:var(--ice-hi); font-family:'Oswald'; font-size:9px; font-style:normal;
+    letter-spacing:.09em; text-transform:uppercase; white-space:nowrap}
+  .geo-recruit{display:inline-flex; align-items:center; gap:6px; color:var(--ice-hi); font-family:'Oswald';
+    font-size:9px; font-style:normal; letter-spacing:.12em; text-transform:uppercase}
+  .geo-recruit:before{content:"+"; display:grid; width:16px; height:16px; place-items:center; border:1px solid var(--ice);
+    border-radius:50%; color:#fff; font-size:12px}
   .geo-legend{display:flex; align-items:center; gap:9px; margin-top:13px; color:var(--muted2); font-size:12px}
-  .geo-legend:before{content:""; width:8px; height:8px; border-radius:50%; background:var(--ice)}
+  .geo-legend:before{content:""; width:17px; height:17px; background:url('assets/geography/wolf-head.svg') center/contain no-repeat}
+  .geo-modal{position:relative; overflow:hidden}
+  .geo-modal .geo-modal-crest{position:absolute; right:-16px; top:-20px; width:150px; height:170px; object-fit:contain;
+    opacity:.09; filter:grayscale(1)}
+  .geo-modal>*:not(.geo-modal-crest){position:relative; z-index:1}
 
   /* ---------- NEXT HUNT ---------- */
   .hunt-section{padding-bottom:0}
@@ -580,7 +632,9 @@
     .hunt-card{grid-template-columns:170px minmax(0,1fr)}
     .hunt-side{grid-column:1/-1; flex-direction:row}
     .hunt-side>*{flex:1}
-    .geo-map{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; min-height:0; padding:16px}
+    .geo-dashboard{grid-template-columns:1fr}
+    .geo-russia{min-height:320px}
+    .geo-map{padding:12px}
     .geo-map:before,.geo-route{display:none}
     .geo-node{position:relative; inset:auto; width:100%; min-height:76px}
     .wolf-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
@@ -607,7 +661,9 @@
     .ai-demo-actions .btn{width:100%}
     .ai-demo-visual{min-height:250px; order:-1; border-left:0; border-top:0; border-bottom:1px solid var(--line2);
       background-position:62% center}
-    .geo-map{grid-template-columns:1fr}
+    .geo-regions{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding:4px 2px 12px}
+    .geo-node{flex:0 0 82%;scroll-snap-align:start}
+    .geo-russia{min-height:360px}
     .hunt-card{grid-template-columns:1fr; gap:18px; padding:22px}
     .hunt-count{padding:0 0 16px; border-right:0; border-bottom:1px solid var(--line2)}
     .hunt-side{grid-column:auto; flex-direction:column; min-width:0}
@@ -788,7 +844,6 @@
       <div class="reserve-head">
         <div><div class="eyebrow">Единая команда</div><h3>Расширенный <span class="ice">состав</span></h3></div>
         <p>Одна команда, общие старты и ценности. Здесь собраны участники, которые тренируются, общаются и выходят на дистанции вместе с ВАРГИ.</p>
-        <div class="reserve-capacity">До 15 участников</div>
       </div>
       <div class="reserve-slider">
         <button class="reserve-arrow prev" id="reservePrev" type="button" aria-label="Предыдущие участники">‹</button>
@@ -807,34 +862,52 @@
   <div class="wrap">
     <div class="eyebrow">География стаи</div>
     <h2>От Заполярья<br><span class="ice">до центра России.</span></h2>
-    <p class="lead">ВАРГИ объединяет спортсменов из разных регионов. Нажмите на точку, чтобы увидеть, кто представляет стаю в этом направлении.</p>
+    <p class="lead">ВАРГИ объединяет спортсменов из разных регионов. Выберите город или регион, чтобы увидеть участников стаи.</p>
     <div class="geo-map reveal" aria-label="География участников и тренировочных направлений ВАРГИ">
-      <svg class="geo-route" viewBox="0 0 1000 520" preserveAspectRatio="none" aria-hidden="true">
-        <path d="M150 70 C245 92,245 150,390 190 S555 60,690 90 S765 190,830 235 S640 325,485 370 S650 432,820 438"/>
-      </svg>
-      <button class="geo-node geo-north" type="button" data-geo-title="Мурманская область" data-geo-copy="Артем Грязев — родом из Мурманска. Регион также представляют Екатерина Бурянина, Константин Нечаев, Дмитрий Меньшаков и Андрей Касьяненко.">
+      <div class="geo-dashboard">
+        <div class="geo-russia">
+          <div class="geo-map-kicker">Территория стаи</div>
+          <div class="geo-map-controls" aria-label="Масштаб карты"><button type="button" data-map-view="all" aria-pressed="true">Вся страна</button><button type="button" data-map-view="near" aria-pressed="false">Ближе к стае</button></div>
+          <svg class="geo-russia-map" viewBox="0 0 1100 460" aria-label="Карта городов стаи">
+            <image href="assets/geography/russia-map.svg" width="1100" height="460"/>
+<g class="geo-eye" transform="translate(100.76 152.36)" data-region="0" role="button" tabindex="0" aria-label="Мурманск · Мончегорск: открыть регион"><title>Мурманск · Мончегорск</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Мурманск · Мончегорск</text></g>
+            <g class="geo-eye" transform="translate(142.89 198.34)" data-region="1" role="button" tabindex="0" aria-label="Северодвинск: открыть регион"><title>Северодвинск</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Северодвинск</text></g>
+            <g class="geo-eye" transform="translate(108.69 227.32)" data-region="2" role="button" tabindex="0" aria-label="Петрозаводск · Мелиоративный: открыть регион"><title>Петрозаводск · Мелиоративный</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Петрозаводск · Мелиоративный</text></g>
+            <g class="geo-eye" transform="translate(100.57 180.51)" data-region="2" role="button" tabindex="0" aria-label="Чупа: открыть регион"><title>Чупа</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="-12" y="1" text-anchor="end">Чупа</text></g>
+            <g class="geo-eye" transform="translate(229.39 208.66)" data-region="3" role="button" tabindex="0" aria-label="Ухта · Сосногорск: открыть регион"><title>Ухта · Сосногорск</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Ухта · Сосногорск</text></g>
+            <g class="geo-eye" transform="translate(129.1 290.19)" data-region="4" role="button" tabindex="0" aria-label="Москва · Зеленоград: открыть регион"><title>Москва · Зеленоград</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Москва · Зеленоград</text></g>
+            <g class="geo-eye" transform="translate(149.75 269.13)" data-region="5" role="button" tabindex="0" aria-label="Кострома: открыть регион"><title>Кострома</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Кострома</text></g>
+            <g class="geo-eye" transform="translate(138.96 332.83)" data-region="6" role="button" tabindex="0" aria-label="Воронеж: открыть регион"><title>Воронеж</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Воронеж</text></g>
+          </svg>
+          <div class="geo-map-summary"><span>Ледяные глаза — города стаи.<br>Близкие города объединены в одну отметку.</span></div>
+        </div>
+        <div class="geo-regions">
+      <button class="geo-node geo-north" type="button" data-geo-title="Мурманская область" data-geo-copy="Артем Грязев — родом из Мурманска. Регион также представляют Екатерина Бурянина, Константин Нечаев, Дмитрий Меньшаков и Андрей Касьяненко."><img class="geo-crest" src="assets/geography/murmansk.webp" alt="" loading="lazy" width="96" height="112"><span class="geo-node-copy">
         <strong>Мурманская область</strong><span>Мурманск · Мончегорск</span>
-      </button>
-      <button class="geo-node geo-arkhangelsk" type="button" data-geo-title="Архангельская область" data-geo-copy="Северодвинск в расширенном составе ВАРГИ представляет Василий Соснин.">
+      <span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"></span><em>5 в стае</em></span></span></button>
+      <button class="geo-node geo-arkhangelsk" type="button" data-geo-title="Архангельская область" data-geo-copy="Северодвинск в расширенном составе ВАРГИ представляет Василий Соснин."><img class="geo-crest" src="assets/geography/severodvinsk.webp" alt="" loading="lazy" width="96" height="112"><span class="geo-node-copy">
         <strong>Архангельская область</strong><span>Северодвинск</span>
-      </button>
-      <button class="geo-node geo-karelia" type="button" data-geo-title="Республика Карелия" data-geo-copy="Павел Сарин, Елена Богданова, Лариса Иванова, Алексей Кондратьев, Полина Сероносова и Климентий Агалаков.">
+      <span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"></span><em>1 в стае</em></span></span></button>
+      <button class="geo-node geo-karelia" type="button" data-geo-title="Республика Карелия" data-geo-copy="Павел Сарин, Елена Богданова, Лариса Иванова, Алексей Кондратьев, Полина Сероносова и Климентий Агалаков."><img class="geo-crest" src="assets/geography/petrozavodsk.webp" alt="" loading="lazy" width="96" height="112"><span class="geo-node-copy">
         <strong>Республика Карелия</strong><span>Петрозаводск · Чупа · Мелиоративный</span>
-      </button>
-      <button class="geo-node geo-komi" type="button" data-geo-title="Республика Коми" data-geo-copy="Республику Коми в стае представляют Людмила Удалова и Алексей Мошкин.">
+      <span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"></span><em>6 в стае</em></span></span></button>
+      <button class="geo-node geo-komi" type="button" data-geo-title="Республика Коми" data-geo-copy="Республику Коми в стае представляют Людмила Удалова и Алексей Мошкин."><img class="geo-crest" src="assets/geography/ukhta.webp" alt="" loading="lazy" width="96" height="112"><span class="geo-node-copy">
         <strong>Республика Коми</strong><span>Ухта · Сосногорск</span>
-      </button>
-      <button class="geo-node geo-moscow" type="button" data-geo-title="Москва и Московская область" data-geo-copy="Центральное направление ВАРГИ представляют Валерия Максименко и Максим Зубцов. В Москве формируется группа для совместных тренировок.">
+      <span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"></span><em>2 в стае</em></span></span></button>
+      <button class="geo-node geo-moscow" type="button" data-geo-title="Москва и Московская область" data-geo-copy="Центральное направление ВАРГИ представляют Валерия Максименко и Максим Зубцов. В Москве формируется группа для совместных тренировок."><img class="geo-crest" src="assets/geography/moscow.webp" alt="" loading="lazy" width="96" height="112"><span class="geo-node-copy">
         <strong>Москва и область</strong><span>Москва · Зеленоград</span>
-      </button>
-      <button class="geo-node geo-kostroma" type="button" data-geo-title="Костромская область" data-geo-copy="Кострому в расширенном составе ВАРГИ представляет Даниил Махов.">
+      <span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"></span><em>2 в стае</em></span></span></button>
+      <button class="geo-node geo-kostroma" type="button" data-geo-title="Костромская область" data-geo-copy="Кострому в расширенном составе ВАРГИ представляет Даниил Махов."><img class="geo-crest" src="assets/geography/kostroma.webp" alt="" loading="lazy" width="96" height="112"><span class="geo-node-copy">
         <strong>Костромская область</strong><span>Кострома</span>
-      </button>
-      <button class="geo-node geo-voronezh" type="button" data-geo-title="Воронеж" data-geo-copy="Одно из направлений запуска групповых тренировок ВАРГИ. Группа формируется от трёх участников.">
+      <span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"></span><em>1 в стае</em></span></span></button>
+      <button class="geo-node geo-voronezh" type="button" data-geo-title="Воронеж" data-geo-copy="Одно из направлений запуска групповых тренировок ВАРГИ. Группа формируется от трёх участников."><img class="geo-crest" src="assets/geography/voronezh.webp" alt="" loading="lazy" width="96" height="112"><span class="geo-node-copy">
         <strong>Воронеж</strong><span>Тренировочное направление</span>
-      </button>
+      <span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"></span><em>Тренировки · набор группы</em></span></span></button>
+        </div>
+      </div>
     </div>
-    <div class="geo-legend">География действующих участников и направлений подготовки</div>
+    <div class="geo-legend">Один волк — один участник региона. Воронеж — направление тренировок.</div>
+    <details class="geo-source"><summary>Источники карты и гербов</summary><p>Карта: <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener">Natural Earth, public domain</a>. Гербы: Wikimedia Commons. Мурманск — MesserWoland, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>; Воронеж — Vizardis, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Изображения уменьшены и преобразованы в WebP, на сайте показаны в приглушённых цветах. <a href="assets/geography/SOURCES.md">Все источники и авторы</a>.</p></details>
   </div>
 </section>
 
@@ -1681,6 +1754,19 @@ function showOverlay(html){ oc.innerHTML=html; overlay.classList.add("show"); }
 function hideOverlay(){ overlay.classList.remove("show"); oc.innerHTML=""; }
 function openLightbox(src,alt=""){ showOverlay(`<img class="lb-img" src="${src}" alt="${alt}">`); }
 function openModal(title,text){ showOverlay(`<div class="modal"><h3>${title}</h3><p>${text}</p></div>`); }
+document.querySelectorAll("[data-map-view]").forEach(button=>{
+  button.addEventListener("click",()=>{
+    const near=button.dataset.mapView==="near";
+    document.querySelector(".geo-russia-map").setAttribute("viewBox",near?"35 120 335 240":"0 0 1100 460");
+    document.querySelector(".geo-russia").classList.toggle("is-near",near);
+    document.querySelectorAll("[data-map-view]").forEach(item=>item.setAttribute("aria-pressed",String(item===button)));
+  });
+});
+document.querySelectorAll(".geo-eye").forEach(marker=>{
+  const activate=()=>document.querySelectorAll(".geo-node")[Number(marker.dataset.region)]?.click();
+  marker.addEventListener("click",activate);
+  marker.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();activate();}});
+});
 document.querySelectorAll(".geo-node").forEach(node=>{
   node.addEventListener("click",()=>{
     openModal(node.dataset.geoTitle,node.dataset.geoCopy);
