@@ -129,7 +129,7 @@ async function fetchGa4(){
     ga4Report(token,{dateRanges:[{startDate:'13daysAgo',endDate:'7daysAgo'}],metrics}),
     ga4Report(token,{dateRanges:[{startDate:'13daysAgo',endDate:'today'}],dimensions:[{name:'date'}],metrics:[{name:'sessions'}],orderBys:[{dimension:{dimensionName:'date'}}]}),
     ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],dimensions:[{name:'sessionDefaultChannelGroup'}],metrics:[{name:'sessions'}],orderBys:[{metric:{metricName:'sessions'},desc:true}],limit:'8'}),
-    ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],dimensions:[{name:'pagePathPlusQueryString'}],metrics:[{name:'screenPageViews'}],orderBys:[{metric:{metricName:'screenPageViews'},desc:true}],limit:'10'})
+    ga4Report(token,{dateRanges:[{startDate:'6daysAgo',endDate:'today'}],dimensions:[{name:'pagePath'}],metrics:[{name:'screenPageViews'}],orderBys:[{metric:{metricName:'screenPageViews'},desc:true}],limit:'10'})
   ]);
   const cur=current.rows?.[0],prev=previous.rows?.[0];
   console.log('GA4: авторизация через service account работает');
