@@ -580,6 +580,130 @@
           "source": "https://russialoppet.ru/results/2023/327336/"
         }
       ]
+    },
+    {
+      "name": "Андрей Лисов",
+      "profile": "https://russialoppet.ru/athletes/11984/",
+      "city": "Мурманск",
+      "results": [
+        {
+          "year": 2025,
+          "event": "Вологда-Марафон Кирики-Улита",
+          "category": "Марафон",
+          "style": "skate",
+          "absPlace": 208,
+          "time": "2:04:50",
+          "group": "М 35-39",
+          "groupPlace": 40,
+          "source": "https://russialoppet.ru/results/2025/327336/"
+        },
+        {
+          "year": 2025,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "absPlace": 172,
+          "time": "2:47:37",
+          "group": "М 35-39",
+          "groupPlace": 38,
+          "source": "https://russialoppet.ru/results/2025/842/"
+        },
+        {
+          "year": 2024,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "absPlace": 414,
+          "time": "2:59:51",
+          "group": "М 35-39",
+          "groupPlace": 88,
+          "source": "https://russialoppet.ru/results/2024/842/"
+        },
+        {
+          "year": 2023,
+          "event": "Праздник Севера",
+          "category": "25 км",
+          "style": "skate",
+          "absPlace": 31,
+          "time": "1:30:29",
+          "group": "М 35-39",
+          "groupPlace": 8,
+          "source": "https://russialoppet.ru/results/2023/842/"
+        },
+        {
+          "year": 2023,
+          "event": "Токсово Марафон",
+          "category": "34 км",
+          "style": "skate",
+          "absPlace": 51,
+          "time": "2:17:31",
+          "group": "М 35-39",
+          "groupPlace": 15,
+          "source": "https://russialoppet.ru/results/2023/836/"
+        },
+        {
+          "year": 2022,
+          "event": "Праздник Севера",
+          "category": "25 км",
+          "style": "skate",
+          "absPlace": 110,
+          "time": "1:38:07",
+          "group": "М 35-39",
+          "groupPlace": 22,
+          "source": "https://russialoppet.ru/results/2022/842/"
+        },
+        {
+          "year": 2021,
+          "event": "Праздник Севера",
+          "category": "25 км",
+          "style": "skate",
+          "absPlace": 75,
+          "time": "1:26:40",
+          "group": "М 35-39",
+          "groupPlace": 13,
+          "source": "https://russialoppet.ru/results/2021/842/"
+        },
+        {
+          "year": 2010,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "absPlace": 341,
+          "time": "2:56:22",
+          "group": "М 24-29",
+          "groupPlace": 54,
+          "source": "https://russialoppet.ru/results/2010/842/"
+        },
+        {
+          "year": 2008,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "absPlace": 228,
+          "time": "2:43:36",
+          "group": "М 21-23",
+          "groupPlace": 43,
+          "source": "https://russialoppet.ru/results/2008/842/"
+        },
+        {
+          "year": 2004,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "absPlace": 300,
+          "time": "2:38:45",
+          "group": "М 19-20",
+          "groupPlace": 40,
+          "source": "https://russialoppet.ru/results/2004/842/"
+        }
+      ],
+      "summary": {
+        "marathons": 6,
+        "halfMarathons": 4,
+        "seasonMax": 2,
+        "seasonYear": 2025
+      },
+      "distanceNote": "Кирики-Улита 2025 — 40 км, исключено из рекорда на 50 км. В протоколе 2004 дистанция обозначена только как Марафон; время 2:38:45 сохранено в истории, но не объявлено рекордом ровно на 50 км без подтверждения дистанции."
     }
   ]
 }

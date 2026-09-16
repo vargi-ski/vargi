@@ -71,7 +71,7 @@
   .ice{color:var(--ice)}
   .eyebrow{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.32em;
     font-size:12px; color:var(--ice); font-weight:500}
-  .section{padding:96px 0; position:relative}
+  .section{padding:52px 0; position:relative}
   .section h2{font-size:clamp(30px,5vw,52px); text-transform:uppercase; margin:14px 0 8px}
   .lead{color:var(--muted); max-width:62ch; font-size:17px; text-align:left;
     text-wrap:pretty; hyphens:none; overflow-wrap:break-word}
@@ -208,8 +208,9 @@
   .reserve-head p{margin:0; max-width:610px; color:var(--muted); font-size:13px; line-height:1.5}
   .reserve-capacity{flex:0 0 auto; border:1px solid var(--line2); border-radius:99px; padding:7px 12px;
     color:var(--ice); font-family:'Oswald'; font-size:11px; letter-spacing:.12em; text-transform:uppercase}
-  .reserve-slider{position:relative}
-  .reserve-track{display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 48px)/5);
+  .reserve-layout{display:grid; grid-template-columns:minmax(0,4fr) minmax(0,1fr); gap:12px; align-items:stretch}
+  .reserve-slider{position:relative; min-width:0}
+  .reserve-track{display:grid; grid-auto-flow:column; grid-auto-columns:calc((100% - 36px)/4);
     gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; padding:2px 2px 8px;
     overscroll-behavior-x:contain; touch-action:pan-x pan-y}
   .reserve-track::-webkit-scrollbar{display:none}
@@ -229,7 +230,9 @@
   .reserve-join{border-style:dashed; border-color:rgba(143,208,239,.5); background:
     radial-gradient(circle at 50% 25%,rgba(62,155,214,.16),transparent 48%),rgba(10,14,18,.96);
     align-items:center; justify-content:center; text-align:center; padding:24px 18px}
-  .reserve-rune{font-size:34px; color:var(--ice); line-height:1; margin-bottom:14px}
+  .reserve-rune{width:40px; height:40px; margin-bottom:14px}
+  .reserve-join-slot{display:flex; min-width:0; padding:2px 0 8px}
+  .reserve-join-slot .reserve-card{width:100%}
   .reserve-join .reserve-name{font-size:21px}
   .reserve-join p{margin:7px 0 16px; color:var(--muted); font-size:12px; line-height:1.45}
   .reserve-arrow{position:absolute; top:50%; z-index:4; width:38px; height:38px; border:1px solid var(--line2);
@@ -244,12 +247,19 @@
   .reserve-form textarea{min-height:78px; resize:vertical}
   .reserve-form .btn{justify-content:center; width:100%; margin-top:3px; cursor:pointer}
   .reserve-form-note{color:var(--muted2); font-size:10px; line-height:1.4; text-align:center}
-  @media(max-width:1023px){.reserve-track{grid-auto-columns:calc((100% - 24px)/3)}}
+  @media(max-width:1023px){.reserve-layout{grid-template-columns:minmax(0,3fr) minmax(160px,1fr)}.reserve-track{grid-auto-columns:calc((100% - 12px)/2)}}
   @media(max-width:679px){
     .roster-tier-head,.reserve-head{align-items:flex-start; flex-direction:column}
     .reserve-block{margin-top:25px; padding-top:22px}
-    .reserve-track{grid-auto-columns:78%; gap:10px}
-    .reserve-arrow{display:none}
+    .reserve-layout{grid-template-columns:minmax(0,1fr) 128px; gap:10px}
+    .reserve-track{grid-auto-columns:100%; gap:10px}
+    .reserve-arrow{top:174px; width:32px; height:32px}
+    .reserve-arrow.prev{left:6px}.reserve-arrow.next{right:6px}
+    .reserve-join{padding:16px 10px}
+    .reserve-join .reserve-name{font-size:17px}
+    .reserve-join p{font-size:11px}
+    .reserve-join .btn{font-size:11px; padding:10px 8px; letter-spacing:.05em; width:100%}
+    .reserve-body{padding:12px 10px}.reserve-name{font-size:17px}
     .reserve-card{min-height:320px}.reserve-photo{height:195px}
     .reserve-capacity{align-self:flex-start}
   }
@@ -576,7 +586,7 @@
     .team-table{font-size:11.5px}
   }
   @media(max-width:560px){
-    .section{padding:70px 0}
+    .section{padding:36px 0}
     .values{grid-template-columns:1fr; gap:14px}
     .value b{font-size:16px}
     .value p{font-size:15px}
@@ -777,11 +787,11 @@
         <div><div class="eyebrow">Единая команда</div><h3>Расширенный <span class="ice">состав</span></h3></div>
         <p>Одна команда, общие старты и ценности. Здесь собраны участники, которые тренируются, общаются и выходят на дистанции вместе с ВАРГИ.</p>
       </div>
-      <div class="reserve-slider">
+      <div class="reserve-layout"><div class="reserve-slider">
         <button class="reserve-arrow prev" id="reservePrev" type="button" aria-label="Предыдущие участники">‹</button>
-        <div class="reserve-track" id="reservePack" aria-label="Расширенный состав ВАРГИ"></div>
+        <div class="reserve-track" id="reservePack" tabindex="0" aria-label="Расширенный состав ВАРГИ — листайте участников"></div>
         <button class="reserve-arrow next" id="reserveNext" type="button" aria-label="Следующие участники">›</button>
-      </div>
+      </div><div class="reserve-join-slot" id="reserveJoin"></div></div>
     </div>
     <p class="consent-note">* Спортивные данные приведены по официальным профилям RussiaLoppet и ФЛГР и обновляются по мере публикации результатов.</p>
   </div>
@@ -1032,10 +1042,11 @@ const ROSTER = [
 
 // Расширенный состав. Карточки компактнее основного состава; join:true — открывает анкету вступления.
 const RESERVE_ROSTER = [
+  { name:"Андрей Лисов", city:"Мурманск", record:"6 марафонов RussiaLoppet", photo:"assets/andrey-lisov.jpg", rl:"https://russialoppet.ru/athletes/11984/" },
+  { name:"Андрей Касьяненко", city:"Мурманск", record:"Дебютант RussiaLoppet", photo:"assets/andrey-kasyanenko-card-v2.webp", rl:"https://russialoppet.ru/athletes/807465/" },
   { name:"Даниил Махов", city:"Кострома", record:"12 марафонов RussiaLoppet", photo:"assets/daniil-makhov.webp", rl:"https://russialoppet.ru/athletes/377901/" },
-  { name:"Василий Соснин", city:"Северодвинск", record:"19 марафонов · КМС RL", photo:"assets/vasiliy-sosnin.webp", rl:"https://russialoppet.ru/athletes/21759/" },
-  { name:"Андрей Касьяненко", city:"Мурманск", record:"Дебютант RussiaLoppet", photo:"assets/andrey-kasyanenko-card-v2.webp", rl:"https://flgr-results.ru/athletes/102153", profileLabel:"Профиль ФЛГР", profileGoal:"reserve_flgr_profile_click" },
   { name:"Виталий Ильин", city:"Оренбург", record:"10 марафонов RussiaLoppet", photo:"assets/vitaliy-ilyin.webp", rl:"https://russialoppet.ru/athletes/20361/" },
+  { name:"Василий Соснин", city:"Северодвинск", record:"19 марафонов · КМС RL", photo:"assets/vasiliy-sosnin.webp", rl:"https://russialoppet.ru/athletes/21759/" },
   { join:true }
 ];
 
@@ -1070,6 +1081,7 @@ const ALL_MEMBERS = [...ROSTER,...RESERVE_ROSTER.filter(member=>!member.join)];
 // Сверено 16.09.2026: data/russialoppet-expanded-2026-09-16.json.
 // Сокращённые марафоны входят в общий счёт RL, но не в рекорд ровно на 50 км.
 WOLF_STATS.push(
+  {name:"Андрей Лисов",skate:6,classic:0,fastestNote:"Дистанция архивного результата уточняется",seasonMax:2,seasonYear:"2025"},
   {name:"Даниил Махов",skate:12,classic:0,fastest:"2:10:19",fastestEvent:"Деминский марафон",fastestYear:"2025",seasonMax:3,seasonNote:"Сезоны 2023–2026"},
   {name:"Василий Соснин",skate:19,classic:0,fastest:"1:56:19",fastestEvent:"Деминский марафон",fastestYear:"2019",seasonMax:4,seasonYear:"2025"},
   {name:"Андрей Касьяненко",skate:0,classic:0,fastestNote:"Дебютант RussiaLoppet",seasonMax:0,seasonNote:"Дебют в серии впереди"},
@@ -1094,6 +1106,7 @@ const ATHLETE_PROFILE_LINKS = {
 
 // Крайний марафон каждого действующего волка. Места — по протоколам RussiaLoppet.
 const RESULTS = [
+  {year:"2025",athlete:"Андрей Лисов",event:"Вологда-Марафон Кирики-Улита · 40 км",time:"2:04:50",absPlace:208,group:"М35–39",groupPlace:40},
   {year:"2026",athlete:"Даниил Махов",event:"Владимирский Проку",time:"2:25:08",absPlace:18,group:"М24–29",groupPlace:3},
   {year:"2026",athlete:"Василий Соснин",event:"Югорский марафон",time:"2:13:03",absPlace:45,group:"М30–34",groupPlace:8},
   {year:"2025",athlete:"Виталий Ильин",event:"Праздник Севера",time:"3:12:53",absPlace:405,group:"М55–59",groupPlace:27},
@@ -1338,7 +1351,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   if(!track) return;
   const card=item=>{
     if(item.join) return `<article class="reserve-card reserve-join">
-      <div class="reserve-rune" aria-hidden="true">ᛉ</div>
+      <img class="reserve-rune" src="assets/vargi-rune.svg" alt="" aria-hidden="true" width="40" height="40">
       <div class="reserve-role">Набор открыт</div>
       <div class="reserve-name">Здесь можешь быть ты</div>
       <p>Заполни короткую анкету и расскажи, почему хочешь идти со стаей.</p>
@@ -1356,13 +1369,15 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       </div>
     </article>`;
   };
-  track.innerHTML=RESERVE_ROSTER.map(card).join("");
+  track.innerHTML=RESERVE_ROSTER.filter(item=>!item.join).map(card).join("");
+  $("#reserveJoin").innerHTML=card({join:true});
   const prev=$("#reservePrev"),next=$("#reserveNext");
-  const updateArrows=()=>{const canScroll=track.scrollWidth>track.clientWidth+4;prev.hidden=!canScroll;next.hidden=!canScroll};
-  const step=()=>Math.max(220,track.clientWidth*.72);
+  const updateArrows=()=>{prev.hidden=track.scrollLeft<4;next.hidden=track.scrollLeft+track.clientWidth>=track.scrollWidth-4};
+  const step=()=>track.firstElementChild.getBoundingClientRect().width+parseFloat(getComputedStyle(track).columnGap);
   prev.onclick=()=>track.scrollBy({left:-step(),behavior:"smooth"});
   next.onclick=()=>track.scrollBy({left:step(),behavior:"smooth"});
-  track.querySelector("[data-reserve-join]")?.addEventListener("click",openReserveForm);
+  $("#reserveJoin [data-reserve-join]").addEventListener("click",openReserveForm);
+  track.addEventListener("scroll",updateArrows,{passive:true});
   updateArrows();
   addEventListener("resize",updateArrows);
 })();
