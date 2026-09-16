@@ -449,18 +449,25 @@
       linear-gradient(0deg,rgba(7,10,13,.58),transparent 52%),
       url('/assets/camps-ski-sunrise.webp') 63% center/cover no-repeat}
   /* ---------- PACK GEOGRAPHY ---------- */
-  .geo-section{background:radial-gradient(ellipse at 50% 50%,#10212b 0,transparent 68%)}
-  .pack-atlas{max-width:900px;margin:18px auto 0}
-  .pack-atlas-svg{display:block;width:100%;height:auto;overflow:visible}
-  .atlas-city{cursor:pointer;outline:none}
-  .atlas-line{fill:none;stroke:#6190a5;stroke-width:.7;opacity:.55}
-  .atlas-dot,.atlas-glow{fill:#9de4ff}
-  .atlas-leader .atlas-dot,.atlas-leader .atlas-glow{fill:white}
-  .atlas-label{fill:#e9f5fb;font:500 18px 'Oswald',sans-serif;paint-order:stroke;stroke:#09131b;stroke-width:3;stroke-linejoin:round}
-  .atlas-person{fill:#c2d7e2;font:12px Arial,sans-serif}
-  .atlas-city:hover .atlas-line,.atlas-city:focus-visible .atlas-line{stroke:white;stroke-width:1.7;opacity:1}
-  .atlas-city:focus-visible .atlas-label{fill:#a9e6ff}
-  @media(max-width:560px){.geo-section .wrap{width:calc(100% - 24px)}.pack-atlas{margin-top:24px}.atlas-label{font-size:20px}.atlas-person{font-size:15px}}
+  .geo-section{background:radial-gradient(ellipse at 50% 50%,#102631 0%,#070b0e 75%)}
+  .pack-atlas{height:650px;margin:28px auto 0;border:1px solid #263a46;border-radius:18px;isolation:isolate;background:#111d25;overflow:hidden}
+  .pack-atlas .leaflet-tile-pane{filter:grayscale(1) invert(1) brightness(.72) contrast(.9)}
+  .pack-atlas .leaflet-control-attribution{background:#101a22dd;color:#cad6dc;font:10px/1.4 Arial,sans-serif}
+  .pack-atlas .leaflet-control-attribution a{color:#dae8ef}
+  .pack-atlas .leaflet-bar a{background:#12232e;color:white;border-color:#344652}
+  .pack-city-dot{border:0;background:none}
+  .pack-city-dot span{position:absolute;inset:17px;border-radius:50%;background:white;box-shadow:0 0 5px 2px #fff,0 0 16px 5px #ffffff80}
+  .pack-atlas .pack-city-label{background:none;border:none;box-shadow:none;color:white;padding:0;font:500 15px/1.2 Oswald,Arial,sans-serif;text-shadow:0 1px 3px #000,0 0 5px #000,0 0 8px #000}
+  .pack-atlas .pack-city-label::before{display:none}
+  .pack-city-label .city-wolves{display:flex;gap:3px;margin-top:3px}
+  .pack-city-label img{display:block;width:23px;height:16px;filter:drop-shadow(0 0 3px #ffffff99)}
+  .pack-city-label.leaflet-tooltip-left{text-align:right}
+  .pack-city-label.leaflet-tooltip-left .city-wolves{justify-content:flex-end}
+  .pack-atlas .leaflet-popup-content-wrapper,.pack-atlas .leaflet-popup-tip{background:#101d26;color:white}
+  .pack-atlas .leaflet-popup-content{font:14px/1.6 Arial,sans-serif}
+  .pack-atlas .leaflet-popup-content strong{font:500 20px Oswald,Arial,sans-serif}
+  .pack-map-status{padding:24px;color:#d7e4eb}
+  @media(max-width:560px){.geo-section .wrap{width:calc(100% - 24px)}.pack-atlas{height:650px;margin-top:24px;border-radius:12px}.pack-atlas .pack-city-label{font-size:14px}}
 
   /* ---------- NEXT HUNT ---------- */
   .hunt-section{padding-bottom:0}
@@ -635,6 +642,9 @@
   "sameAs":["https://t.me/TomMurman"]
 }
 </script>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+<script defer src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script defer src="assets/geography/pack-map.js"></script>
 </head>
 <body>
 
@@ -789,66 +799,8 @@
   <div class="wrap">
     <div class="eyebrow">География стаи</div>
     <h2>От Заполярья<br><span class="ice">до Южного Урала.</span></h2>
-    <p class="lead">ВАРГИ объединяет спортсменов из разных регионов. Выберите город или регион, чтобы увидеть участников стаи.</p>
-    <div class="pack-atlas"><svg class="pack-atlas-svg" viewBox="0 0 620 520" aria-label="Города стаи на карте России">
-<defs><filter id="city-glow" x="-200%" y="-200%" width="500%" height="500%"><feGaussianBlur stdDeviation="3"/></filter></defs>
-<image href="assets/geography/russia-map.svg" x="20" y="170" width="580" height="243" opacity=".48"/><g class="atlas-city" data-geo-title="Мурманская область" data-geo-copy="Регион представляют Екатерина Бурянина, Константин Нечаев, Дмитрий Меньшаков и Андрей Касьяненко." role="button" tabindex="0" aria-label="Мурманск, Мончегорск — 4 участников">
-<path class="atlas-line" d="M73.128 250.33527272727272 L26 89 H118"/>
-<circle class="atlas-glow" cx="73.128" cy="250.33527272727272" r="7" filter="url(#city-glow)"/><circle class="atlas-dot" cx="73.128" cy="250.33527272727272" r="3.2"/>
-<rect x="13" y="10" width="194" height="76" fill="transparent"/>
-<text class="atlas-label" x="18" y="30">Мурманск</text><text class="atlas-label" x="18" y="51">Мончегорск</text>
-<image href="assets/geography/wolf-standing.svg" x="18" y="59" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="45" y="59" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="72" y="59" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="99" y="59" width="25" height="20"/>
-
-</g><g class="atlas-city" data-geo-title="Архангельская область" data-geo-copy="Северодвинск в расширенном составе ВАРГИ представляет Василий Соснин." role="button" tabindex="0" aria-label="Северодвинск — 1 участник">
-<path class="atlas-line" d="M95.34199999999998 274.5792727272727 L226 114 H250"/>
-<circle class="atlas-glow" cx="95.34199999999998" cy="274.5792727272727" r="7" filter="url(#city-glow)"/><circle class="atlas-dot" cx="95.34199999999998" cy="274.5792727272727" r="3.2"/>
-<rect x="213" y="56" width="194" height="55" fill="transparent"/>
-<text class="atlas-label" x="218" y="76">Северодвинск</text>
-<image href="assets/geography/wolf-standing.svg" x="218" y="84" width="25" height="20"/>
-
-</g><g class="atlas-city" data-geo-title="Республика Карелия" data-geo-copy="Павел Сарин, Елена Богданова, Лариса Иванова, Алексей Кондратьев, Полина Сероносова и Климентий Агалаков." role="button" tabindex="0" aria-label="Петрозаводск · Чупа, Мелиоративный — 6 участников">
-<path class="atlas-line" d="M77.30927272727271 289.85963636363635 L26 203 H168"/>
-<circle class="atlas-glow" cx="77.30927272727271" cy="289.85963636363635" r="7" filter="url(#city-glow)"/><circle class="atlas-dot" cx="77.30927272727271" cy="289.85963636363635" r="3.2"/>
-<rect x="13" y="124" width="194" height="76" fill="transparent"/>
-<text class="atlas-label" x="18" y="144">Петрозаводск · Чупа</text><text class="atlas-label" x="18" y="165">Мелиоративный</text>
-<image href="assets/geography/wolf-standing.svg" x="18" y="173" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="45" y="173" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="72" y="173" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="99" y="173" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="126" y="173" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="153" y="173" width="25" height="20"/>
-
-</g><g class="atlas-city" data-geo-title="Республика Коми" data-geo-copy="Республику Коми в стае представляют Людмила Удалова и Алексей Мошкин." role="button" tabindex="0" aria-label="Ухта · Сосногорск — 2 участников">
-<path class="atlas-line" d="M140.9510909090909 280.02072727272724 L386 208 H428"/>
-<circle class="atlas-glow" cx="140.9510909090909" cy="280.02072727272724" r="7" filter="url(#city-glow)"/><circle class="atlas-dot" cx="140.9510909090909" cy="280.02072727272724" r="3.2"/>
-<rect x="373" y="150" width="222" height="55" fill="transparent"/>
-<text class="atlas-label" x="378" y="170">Ухта · Сосногорск</text>
-<image href="assets/geography/wolf-standing.svg" x="378" y="178" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="405" y="178" width="25" height="20"/>
-
-</g><g class="atlas-city" data-geo-title="Москва и Московская область" data-geo-copy="Центральное направление ВАРГИ представляют Валерия Максименко и Максим Зубцов. В Москве формируется группа для совместных тренировок." role="button" tabindex="0" aria-label="Москва, Зеленоград — 2 участников">
-<path class="atlas-line" d="M88.07090909090908 323.0092727272727 L26 424 H68"/>
-<circle class="atlas-glow" cx="88.07090909090908" cy="323.0092727272727" r="7" filter="url(#city-glow)"/><circle class="atlas-dot" cx="88.07090909090908" cy="323.0092727272727" r="3.2"/>
-<rect x="13" y="345" width="194" height="76" fill="transparent"/>
-<text class="atlas-label" x="18" y="365">Москва</text><text class="atlas-label" x="18" y="386">Зеленоград</text>
-<image href="assets/geography/wolf-standing.svg" x="18" y="394" width="25" height="20"/><image href="assets/geography/wolf-standing.svg" x="45" y="394" width="25" height="20"/>
-
-</g><g class="atlas-city" data-geo-title="Костромская область" data-geo-copy="Кострому в расширенном составе ВАРГИ представляет Даниил Махов." role="button" tabindex="0" aria-label="Кострома — 1 участник">
-<path class="atlas-line" d="M98.9590909090909 311.9049090909091 L226 358 H250"/>
-<circle class="atlas-glow" cx="98.9590909090909" cy="311.9049090909091" r="7" filter="url(#city-glow)"/><circle class="atlas-dot" cx="98.9590909090909" cy="311.9049090909091" r="3.2"/>
-<rect x="213" y="300" width="194" height="55" fill="transparent"/>
-<text class="atlas-label" x="218" y="320">Кострома</text>
-<image href="assets/geography/wolf-standing.svg" x="218" y="328" width="25" height="20"/>
-
-</g><g class="atlas-city atlas-leader" data-geo-title="Воронеж" data-geo-copy="Воронеж представляет Артём Грязев — вожак ВАРГИ. Белый волк на карте и в карточке обозначает Артёма." role="button" tabindex="0" aria-label="Воронеж — 1 участник">
-<path class="atlas-line" d="M93.26981818181818 345.4921818181818 L208 482 H232"/>
-<circle class="atlas-glow" cx="93.26981818181818" cy="345.4921818181818" r="7" filter="url(#city-glow)"/><circle class="atlas-dot" cx="93.26981818181818" cy="345.4921818181818" r="3.2"/>
-<rect x="195" y="424" width="194" height="55" fill="transparent"/>
-<text class="atlas-label" x="200" y="444">Воронеж</text>
-<image href="assets/geography/wolf-standing-white.svg" x="200" y="452" width="25" height="20"/>
-<text class="atlas-person" x="234" y="467">Артём Грязев</text>
-</g><g class="atlas-city" data-geo-title="Оренбургская область" data-geo-copy="Оренбург в расширенном составе ВАРГИ представляет Виталий Ильин, 1967 года рождения." role="button" tabindex="0" aria-label="Оренбург — 1 участник">
-<path class="atlas-line" d="M145.5910909090909 344.8858181818182 L434 408 H458"/>
-<circle class="atlas-glow" cx="145.5910909090909" cy="344.8858181818182" r="7" filter="url(#city-glow)"/><circle class="atlas-dot" cx="145.5910909090909" cy="344.8858181818182" r="3.2"/>
-<rect x="421" y="350" width="194" height="55" fill="transparent"/>
-<text class="atlas-label" x="426" y="370">Оренбург</text>
-<image href="assets/geography/wolf-standing.svg" x="426" y="378" width="25" height="20"/>
-
-</g></svg></div>
+    <p class="lead">ВАРГИ объединяет спортсменов из разных регионов. Нажмите на светящуюся точку, чтобы увидеть участников стаи.</p>
+    <div id="packMap" class="pack-atlas" role="region" aria-label="География участников ВАРГИ — интерактивная карта"><p class="pack-map-status">Загружаем карту городов стаи…</p></div>
   </div>
 </section>
 
@@ -1705,11 +1657,6 @@ function showOverlay(html){ oc.innerHTML=html; overlay.classList.add("show"); }
 function hideOverlay(){ overlay.classList.remove("show"); oc.innerHTML=""; }
 function openLightbox(src,alt=""){ showOverlay(`<img class="lb-img" src="${src}" alt="${alt}">`); }
 function openModal(title,text){ showOverlay(`<div class="modal"><h3>${title}</h3><p>${text}</p></div>`); }
-document.querySelectorAll(".atlas-city").forEach(node=>{
-  const activate=()=>{openModal(node.dataset.geoTitle,node.dataset.geoCopy);if(window.vargiTrack)window.vargiTrack("geography_region_click",{region:node.dataset.geoTitle});};
-  node.addEventListener("click",activate);
-  node.addEventListener("keydown",event=>{if(event.key==="Enter"||event.key===" "){event.preventDefault();activate();}});
-});
 function openReserveForm(){
   showOverlay(`<div class="modal"><div class="eyebrow">Расширенный состав</div><h3>Вступить в ВАРГИ</h3><p>Несколько вопросов, после которых откроется готовая заявка в Telegram.</p>
     <form class="reserve-form" id="reserveForm">
