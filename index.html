@@ -108,9 +108,22 @@
   .hero{display:flex; align-items:center; position:relative; overflow:hidden;
     padding:82px 0 28px; text-align:center; background:#010101}
   .hero .ridge{position:absolute; inset:0; z-index:0; opacity:0; background:none}
-  .hero .inner{position:relative; z-index:2; width:100%}
+  .hero .inner{position:relative; z-index:2; width:100%; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:40px; align-items:center}
+  .hero-copy{text-align:left; min-width:0; scroll-margin-top:90px}
+  .hero-copy h1{font-family:'Oswald'; font-size:clamp(32px,3.5vw,48px); line-height:1.15; text-transform:uppercase; margin:12px 0 18px}
+  .hero-copy .lead{font-size:18px; line-height:1.65}
+  .hero .hero-copy .cta{justify-content:flex-start}
+  .hero .logo-stage{width:100%; max-width:480px}
+  @media(max-width:760px){
+    .hero .inner{grid-template-columns:1fr; gap:16px}
+    .hero .logo-stage{max-width:290px}
+    .hero-copy h1{font-size:34px; margin:8px 0 12px}
+    .hero-copy .lead{font-size:16px}
+    .hero .hero-copy .cta{margin-top:16px; padding:0; align-items:stretch}
+    .hero .hero-copy .cta .btn{width:100%}
+  }
   .logo-stage{position:relative; display:table; margin:0 auto; line-height:0; isolation:isolate}
-  .hero img.logo{position:relative; z-index:1; width:auto; max-width:min(520px,86vw); max-height:60vh; margin:0; filter:none}
+  .hero img.logo{position:relative; z-index:1; width:100%; height:auto; max-width:100%; margin:0; filter:none}
   .wolf-eyes{position:absolute; inset:0; z-index:2; pointer-events:none}
   .wolf-eye{position:absolute; width:1.15%; min-width:3px; max-width:6px; aspect-ratio:1;
     border-radius:50%; background:#e8f9ff; opacity:.16;
@@ -428,7 +441,7 @@
   .training-service:first-child{border-color:rgba(143,208,239,.68); background:linear-gradient(180deg,rgba(62,155,214,.16),rgba(7,12,16,.7))}
   .training-service.camp-service{background:linear-gradient(145deg,rgba(62,155,214,.1),rgba(7,12,16,.72))}
   .training-service-tag{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.18em; font-size:11px; color:var(--ice)}
-  .training-service h4{font-family:'Oswald'; text-transform:uppercase; font-size:21px; margin:9px 0 7px}
+  .training-service h3{font-family:'Oswald'; text-transform:uppercase; font-size:21px; margin:9px 0 7px}
   .training-service p{margin:0 0 20px; color:var(--muted); font-size:14px; line-height:1.55}
   .training-service .btn{width:100%; min-height:48px; margin-top:auto; justify-content:center;
     text-align:center; white-space:normal; line-height:1.25; padding:10px 12px}
@@ -688,88 +701,15 @@
         <i class="wolf-eye" style="left:84.8%;top:39.4%;--eye-delay:-.18s"></i><i class="wolf-eye" style="left:89.8%;top:39.4%;--eye-delay:-.18s"></i>
       </div>
     </div>
-    <h1 style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0">ВАРГИ — лыжная марафонская стая</h1>
-    <div class="cta">
-      <a href="/training-plan/" class="btn" data-goal="hero_training_click">Обсудить подготовку →</a>
-      <a href="#about" class="btn ghost">Познакомиться со стаей</a>
-    </div>
-    <p class="hero-arsenal"><b>В арсенале ВАРГИ:</b> опыт действующих марафонцев · индивидуальный ИИ-агент · личный нутрициолог</p>
-  </div>
-</section>
-
-<!-- ===== ABOUT ===== -->
-<section class="section" id="about">
-  <div class="wrap">
-    <div class="eyebrow">Север внутри</div>
-    <h2>Здесь не ищут лёгких километров.<br><span class="ice">Здесь находят свою стаю.</span></h2>
-    <div class="about-grid" style="margin-top:26px">
-      <div>
-        <p class="lead"><b>ВАРГИ</b> — лыжная марафонская стая для тех, кто выходит на старт не ради фотографии с номером.</p>
-        <p class="lead" style="margin-top:14px">Мы держим темп, когда заканчиваются силы. Идём до конца, когда остальные уже договариваются с собой. Здесь ценят характер, верность стае и готовность сражаться за каждый метр.</p>
-        <p class="lead" style="margin-top:14px">Мы берём темп на себя, ведём группу и постепенно заставляем соперников отпускать. Возможно, это не всегда самый расчётливый путь — но это наш характер.</p>
-        <p class="lead" style="margin-top:14px"><b>Стая не ждёт, когда начнётся гонка. Стая начинает её сама.</b></p>
-      </div>
-      <div class="values">
-        <div class="value"><b>Свой темп</b><p>На трассе каждый один на один с дистанцией. Свои километры, свой пульс, свой финиш.</p></div>
-        <div class="value"><b>Общий характер</b><p>Разный стаж, разное число марафонов. Но характер у всех один: биться до конца и не искать отговорок. ВАРГИ не сходят с дистанции.</p></div>
-        <div class="value"><b>Вожак</b><p>Формирует стандарты подготовки, составляет индивидуальные планы, ведёт аналитику тренировок и гонит стаю вперёд.</p></div>
-        <div class="value"><b>Стая вне гонки</b><p>Тренировки, сборы, кемпы. Вожак задаёт темп — стая держит темп.</p></div>
-        <div class="value"><b>ИИ-агент спортсмена</b><p>Собирает тренировки, восстановление, самочувствие, старты и условия в единый профиль. ИИ находит связи — решение принимает тренер.</p></div>
-        <div class="value"><b>Личный нутрициолог</b><p>Индивидуальный рацион и стратегия питания на дистанции — от тренировочного дня до главного старта.</p></div>
+    <div class="hero-copy" id="about">
+      <div class="eyebrow">Север внутри</div>
+      <h1>ВАРГИ — лыжная<br><span class="ice">марафонская стая</span></h1>
+      <p class="lead">Объединяем лыжников из разных городов. Тренируемся, выходим на марафоны и поддерживаем друг друга на пути к своему финишу.</p>
+      <div class="cta">
+        <a href="#roster" class="btn">Познакомиться со стаей</a>
+        <a href="/training-plan/" class="btn ghost" data-goal="hero_training_click">Обсудить подготовку →</a>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- ===== TRAINING FORMATS ===== -->
-<section class="section training-section" id="training">
-  <div class="wrap">
-    <div class="eyebrow">Цифровая стая</div>
-    <h2>Марафон начинается<br><span class="ice">задолго до старта.</span></h2>
-    <p class="lead">Опыт действующих марафонцев, сильный ИИ-помощник и профильный нутрициолог работают как единая система — под вашу цель, уровень и календарь стартов.</p>
-    <div class="training-services">
-      <article class="training-service reveal">
-        <div class="training-service-tag">Данные · анализ · решение</div>
-        <h4>ИИ-агент спортсмена</h4>
-        <p>Создаёт индивидуальный аналитический профиль: сопоставляет тренировки, восстановление, самочувствие, старты, погоду, снег, лыжи и структуры. Агент подсвечивает закономерности — тренер принимает решение.</p>
-        <a class="btn ghost" href="/ai-agent/" data-goal="ai_agent_page_click">Как работает ИИ-агент</a>
-      </article>
-      <article class="training-service reveal">
-        <div class="training-service-tag">Питание и восстановление</div>
-        <h4>Личный нутрициолог</h4>
-        <p>Профильный специалист выстраивает рацион, восстановление и питание на дистанции под ваши тренировки, переносимость и главные старты.</p>
-        <a class="btn ghost" href="/nutrition/" data-goal="nutrition_page_click">Выстроить питание</a>
-      </article>
-      <article class="training-service reveal">
-        <div class="training-service-tag">Москва · Мурманск · Воронеж</div>
-        <h4>Групповые тренировки</h4>
-        <p>Формируем небольшие группы для работы над техникой, выносливостью и темпом. Запуск в каждом городе — от трёх участников.</p>
-        <a class="btn ghost" href="/group-training/" data-goal="group_training_page_click">Выбрать город</a>
-      </article>
-      <article class="training-service camp-service reveal">
-        <div class="training-service-tag">Первый запуск готовится</div>
-        <h4>Кэмпы</h4>
-        <p>Выбираем локацию, даты и формат первого кэмпа. Предварительная заявка ни к чему не обязывает и даёт возможность в числе первых получить полный анонс.</p>
-        <a class="btn ghost" href="/camps/" data-goal="camps_page_click">Узнать о первом кэмпе</a>
-      </article>
-    </div>
-    <article class="ai-demo reveal" aria-labelledby="aiDemoTitle">
-      <div class="ai-demo-copy">
-        <div class="ai-demo-kicker">ИИ-агент ВАРГИ</div>
-        <h3 id="aiDemoTitle">Покажи тренировку.<br><span class="ice">Увидим больше.</span></h3>
-        <p>Передай одну тренировку — разберём её в контексте твоей подготовки. ИИ найдёт сигналы и закономерности, а тренер объяснит, что они значат именно для тебя.</p>
-        <div class="ai-demo-data">
-          <span>В анализе</span>
-          <strong>Пульс · темп · рельеф · самочувствие · история нагрузок</strong>
-        </div>
-        <div class="ai-demo-actions">
-          <a class="btn" id="aiDemoCta" href="#" target="_blank" rel="noopener noreferrer" data-goal="ai_demo_request_click">Разобрать мою тренировку →</a>
-          <a class="btn ghost" href="/lab/" data-goal="ai_lab_home_click">Лаборатория ВАРГИ →</a>
-        </div>
-        <a class="ai-demo-more-link" href="/ai-agent/" data-goal="ai_agent_demo_more_click">Как работает ИИ-агент →</a>
-      </div>
-      <div class="ai-demo-visual" role="img" aria-label="Лыжник ВАРГИ на тренировке в горах"></div>
-    </article>
   </div>
 </section>
 
@@ -814,6 +754,43 @@
         <image href="assets/geography/vargi-atlas-art.webp" width="1774" height="887" preserveAspectRatio="xMidYMid meet" aria-hidden="true"/>
         <g id="atlasCities"></g>
       </svg>
+    </div>
+  </div>
+</section>
+
+<hr class="track">
+
+<!-- ===== TRAINING FORMATS ===== -->
+<section class="section" id="training">
+  <div class="wrap">
+    <div class="eyebrow">Цифровая стая</div>
+    <h2>Марафон начинается<br><span class="ice">задолго до старта.</span></h2>
+    <p class="lead">Подготовка под вашу цель, уровень и календарь стартов.</p>
+    <div class="training-services">
+      <article class="training-service reveal">
+        <div class="training-service-tag">Данные · анализ · решение</div>
+        <h3>ИИ-агент спортсмена</h3>
+        <p>Анализирует тренировки и восстановление. ИИ находит закономерности — решение принимает тренер.</p>
+        <a class="btn ghost" href="/ai-agent/" data-goal="ai_agent_page_click">Как работает ИИ-агент</a>
+      </article>
+      <article class="training-service reveal">
+        <div class="training-service-tag">Питание и восстановление</div>
+        <h3>Личный нутрициолог</h3>
+        <p>Рацион и питание на дистанции под ваши нагрузки, переносимость и главные старты.</p>
+        <a class="btn ghost" href="/nutrition/" data-goal="nutrition_page_click">Выстроить питание</a>
+      </article>
+      <article class="training-service reveal">
+        <div class="training-service-tag">Москва · Мурманск · Воронеж</div>
+        <h3>Групповые тренировки</h3>
+        <p>Формируем небольшие группы для работы над техникой, выносливостью и темпом. Запуск в каждом городе — от трёх участников.</p>
+        <a class="btn ghost" href="/group-training/" data-goal="group_training_page_click">Выбрать город</a>
+      </article>
+      <article class="training-service camp-service reveal">
+        <div class="training-service-tag">Первый запуск готовится</div>
+        <h3>Кэмпы</h3>
+        <p>Готовим первый выезд. Оставьте предварительную заявку, чтобы получить даты и программу.</p>
+        <a class="btn ghost" href="/camps/" data-goal="camps_page_click">Узнать о первом кэмпе</a>
+      </article>
     </div>
   </div>
 </section>
