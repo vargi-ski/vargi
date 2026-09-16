@@ -504,7 +504,7 @@
     background:linear-gradient(90deg,rgba(6,11,15,.98) 0%,rgba(6,11,15,.86) 58%,rgba(6,11,15,.18) 100%)}
   .geo-node:hover{transform:translateY(-3px); border-color:rgba(143,208,239,.72); box-shadow:0 12px 30px rgba(0,0,0,.4)}
   .geo-node:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
-  .geo-node:nth-child(7){grid-column:1/-1; min-height:82px}
+  .geo-node:nth-child(7){min-height:102px}
   .geo-crest{position:absolute; z-index:0; right:-5px; top:-10px; width:96px; height:112px; object-fit:contain;
     opacity:.32; filter:grayscale(1) saturate(.25) contrast(1.12); transition:opacity .2s,transform .2s}
   .geo-node:hover .geo-crest{opacity:.45; transform:scale(1.035)}
@@ -861,7 +861,7 @@
 <section class="section geo-section" id="geography">
   <div class="wrap">
     <div class="eyebrow">География стаи</div>
-    <h2>От Заполярья<br><span class="ice">до центра России.</span></h2>
+    <h2>От Заполярья<br><span class="ice">до Южного Урала.</span></h2>
     <p class="lead">ВАРГИ объединяет спортсменов из разных регионов. Выберите город или регион, чтобы увидеть участников стаи.</p>
     <div class="geo-map reveal" aria-label="География участников и тренировочных направлений ВАРГИ">
       <div class="geo-dashboard">
@@ -878,6 +878,7 @@
             <g class="geo-eye" transform="translate(129.1 290.19)" data-region="4" role="button" tabindex="0" aria-label="Москва · Зеленоград: открыть регион"><title>Москва · Зеленоград</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Москва · Зеленоград</text></g>
             <g class="geo-eye" transform="translate(149.75 269.13)" data-region="5" role="button" tabindex="0" aria-label="Кострома: открыть регион"><title>Кострома</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Кострома</text></g>
             <g class="geo-eye" transform="translate(138.96 332.83)" data-region="6" role="button" tabindex="0" aria-label="Воронеж: открыть регион"><title>Воронеж</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1" >Воронеж</text></g>
+<g class="geo-eye" transform="translate(238.19 331.68)" data-region="7" role="button" tabindex="0" aria-label="Оренбург: открыть регион"><title>Оренбург</title><circle r="10" fill="transparent"/><path d="M-8-3 Q-4-2-1 0 Q-5 4-8-3 M8-3 Q4-2 1 0 Q5 4 8-3"/><circle cx="-4" r=".8"/><circle cx="4" r=".8"/><text class="geo-eye-label" x="12" y="1">Оренбург</text></g>
           </svg>
           <div class="geo-map-summary"><span>Ледяные глаза — города стаи.<br>Близкие города объединены в одну отметку.</span></div>
         </div>
@@ -903,11 +904,12 @@
       <button class="geo-node geo-voronezh" type="button" data-geo-title="Воронеж" data-geo-copy="Одно из направлений запуска групповых тренировок ВАРГИ. Группа формируется от трёх участников."><img class="geo-crest" src="assets/geography/voronezh.webp" alt="" loading="lazy" width="96" height="112"><span class="geo-node-copy">
         <strong>Воронеж</strong><span>Тренировочное направление</span>
       <span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"></span><em>Тренировки · набор группы</em></span></span></button>
+      <button class="geo-node geo-orenburg" type="button" data-geo-title="Оренбургская область" data-geo-copy="Оренбург в расширенном составе ВАРГИ представляет Виталий Ильин, 1967 года рождения."><img class="geo-crest" src="https://upload.wikimedia.org/wikipedia/commons/4/40/Coat_of_Arms_of_Orenburg.svg" alt="" loading="lazy" width="96" height="112" referrerpolicy="no-referrer"><span class="geo-node-copy"><strong>Оренбургская область</strong><span>Оренбург</span><span class="geo-pack-count"><span class="geo-wolves" aria-hidden="true"><img class="geo-wolf" src="assets/geography/wolf-head.svg" alt="" width="16" height="16"></span><em>1 в стае</em></span></span></button>
         </div>
       </div>
     </div>
     <div class="geo-legend">Один волк — один участник региона. Воронеж — направление тренировок.</div>
-    <details class="geo-source"><summary>Источники карты и гербов</summary><p>Карта: <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener">Natural Earth, public domain</a>. Гербы: Wikimedia Commons. Мурманск — MesserWoland, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>; Воронеж — Vizardis, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Изображения уменьшены и преобразованы в WebP, на сайте показаны в приглушённых цветах. <a href="assets/geography/SOURCES.md">Все источники и авторы</a>.</p></details>
+    <details class="geo-source"><summary>Источники карты и гербов</summary><p>Карта: <a href="https://www.naturalearthdata.com/about/terms-of-use/" target="_blank" rel="noopener">Natural Earth, public domain</a>. Гербы: Wikimedia Commons. Мурманск — MesserWoland, <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a>; Воронеж — Vizardis, <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a>. Изображения уменьшены и преобразованы в WebP, на сайте показаны в приглушённых цветах. <a href="assets/geography/SOURCES.md">Все источники и авторы</a>. <a href="https://commons.wikimedia.org/wiki/File:Coat_of_Arms_of_Orenburg.svg" target="_blank" rel="noopener">Герб Оренбурга</a>: К. Ф. Мочёнов, М. Ю. Медведев, Ольга Салова, К. В. Переходенко; public domain.</p></details>
   </div>
 </section>
 
@@ -1138,6 +1140,7 @@ const RESERVE_ROSTER = [
   { name:"Даниил Махов", city:"Кострома", record:"12 марафонов RussiaLoppet", photo:"assets/daniil-makhov.webp", rl:"https://russialoppet.ru/athletes/377901/" },
   { name:"Василий Соснин", city:"Северодвинск", record:"19 марафонов · КМС RL", photo:"assets/vasiliy-sosnin.webp", rl:"https://russialoppet.ru/athletes/21759/" },
   { name:"Андрей Касьяненко", city:"Мурманск", record:"Дебютант RussiaLoppet", photo:"assets/andrey-kasyanenko-card-v2.webp", rl:"https://flgr-results.ru/athletes/102153", profileLabel:"Профиль ФЛГР", profileGoal:"reserve_flgr_profile_click" },
+  { name:"Виталий Ильин", city:"Оренбург", record:"1967 г. р.", photo:"assets/vitaliy-ilyin.webp", rl:"https://russialoppet.ru/athletes/20361/" },
   { join:true }
 ];
 
