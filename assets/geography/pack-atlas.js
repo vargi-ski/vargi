@@ -12,13 +12,13 @@
     "Мелиоративный":{point:[337,363],label:[307,329],align:"end"},
     "Петрозаводск":{point:[339,377],label:[371,396]},
     "Ухта":{point:[637,333],label:[612,349],align:"end"},
-    "Сосногорск":{point:[649,325],label:[678,318]},
+    "Сосногорск":{point:[649,325],label:[760,318],align:"end"},
     "Кострома":{point:[443,479],label:[471,463]},
     "Зеленоград":{point:[390,536],label:[363,529],align:"end"},
     "Долгопрудный":{point:[402,548],label:[443,526]},
     "Москва":{point:[408,567],label:[436,597]},
     "Воронеж":{point:[388,633],label:[358,657],align:"end"},
-    "Оренбург":{point:[642,658],label:[671,663]}
+    "Оренбург":{point:[642,658],label:[765,663],align:"end"}
   };
   function buildCities(members,registry=locations){
     const grouped=new Map();
@@ -56,7 +56,7 @@
       const [x,y]=entry.point,[lx,ly]=entry.label;
       const end=entry.align==="end";
       const names=entry.members.map(m=>m.name);
-      const group=svgNode("g",{class:"atlas-city",tabindex:"0",role:"button","aria-haspopup":"dialog","aria-label":`${entry.city}: ${names.join(", ")}`,"data-city":entry.city,"data-count":names.length});
+      const group=svgNode("g",{class:"atlas-city",tabindex:"0",role:"button","aria-haspopup":"dialog","aria-label":`${entry.city}: ${names.join(", ")}`,"data-city":entry.city,"data-wolf-count":names.length});
       group.append(svgNode("title",{},`${entry.city}: ${names.join(", ")}`));
       group.append(svgNode("path",{d:`M${x} ${y} L${lx+(end?8:-8)} ${ly-7}`,class:"atlas-tether"}));
       const light=svgNode("g",{class:"atlas-beacon",style:`--pulse-delay:${-index*.17}s`});
