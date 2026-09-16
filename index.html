@@ -1039,7 +1039,7 @@ const RESERVE_ROSTER = [
   { name:"Даниил Махов", city:"Кострома", record:"12 марафонов RussiaLoppet", photo:"assets/daniil-makhov.webp", rl:"https://russialoppet.ru/athletes/377901/" },
   { name:"Василий Соснин", city:"Северодвинск", record:"19 марафонов · КМС RL", photo:"assets/vasiliy-sosnin.webp", rl:"https://russialoppet.ru/athletes/21759/" },
   { name:"Андрей Касьяненко", city:"Мурманск", record:"Дебютант RussiaLoppet", photo:"assets/andrey-kasyanenko-card-v2.webp", rl:"https://flgr-results.ru/athletes/102153", profileLabel:"Профиль ФЛГР", profileGoal:"reserve_flgr_profile_click" },
-  { name:"Виталий Ильин", city:"Оренбург", record:"1967 г. р.", photo:"assets/vitaliy-ilyin.webp", rl:"https://russialoppet.ru/athletes/20361/" },
+  { name:"Виталий Ильин", city:"Оренбург", record:"10 марафонов RussiaLoppet", photo:"assets/vitaliy-ilyin.webp", rl:"https://russialoppet.ru/athletes/20361/" },
   { join:true }
 ];
 
@@ -1071,11 +1071,13 @@ const WOLF_STATS = [
 
 // Combined presentation order: main roster, then expanded roster; invitation is not an athlete.
 const ALL_MEMBERS = [...ROSTER,...RESERVE_ROSTER.filter(member=>!member.join)];
+// Сверено 16.09.2026: data/russialoppet-expanded-2026-09-16.json.
+// Сокращённые марафоны входят в общий счёт RL, но не в рекорд ровно на 50 км.
 WOLF_STATS.push(
-  {name:"Даниил Махов",total:12,fastestNote:"Нет подтверждённых данных",seasonNote:"Нет подтверждённых данных"},
-  {name:"Василий Соснин",total:19,fastestNote:"Нет подтверждённых данных",seasonNote:"Нет подтверждённых данных"},
-  {name:"Андрей Касьяненко",fastestNote:"Дебютант RussiaLoppet",seasonNote:"Нет подтверждённых данных"},
-  {name:"Виталий Ильин",fastestNote:"Нет подтверждённых данных",seasonNote:"Нет подтверждённых данных"}
+  {name:"Даниил Махов",skate:12,classic:0,fastest:"2:10:19",fastestEvent:"Деминский марафон",fastestYear:"2025",seasonMax:3,seasonNote:"Сезоны 2023–2026"},
+  {name:"Василий Соснин",skate:19,classic:0,fastest:"1:56:19",fastestEvent:"Деминский марафон",fastestYear:"2019",seasonMax:4,seasonYear:"2025"},
+  {name:"Андрей Касьяненко",skate:0,classic:0,fastestNote:"Дебютант RussiaLoppet",seasonMax:0,seasonNote:"Дебют в серии впереди"},
+  {name:"Виталий Ильин",skate:9,classic:1,fastest:"2:40:23",fastestEvent:"Праздник Севера",fastestYear:"2019",seasonMax:1,seasonNote:"По одному марафону за сезон"}
 );
 const ATHLETE_PROFILE_LINKS = {
   "Артем Грязев":"https://russialoppet.ru/athletes/17489/",
@@ -1096,7 +1098,9 @@ const ATHLETE_PROFILE_LINKS = {
 
 // Крайний марафон каждого действующего волка. Места — по протоколам RussiaLoppet.
 const RESULTS = [
+  {year:"2026",athlete:"Даниил Махов",event:"Владимирский Проку",time:"2:25:08",absPlace:18,group:"М24–29",groupPlace:3},
   {year:"2026",athlete:"Василий Соснин",event:"Югорский марафон",time:"2:13:03",absPlace:45,group:"М30–34",groupPlace:8},
+  {year:"2025",athlete:"Виталий Ильин",event:"Праздник Севера",time:"3:12:53",absPlace:405,group:"М55–59",groupPlace:27},
   { year:"2026", athlete:"Артем Грязев", event:"Камчатский марафон", time:"2:21:39", absPlace:6, group:"М35–39", groupPlace:2 },
   { year:"2026", athlete:"Константин Нечаев", event:"Камчатский марафон", time:"2:44:00", absPlace:31, group:"М55–59", groupPlace:1 },
   { year:"2026", athlete:"Валерия Максименко", event:"Байкальский марафон", time:"2:35:04", absPlace:18, group:"Ж45–49", groupPlace:3 },

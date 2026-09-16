@@ -1,0 +1,585 @@
+{
+  "verifiedOn": "2026-09-16",
+  "scope": "История RussiaLoppet новых участников расширенного состава",
+  "rules": {
+    "marathonCount": "Только строки категории «Марафон» в профиле RussiaLoppet; сокращённые марафоны учитываются, полумарафоны и другие короткие дистанции исключаются.",
+    "fastest50km": "Только подтверждённая дистанция ровно 50 км; программа до старта не заменяет фактическую дистанцию в итоговом протоколе.",
+    "seasonMax": "Максимальное число марафонских финишей за сезон, обозначенный годом на RussiaLoppet.",
+    "latestMarathon": "Первая строка категории «Марафон» в отсортированной от новых к старым истории профиля.",
+    "debut": "Андрей Касьяненко — дебютант именно RussiaLoppet по уточнению владельца сайта; результаты других серий не смешиваются."
+  },
+  "distanceEvidence": [
+    {
+      "event": "На Комёле",
+      "year": 2020,
+      "actualKm": 37,
+      "source": "https://vologdamarafon.ru/marafon/lyzhnyj-marafon-na-komele/rezultaty/2020/",
+      "note": "Организатор: «Дистанция 37 СВ ХС МАРАФОН». Соснин — 5-е место, 01:35:07.36. В профиле RL округлено до 1:35:07. Исключено из лучшего времени на 50 км."
+    },
+    {
+      "event": "Вологда-Марафон Кирики-Улита",
+      "year": 2025,
+      "actualKm": 40,
+      "source": "https://russialoppet.ru/results/2025/327336/",
+      "note": "Итоговый протокол: «Марафон (40 км)». Результаты Махова 2:01:26 и Соснина 1:49:57 исключены из рекорда на 50 км."
+    },
+    {
+      "event": "Деминский марафон",
+      "year": 2025,
+      "actualKm": 50,
+      "source": "https://russialoppet.ru/events/demino2025.html",
+      "note": "Свободный стиль, золотая гонка, 50 км; рекорд Махова 2:10:19."
+    },
+    {
+      "event": "Деминский марафон",
+      "year": 2019,
+      "actualKm": 50,
+      "source": "https://russialoppet.ru/events/demino2019.html",
+      "note": "02.03.2019, свободный стиль, 50 км; рекорд Соснина 1:56:19."
+    },
+    {
+      "event": "Праздник Севера",
+      "year": 2019,
+      "actualKm": 50,
+      "source": "https://russialoppet.ru/events/murmansk2019.html",
+      "note": "30.03.2019, свободный стиль, 50 км; рекорд Ильина 2:40:23."
+    }
+  ],
+  "athletes": [
+    {
+      "name": "Виталий Ильин",
+      "profile": "https://russialoppet.ru/athletes/20361/",
+      "results": [
+        {
+          "year": 2025,
+          "event": "Праздник Севера КЛ",
+          "category": "25 км",
+          "style": "classic",
+          "time": "1:38:46",
+          "absPlace": 45,
+          "group": "М 55-59",
+          "groupPlace": 2,
+          "source": "https://russialoppet.ru/results/2025/1997/"
+        },
+        {
+          "year": 2025,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "3:12:53",
+          "absPlace": 405,
+          "group": "М 55-59",
+          "groupPlace": 27,
+          "source": "https://russialoppet.ru/results/2025/842/"
+        },
+        {
+          "year": 2024,
+          "event": "Праздник Севера",
+          "category": "25 км",
+          "style": "skate",
+          "time": "1:21:05",
+          "absPlace": 49,
+          "group": "М 55-59",
+          "groupPlace": 3,
+          "source": "https://russialoppet.ru/results/2024/842/"
+        },
+        {
+          "year": 2024,
+          "event": "Праздник Севера КЛ",
+          "category": "Марафон",
+          "style": "classic",
+          "time": "3:01:07",
+          "absPlace": 39,
+          "group": "М 55-59",
+          "groupPlace": 2,
+          "source": "https://russialoppet.ru/results/2024/1997/"
+        },
+        {
+          "year": 2023,
+          "event": "Праздник Севера КЛ",
+          "category": "25 км",
+          "style": "classic",
+          "time": "1:35:36",
+          "absPlace": 45,
+          "group": "М 55-59",
+          "groupPlace": 3,
+          "source": "https://russialoppet.ru/results/2023/1997/"
+        },
+        {
+          "year": 2023,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "3:37:35",
+          "absPlace": 461,
+          "group": "М 55-59",
+          "groupPlace": 29,
+          "source": "https://russialoppet.ru/results/2023/842/"
+        },
+        {
+          "year": 2021,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:51:07",
+          "absPlace": 230,
+          "group": "М 50-54",
+          "groupPlace": 21,
+          "source": "https://russialoppet.ru/results/2021/842/"
+        },
+        {
+          "year": 2019,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:40:23",
+          "absPlace": 222,
+          "group": "М 50-54",
+          "groupPlace": 14,
+          "source": "https://russialoppet.ru/results/2019/842/"
+        },
+        {
+          "year": 2018,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "3:02:18",
+          "absPlace": 290,
+          "group": "М 50-54",
+          "groupPlace": 15,
+          "source": "https://russialoppet.ru/results/2018/842/"
+        },
+        {
+          "year": 2017,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "3:00:07",
+          "absPlace": 257,
+          "group": "М 50-54",
+          "groupPlace": 9,
+          "source": "https://russialoppet.ru/results/2017/842/"
+        },
+        {
+          "year": 2013,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:56:09",
+          "absPlace": 223,
+          "group": "М 45-49",
+          "groupPlace": 19,
+          "source": "https://russialoppet.ru/results/2013/842/"
+        },
+        {
+          "year": 2011,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:53:24",
+          "absPlace": 272,
+          "group": "М 40-44",
+          "groupPlace": 40,
+          "source": "https://russialoppet.ru/results/2011/842/"
+        },
+        {
+          "year": 2010,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:50:49",
+          "absPlace": 288,
+          "group": "М 40-44",
+          "groupPlace": 34,
+          "source": "https://russialoppet.ru/results/2010/842/"
+        }
+      ]
+    },
+    {
+      "name": "Василий Соснин",
+      "profile": "https://russialoppet.ru/athletes/21759/",
+      "results": [
+        {
+          "year": 2026,
+          "event": "Югорский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:13:03",
+          "absPlace": 45,
+          "group": "М 30-34",
+          "groupPlace": 8,
+          "source": "https://russialoppet.ru/results/2026/852/"
+        },
+        {
+          "year": 2026,
+          "event": "Кубок Устьи",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:15:44",
+          "absPlace": 17,
+          "group": "М 30-34",
+          "groupPlace": 5,
+          "source": "https://russialoppet.ru/results/2026/851/"
+        },
+        {
+          "year": 2025,
+          "event": "Вологда-Марафон Кирики-Улита",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "1:49:57",
+          "absPlace": 48,
+          "group": "М 30-34",
+          "groupPlace": 8,
+          "source": "https://russialoppet.ru/results/2025/327336/"
+        },
+        {
+          "year": 2025,
+          "event": "Поморский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:20:44",
+          "absPlace": 6,
+          "group": "М 30-34",
+          "groupPlace": 2,
+          "source": "https://russialoppet.ru/results/2025/246602/"
+        },
+        {
+          "year": 2025,
+          "event": "Кубок Устьи",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:11:47",
+          "absPlace": 19,
+          "group": "М 30-34",
+          "groupPlace": 3,
+          "source": "https://russialoppet.ru/results/2025/851/"
+        },
+        {
+          "year": 2025,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "1:58:44",
+          "absPlace": 47,
+          "group": "М 30-34",
+          "groupPlace": 8,
+          "source": "https://russialoppet.ru/results/2025/850/"
+        },
+        {
+          "year": 2024,
+          "event": "Поморский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:35:51",
+          "absPlace": 26,
+          "group": "М 30-34",
+          "groupPlace": 4,
+          "source": "https://russialoppet.ru/results/2024/246602/"
+        },
+        {
+          "year": 2024,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:01:51",
+          "absPlace": 41,
+          "group": "М 30-34",
+          "groupPlace": 12,
+          "source": "https://russialoppet.ru/results/2024/850/"
+        },
+        {
+          "year": 2023,
+          "event": "Поморский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:26:12",
+          "absPlace": 10,
+          "group": "М 30-34",
+          "groupPlace": 6,
+          "source": "https://russialoppet.ru/results/2023/246602/"
+        },
+        {
+          "year": 2023,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:20:00",
+          "absPlace": 87,
+          "group": "М 30-34",
+          "groupPlace": 20,
+          "source": "https://russialoppet.ru/results/2023/850/"
+        },
+        {
+          "year": 2022,
+          "event": "Поморский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:18:21",
+          "absPlace": 12,
+          "group": "М 30-34",
+          "groupPlace": 6,
+          "source": "https://russialoppet.ru/results/2022/246602/"
+        },
+        {
+          "year": 2022,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "1:56:37",
+          "absPlace": 23,
+          "group": "М 30-34",
+          "groupPlace": 10,
+          "source": "https://russialoppet.ru/results/2022/850/"
+        },
+        {
+          "year": 2021,
+          "event": "Поморский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:05:26",
+          "absPlace": 4,
+          "group": "М 24-29",
+          "groupPlace": 2,
+          "source": "https://russialoppet.ru/results/2021/246602/"
+        },
+        {
+          "year": 2021,
+          "event": "Кубок Устьи",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:30:51",
+          "absPlace": 7,
+          "group": "М 24-29",
+          "groupPlace": 4,
+          "source": "https://russialoppet.ru/results/2021/851/"
+        },
+        {
+          "year": 2020,
+          "event": "На Комёле",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "1:35:07",
+          "absPlace": 5,
+          "group": "М 24-29",
+          "groupPlace": 3,
+          "source": "https://russialoppet.ru/results/2020/170591/"
+        },
+        {
+          "year": 2019,
+          "event": "Кубок Устьи",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:35:36",
+          "absPlace": 17,
+          "group": "М 24-29",
+          "groupPlace": 9,
+          "source": "https://russialoppet.ru/results/2019/851/"
+        },
+        {
+          "year": 2019,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "1:56:19",
+          "absPlace": 26,
+          "group": "М 24-29",
+          "groupPlace": 7,
+          "source": "https://russialoppet.ru/results/2019/850/"
+        },
+        {
+          "year": 2018,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:19:19",
+          "absPlace": 8,
+          "group": "М 24-29",
+          "groupPlace": 5,
+          "source": "https://russialoppet.ru/results/2018/842/"
+        },
+        {
+          "year": 2011,
+          "event": "Праздник Севера",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:35:41",
+          "absPlace": 115,
+          "group": "М 19-20",
+          "groupPlace": 6,
+          "source": "https://russialoppet.ru/results/2011/842/"
+        }
+      ]
+    },
+    {
+      "name": "Даниил Махов",
+      "profile": "https://russialoppet.ru/athletes/377901/",
+      "results": [
+        {
+          "year": 2026,
+          "event": "Владимирский Проку",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:25:08",
+          "absPlace": 18,
+          "group": "М 24-29",
+          "groupPlace": 3,
+          "source": "https://russialoppet.ru/results/2026/269653/"
+        },
+        {
+          "year": 2026,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:13:37",
+          "absPlace": 64,
+          "group": "М 24-29",
+          "groupPlace": 9,
+          "source": "https://russialoppet.ru/results/2026/850/"
+        },
+        {
+          "year": 2026,
+          "event": "Галичское Заозерье",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:48:07",
+          "absPlace": 32,
+          "group": "М 24-29",
+          "groupPlace": 4,
+          "source": "https://russialoppet.ru/results/2026/370739/"
+        },
+        {
+          "year": 2026,
+          "event": "Галичское Заозерье КЛ",
+          "category": "20 км",
+          "style": "classic",
+          "time": "1:04:56",
+          "absPlace": 20,
+          "group": "М 24-29",
+          "groupPlace": 6,
+          "source": "https://russialoppet.ru/results/2026/543120/"
+        },
+        {
+          "year": 2026,
+          "event": "Вологда-Марафон Кирики-Улита",
+          "category": "25 км",
+          "style": "skate",
+          "time": "1:04:06",
+          "absPlace": 10,
+          "group": "М 24-29",
+          "groupPlace": 1,
+          "source": "https://russialoppet.ru/results/2026/327336/"
+        },
+        {
+          "year": 2025,
+          "event": "Вологда-Марафон Кирики-Улита",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:01:26",
+          "absPlace": 166,
+          "group": "М 24-29",
+          "groupPlace": 16,
+          "source": "https://russialoppet.ru/results/2025/327336/"
+        },
+        {
+          "year": 2025,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:10:19",
+          "absPlace": 207,
+          "group": "М 24-29",
+          "groupPlace": 21,
+          "source": "https://russialoppet.ru/results/2025/850/"
+        },
+        {
+          "year": 2025,
+          "event": "Галичское Заозерье КЛ",
+          "category": "21 км",
+          "style": "classic",
+          "time": "1:06:56",
+          "absPlace": 44,
+          "group": "М 24-29",
+          "groupPlace": 9,
+          "source": "https://russialoppet.ru/results/2025/543120/"
+        },
+        {
+          "year": 2025,
+          "event": "Галичское Заозерье",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:43:54",
+          "absPlace": 91,
+          "group": "М 24-29",
+          "groupPlace": 12,
+          "source": "https://russialoppet.ru/results/2025/370739/"
+        },
+        {
+          "year": 2024,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:21:08",
+          "absPlace": 393,
+          "group": "М 21-23",
+          "groupPlace": 5,
+          "source": "https://russialoppet.ru/results/2024/850/"
+        },
+        {
+          "year": 2024,
+          "event": "Галичское Заозерье",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "3:01:48",
+          "absPlace": 81,
+          "group": "М 21-23",
+          "groupPlace": 4,
+          "source": "https://russialoppet.ru/results/2024/370739/"
+        },
+        {
+          "year": 2024,
+          "event": "Вологда-Марафон Кирики-Улита",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:59:23",
+          "absPlace": 157,
+          "group": "М 21-23",
+          "groupPlace": 2,
+          "source": "https://russialoppet.ru/results/2024/327336/"
+        },
+        {
+          "year": 2023,
+          "event": "Галичское Заозерье",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:54:57",
+          "absPlace": 99,
+          "group": "М 21-23",
+          "groupPlace": 6,
+          "source": "https://russialoppet.ru/results/2023/370739/"
+        },
+        {
+          "year": 2023,
+          "event": "Деминский марафон",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "3:00:25",
+          "absPlace": 1171,
+          "group": "М 21-23",
+          "groupPlace": 20,
+          "source": "https://russialoppet.ru/results/2023/850/"
+        },
+        {
+          "year": 2023,
+          "event": "Вологда-Марафон Кирики-Улита",
+          "category": "Марафон",
+          "style": "skate",
+          "time": "2:33:31",
+          "absPlace": 200,
+          "group": "М 21-23",
+          "groupPlace": 4,
+          "source": "https://russialoppet.ru/results/2023/327336/"
+        }
+      ]
+    }
+  ]
+}
