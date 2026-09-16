@@ -71,7 +71,7 @@
   .ice{color:var(--ice)}
   .eyebrow{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.32em;
     font-size:12px; color:var(--ice); font-weight:500}
-  .section{padding:52px 0; position:relative}
+  .section{padding:32px 0; position:relative}
   .section h2{font-size:clamp(30px,5vw,52px); text-transform:uppercase; margin:14px 0 8px}
   .lead{color:var(--muted); max-width:62ch; font-size:17px; text-align:left;
     text-wrap:pretty; hyphens:none; overflow-wrap:break-word}
@@ -105,8 +105,8 @@
   .burger svg{width:26px;height:26px}
 
   /* ---------- HERO ---------- */
-  .hero{min-height:100vh; display:flex; align-items:center; position:relative; overflow:hidden;
-    padding-top:66px; text-align:center; background:#010101}
+  .hero{display:flex; align-items:center; position:relative; overflow:hidden;
+    padding:82px 0 28px; text-align:center; background:#010101}
   .hero .ridge{position:absolute; inset:0; z-index:0; opacity:0; background:none}
   .hero .inner{position:relative; z-index:2; width:100%}
   .logo-stage{position:relative; display:table; margin:0 auto; line-height:0; isolation:isolate}
@@ -131,9 +131,9 @@
     -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent}
   .hero .slogan .div{width:58px; height:2px; margin:13px 0 11px;
     background:linear-gradient(90deg,transparent,var(--ice),transparent)}
-  .hero .cta{display:flex; gap:12px; justify-content:center; margin-top:30px; flex-wrap:wrap}
+  .hero .cta{display:flex; gap:12px; justify-content:center; margin-top:20px; flex-wrap:wrap}
   .hero .cta .btn{justify-content:center; text-align:center}
-  .hero-arsenal{max-width:860px; margin:22px auto 0; padding:12px 18px; border:1px solid rgba(143,208,239,.34);
+  .hero-arsenal{max-width:860px; margin:16px auto 0; padding:12px 18px; border:1px solid rgba(143,208,239,.34);
     border-radius:999px; background:rgba(7,12,16,.68); color:var(--muted); font-size:13px; letter-spacing:.02em}
   .hero-arsenal b{color:var(--ice-hi); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.08em}
 
@@ -152,7 +152,7 @@
   .value p{margin:5px 0 0; color:var(--muted); font-size:14px; line-height:1.5}
 
   /* ---------- ROSTER (pack formation) ---------- */
-  .pack{display:flex; justify-content:center; align-items:flex-end; gap:18px; margin-top:42px;
+  .pack{display:flex; justify-content:center; align-items:flex-end; gap:18px; margin-top:24px;
     touch-action:pan-y; overscroll-behavior-x:contain}
   .wolf{flex:1 1 0; min-width:0; border:1px solid var(--line); border-radius:14px; overflow:hidden;
     height:600px; background:var(--card); transition:transform .25s,border-color .25s;
@@ -199,10 +199,10 @@
     font-family:'Oswald'; text-transform:uppercase; letter-spacing:.14em; font-size:11px; padding:5px 10px; border-radius:6px}
 
   /* ---------- RESERVE PACK ---------- */
-  .roster-tier-head{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:34px}
+  .roster-tier-head{display:flex; align-items:center; justify-content:space-between; gap:16px; margin-top:22px}
   .roster-tier-title{font-family:'Oswald'; font-size:14px; font-weight:600; letter-spacing:.18em; text-transform:uppercase; color:var(--ice)}
   .roster-tier-note{color:var(--muted2); font-size:12px}
-  .reserve-block{margin-top:34px; padding-top:28px; border-top:1px solid var(--line)}
+  .reserve-block{margin-top:24px; padding-top:20px; border-top:1px solid var(--line)}
   .reserve-head{display:flex; align-items:flex-end; justify-content:space-between; gap:20px; margin-bottom:16px}
   .reserve-head h3{margin:5px 0 0; font-family:'Oswald'; font-size:clamp(24px,3.5vw,34px); text-transform:uppercase}
   .reserve-head p{margin:0; max-width:610px; color:var(--muted); font-size:13px; line-height:1.5}
@@ -353,7 +353,7 @@
   .results-toggle[aria-expanded="true"] .results-toggle-arrow{transform:rotate(180deg)}
 
   /* ---------- CALENDAR ---------- */
-  .cal{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:38px}
+  .cal{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:24px}
   .race{border:1px solid var(--line); border-radius:12px; padding:20px; background:var(--card); position:relative}
   .race .date{font-family:'Oswald'; font-weight:700; font-size:22px}
   .race .date span{color:var(--ice)}
@@ -375,7 +375,7 @@
   .calendar-toggle:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
   .calendar-toggle-arrow{font-size:21px; line-height:1; transition:transform .25s ease}
   .calendar-toggle[aria-expanded="true"] .calendar-toggle-arrow{transform:rotate(180deg)}
-  .calendar-poster-toggle{display:flex; width:100%; align-items:center; justify-content:space-between; gap:20px; margin-top:48px;
+  .calendar-poster-toggle{display:flex; width:100%; align-items:center; justify-content:space-between; gap:20px; margin-top:24px;
     padding:18px 20px; border:1px solid var(--line2); border-radius:12px; background:var(--card); color:var(--ink);
     cursor:pointer; text-align:left; text-decoration:none; transition:border-color .2s,background .2s}
   .calendar-poster-toggle:hover{border-color:var(--ice); background:rgba(62,155,214,.07)}
@@ -385,7 +385,7 @@
   .calendar-poster-toggle-arrow{color:var(--ice); font-size:28px; line-height:1}
 
   /* ---------- GALLERY ---------- */
-  .gal{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:38px}
+  .gal{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:24px}
   .gal .cell{aspect-ratio:1; border-radius:10px; overflow:hidden; cursor:pointer; border:1px solid var(--line);
     background:repeating-linear-gradient(45deg,#0d141a,#0d141a 12px,#0a1014 12px,#0a1014 24px);
     display:grid; place-items:center; position:relative; color:var(--muted2); font-size:12px; transition:.2s}
@@ -402,7 +402,7 @@
   .consent-note{color:var(--muted2); font-size:13px; margin-top:14px}
 
   /* ---------- SHOP ---------- */
-  .shop{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:38px}
+  .shop{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:24px}
   .prod{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card); display:flex; flex-direction:column}
   .prod .img{aspect-ratio:1/1; background:#0B1115; display:grid; place-items:center; color:var(--muted2); font-size:13px; overflow:hidden}
   .prod .img img{width:100%; height:100%; object-fit:contain}
@@ -422,7 +422,7 @@
 
   /* ---------- TRAINING CTA ---------- */
   .training-section{padding-top:0}
-  .training-services{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:32px}
+  .training-services{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:16px; margin-top:24px}
   .training-service{display:flex; flex-direction:column; min-height:220px; padding:22px;
     border:1px solid var(--line2); border-radius:12px; background:rgba(7,12,16,.62)}
   .training-service:first-child{border-color:rgba(143,208,239,.68); background:linear-gradient(180deg,rgba(62,155,214,.16),rgba(7,12,16,.7))}
@@ -496,7 +496,7 @@
   .hunt-side .btn{justify-content:center; text-align:center}
 
   /* ---------- PARTNERS ---------- */
-  .partners{display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-top:34px}
+  .partners{display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-top:24px}
   .partner{border:1px dashed var(--line2); border-radius:10px; aspect-ratio:16/9; display:grid; place-items:center;
     color:var(--muted2); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.1em; font-size:13px;
     overflow:hidden; background:var(--card); padding:16px; text-align:center; line-height:1.45;
@@ -526,7 +526,7 @@
   .partner-cta-note{color:var(--muted2); font-size:12px; text-align:center}
 
   /* ---------- FOOTER ---------- */
-  footer{border-top:1px solid var(--line); padding:54px 0 40px; background:var(--bg2)}
+  footer{border-top:1px solid var(--line); padding:28px 0; background:var(--bg2)}
   .foot{display:flex; justify-content:space-between; gap:30px; flex-wrap:wrap; align-items:center}
   .foot .socials{display:flex; gap:14px; flex-wrap:wrap}
   .foot .socials a{border:1px solid var(--line2); border-radius:8px; padding:9px 14px; font-family:'Oswald';
@@ -586,7 +586,8 @@
     .team-table{font-size:11.5px}
   }
   @media(max-width:560px){
-    .section{padding:36px 0}
+    .section{padding:24px 0}
+    .hero{padding:78px 0 20px}
     .values{grid-template-columns:1fr; gap:14px}
     .value b{font-size:16px}
     .value p{font-size:15px}
@@ -622,7 +623,7 @@
     footer{padding-bottom:calc(70px + env(safe-area-inset-bottom))}
     .res{grid-template-columns:60px 1fr}
     .result-places{grid-column:2; grid-template-columns:repeat(2,minmax(0,1fr))}
-    .pack{display:block; margin-top:30px}
+    .pack{display:block; margin-top:20px}
     .pack .wolf,.wolf.alpha{width:100%; max-width:420px; height:auto; min-height:590px; margin-inline:auto}
     .pack .wolf.alpha{min-height:680px}
     .pack .wolf .ph,.pack .wolf.alpha .ph{height:auto; min-height:0; flex:0 0 auto}
