@@ -59,7 +59,7 @@
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  section[id]{scroll-margin-top:78px}
+  section[id],footer[id]{scroll-margin-top:78px}
   body{
     margin:0; background:var(--bg); color:var(--ink);
     font-family:'Inter',system-ui,sans-serif; line-height:1.6;
@@ -672,18 +672,15 @@
 <header id="hdr">
   <div class="wrap nav">
     <a href="#top" class="brand"><span class="mark">❅</span> ВАРГИ</a>
-    <button class="burger" id="burger" aria-label="Меню">
+    <button class="burger" id="burger" aria-label="Меню" aria-expanded="false" aria-controls="links">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
     </button>
-    <nav class="links" id="links">
-      <a href="#about">Стая</a>
-      <a href="#roster">Состав</a>
-      <a href="#results">Достижения</a>
+    <nav class="links" id="links" aria-label="Основная навигация">
+      <a href="#roster">Команда</a>
+      <a href="#training">Подготовка</a>
       <a href="#calendar">Старты</a>
-      <a href="#gallery">Фото</a>
-      <a href="/ai-agent/">ИИ-агент</a>
-      <a href="/training-plan/">Подготовка</a>
       <a href="#shop">Магазин</a>
+      <a href="#contacts">Контакты</a>
     </nav>
   </div>
 </header>
@@ -764,15 +761,15 @@
 <!-- ===== TRAINING FORMATS ===== -->
 <section class="section" id="training">
   <div class="wrap">
-    <div class="eyebrow">Цифровая стая</div>
+    <div class="eyebrow">Подготовка со стаей</div>
     <h2>Марафон начинается<br><span class="ice">задолго до старта.</span></h2>
     <p class="lead">Подготовка под вашу цель, уровень и календарь стартов.</p>
     <div class="training-services">
       <article class="training-service reveal">
-        <div class="training-service-tag">Данные · анализ · решение</div>
-        <h3>ИИ-агент спортсмена</h3>
-        <p>Анализирует тренировки и восстановление. ИИ находит закономерности — решение принимает тренер.</p>
-        <a class="btn ghost" href="/ai-agent/" data-goal="ai_agent_page_click">Как работает ИИ-агент</a>
+        <div class="training-service-tag">План · обратная связь · корректировки</div>
+        <h3>Индивидуальное ведение</h3>
+        <p>Подготовку ведёт Артём Грязев — вожак стаи — или один из двух тренеров команды. Персональный план и обратная связь в течение месяца. ИИ помогает тренеру анализировать нагрузку.</p>
+        <a class="btn ghost" href="/training-plan/" data-goal="training_plan_page_click">Как устроено ведение</a>
       </article>
       <article class="training-service reveal">
         <div class="training-service-tag">Питание и восстановление</div>
@@ -1650,8 +1647,19 @@ const hdr=$("#hdr");
 addEventListener("scroll",()=>hdr.classList.toggle("scrolled", scrollY>20));
 
 // burger
-$("#burger").onclick=()=>$("#links").classList.toggle("open");
-$("#links").querySelectorAll("a").forEach(a=>a.onclick=()=>$("#links").classList.remove("open"));
+const menuButton=$("#burger"), menuLinks=$("#links");
+function setMenuOpen(open){
+  menuLinks.classList.toggle("open",open);
+  menuButton.setAttribute("aria-expanded",String(open));
+}
+menuButton.onclick=()=>setMenuOpen(!menuLinks.classList.contains("open"));
+menuLinks.querySelectorAll("a").forEach(a=>a.onclick=()=>setMenuOpen(false));
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape" && menuLinks.classList.contains("open")){
+    setMenuOpen(false);
+    menuButton.focus();
+  }
+});
 
 // overlay
 const overlay=$("#overlay"), oc=$("#overlayContent");
