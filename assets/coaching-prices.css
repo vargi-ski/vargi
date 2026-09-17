@@ -1,0 +1,45 @@
+/* Approved VARGI coaching prices: 2026-09-17. */
+.coaching-rates{display:grid;gap:9px;margin:0 0 20px;padding:14px 0 0;border-top:1px solid var(--line,#1c2a33);font-size:14px}
+.coaching-rates>div{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px}
+.coaching-rates dt{color:var(--muted)}
+.coaching-rates dd{margin:0;font-weight:600;white-space:nowrap}
+.coaching-rates dd span{font-size:12px;font-weight:400;color:var(--muted)}
+.coaching-price-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;margin:0 0 20px;font-size:14px}
+.coaching-price-line strong{font-size:19px;white-space:nowrap}
+.coaching-price-line span{color:var(--muted)}
+.coaching-group-price{margin:20px 0 0}
+.coaching-pricing,#coach-plan,#captain-plan,#single-sessions{scroll-margin-top:84px}
+.coaching-options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin-top:24px}
+.coaching-option{display:flex;flex-direction:column;min-width:0;padding:24px;border:1px solid var(--line2);border-radius:14px;background:linear-gradient(160deg,rgba(22,34,43,.75),rgba(9,13,17,.8))}
+.coaching-option h3{font-size:24px;line-height:1.2}
+.coaching-amount{margin:18px 0 14px;font:600 36px/1.15 Oswald,sans-serif;white-space:nowrap}
+.coaching-amount span{font:400 14px/1.5 Inter,sans-serif;color:var(--muted)}
+.coaching-option p{margin:0 0 22px;color:var(--muted);font-size:15px;line-height:1.6}
+.coaching-option .btn{width:100%;margin-top:auto}
+.coaching-included{margin-top:22px}
+.coaching-included h3{font-size:18px}
+.coaching-included ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 30px;margin:14px 0 0;padding:0;list-style:none}
+.coaching-included li{position:relative;padding-left:15px;color:var(--muted);font-size:14px}
+.coaching-included li:before{content:"";position:absolute;top:.7em;left:0;width:4px;height:4px;border-radius:50%;background:var(--ice)}
+.coaching-included p{margin:14px 0 0;color:var(--muted);font-size:13px}
+.coaching-included a,.coaching-session-rates a,.coaching-session-link{color:var(--ice-hi);text-underline-offset:4px}
+.coaching-included a:hover,.coaching-session-rates a:hover,.coaching-session-link:hover{text-decoration:underline}
+.coaching-singles{margin-top:22px;border-top:1px solid var(--line)}
+.coaching-singles summary{position:relative;padding:18px 32px 18px 0;font-size:18px;line-height:1.35}
+.coaching-singles summary:after{position:absolute;right:4px;top:18px;float:none}
+.coaching-singles summary:focus-visible,.coaching-pricing a:focus-visible{outline:2px solid var(--ice-hi);outline-offset:4px}
+.coaching-session-rates{margin:0}
+.coaching-session-rates>div{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:start;padding:13px 0;border-top:1px solid var(--line);font-size:15px}
+.coaching-session-rates dt{font-weight:500}
+.coaching-session-rates dt span{display:block;margin-top:3px;color:var(--muted);font-size:13px;font-weight:400}
+.coaching-session-rates dd{margin:0;font-weight:600;white-space:nowrap}
+.coaching-singles p{padding:14px 0 10px;font-size:13px}
+.coaching-session-link{display:inline-block;padding:10px 0 20px;font-size:14px}
+@media(max-width:640px){
+  .coaching-options{grid-template-columns:1fr;gap:12px}
+  .coaching-option{padding:20px}
+  .coaching-option h3{font-size:22px}
+  .coaching-amount{font-size:34px;margin:14px 0 12px}
+  .coaching-included ul{grid-template-columns:1fr;gap:9px}
+  .coaching-session-rates>div{gap:12px;font-size:14px}
+}
