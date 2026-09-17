@@ -1023,6 +1023,7 @@ const RESERVE_ROSTER = [
   { name:"Даниил Махов", city:"Кострома", record:"12 марафонов RussiaLoppet", photo:"assets/daniil-makhov.webp", rl:"https://russialoppet.ru/athletes/377901/" },
   { name:"Виталий Ильин", city:"Оренбург", record:"10 марафонов RussiaLoppet", photo:"assets/vitaliy-ilyin.webp", rl:"https://russialoppet.ru/athletes/20361/" },
   { name:"Василий Соснин", city:"Северодвинск", record:"19 марафонов · КМС RL", photo:"assets/vasiliy-sosnin.webp", rl:"https://russialoppet.ru/athletes/21759/" },
+  { name:"Александр Сучков", city:"Воронеж", record:"17 марафонов · Золотой мастер RL", photo:"assets/alexander-suchkov.jpg", rl:"https://russialoppet.ru/athletes/24502/" },
   { join:true }
 ];
 
@@ -1055,13 +1056,15 @@ const WOLF_STATS = [
 // Combined presentation order: main roster, then expanded roster; invitation is not an athlete.
 const ALL_MEMBERS = [...ROSTER,...RESERVE_ROSTER.filter(member=>!member.join)];
 // Сверено 16.09.2026: data/russialoppet-expanded-2026-09-16.json.
+// Александр Сучков: data/russialoppet-alexander-suchkov-2026-09-17.json.
 // Сокращённые марафоны входят в общий счёт RL, но не в рекорд ровно на 50 км.
 WOLF_STATS.push(
   {name:"Андрей Лисов",skate:6,classic:0,fastestNote:"Дистанция архивного результата уточняется",seasonMax:2,seasonYear:"2025"},
   {name:"Даниил Махов",skate:12,classic:0,fastest:"2:10:19",fastestEvent:"Деминский марафон",fastestYear:"2025",seasonMax:3,seasonNote:"Сезоны 2023–2026"},
   {name:"Василий Соснин",skate:19,classic:0,fastest:"1:56:19",fastestEvent:"Деминский марафон",fastestYear:"2019",seasonMax:4,seasonYear:"2025"},
   {name:"Андрей Касьяненко",skate:0,classic:0,fastestNote:"Дебютант RussiaLoppet",seasonMax:0,seasonNote:"Дебют в серии впереди"},
-  {name:"Виталий Ильин",skate:9,classic:1,fastest:"2:40:23",fastestEvent:"Праздник Севера",fastestYear:"2019",seasonMax:1,seasonNote:"По одному марафону за сезон"}
+  {name:"Виталий Ильин",skate:9,classic:1,fastest:"2:40:23",fastestEvent:"Праздник Севера",fastestYear:"2019",seasonMax:1,seasonNote:"По одному марафону за сезон"},
+  {name:"Александр Сучков",skate:14,classic:3,fastest:"1:59:54",fastestEvent:"Экопарк-Алмаз-Ski",fastestYear:"2024",seasonMax:5,seasonYear:"2026"}
 );
 const ATHLETE_PROFILE_LINKS = {
   "Артем Грязев":"https://russialoppet.ru/athletes/17489/",
@@ -1082,6 +1085,7 @@ const ATHLETE_PROFILE_LINKS = {
 
 // Крайний марафон каждого действующего волка. Места — по протоколам RussiaLoppet.
 const RESULTS = [
+  {year:"2026",athlete:"Александр Сучков",event:"Азия-Европа-Азия",time:"3:33:18",absPlace:62,group:"М50–54",groupPlace:7},
   {year:"2025",athlete:"Андрей Лисов",event:"Вологда-Марафон Кирики-Улита · 40 км",time:"2:04:50",absPlace:208,group:"М35–39",groupPlace:40},
   {year:"2026",athlete:"Даниил Махов",event:"Владимирский Проку",time:"2:25:08",absPlace:18,group:"М24–29",groupPlace:3},
   {year:"2026",athlete:"Василий Соснин",event:"Югорский марафон",time:"2:13:03",absPlace:45,group:"М30–34",groupPlace:8},

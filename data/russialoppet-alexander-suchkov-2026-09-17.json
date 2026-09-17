@@ -1,0 +1,269 @@
+{
+  "verifiedOn": "2026-09-17",
+  "name": "Александр Сучков",
+  "birthYear": 1974,
+  "city": "Воронеж",
+  "profile": "https://russialoppet.ru/athletes/24502/",
+  "award": {
+    "name": "Золотой мастер RussiaLoppet",
+    "year": 2026
+  },
+  "rules": {
+    "marathonCount": "Только категория «Марафон» в официальном профиле. Два старта на 25 км не входят в 17 марафонов. Сокращённый марафон Токсово-2026 на 32 км входит в общий счёт серии.",
+    "fastest50km": "Только подтверждённая дистанция ровно 50 км по итоговому протоколу.",
+    "style": "Классика: Азия-Европа-Азия, МВТУ, Токсово КЛ. Остальные 14 марафонов — свободный стиль. Старты на 25 км исключены из обоих счётчиков.",
+    "latestMarathon": "Первая марафонская строка в истории RussiaLoppet, отсортированной от новых к старым."
+  },
+  "summary": {
+    "marathons": 17,
+    "skate": 14,
+    "classic": 3,
+    "federalDistricts": 5,
+    "regions": 10,
+    "seasonMax": 5,
+    "seasonYear": 2026,
+    "fastest50km": {
+      "time": "1:59:54",
+      "event": "Экопарк-Алмаз-Ski",
+      "year": 2024
+    },
+    "latestMarathon": {
+      "year": 2026,
+      "event": "Азия-Европа-Азия",
+      "category": "Марафон",
+      "style": "classic",
+      "time": "3:33:18",
+      "absPlace": 62,
+      "group": "М 50-54",
+      "groupPlace": 7,
+      "source": "https://russialoppet.ru/results/2026/833/"
+    }
+  },
+  "distanceEvidence": [
+    {
+      "event": "Токсово Марафон КЛ",
+      "year": 2026,
+      "actualKm": 32,
+      "source": "https://russialoppet.ru/results/2026/207722/",
+      "note": "Итоговый протокол: выбранная дистанция «Марафон (32 км)». Время 1:53:24 исключено из рекорда на 50 км."
+    },
+    {
+      "event": "Экопарк-Алмаз-Ski",
+      "year": 2024,
+      "actualKm": 50,
+      "source": "https://russialoppet.ru/results/2024/370738/",
+      "note": "Итоговый протокол: выбранная дистанция «Марафон (50 км)». Время 1:59:54 — самое быстрое из остальных марафонских результатов профиля."
+    }
+  ],
+  "results": [
+    {
+      "year": 2026,
+      "event": "Азия-Европа-Азия",
+      "category": "Марафон",
+      "style": "classic",
+      "time": "3:33:18",
+      "absPlace": 62,
+      "group": "М 50-54",
+      "groupPlace": 7,
+      "source": "https://russialoppet.ru/results/2026/833/"
+    },
+    {
+      "year": 2026,
+      "event": "Нижегородский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:54:27",
+      "absPlace": 46,
+      "group": "М 50-54",
+      "groupPlace": 2,
+      "source": "https://russialoppet.ru/results/2026/455589/"
+    },
+    {
+      "year": 2026,
+      "event": "Марафон МВТУ",
+      "category": "Марафон",
+      "style": "classic",
+      "time": "2:40:31",
+      "absPlace": 24,
+      "group": "М 50-54",
+      "groupPlace": 6,
+      "source": "https://russialoppet.ru/results/2026/839/"
+    },
+    {
+      "year": 2026,
+      "event": "Токсово Марафон КЛ",
+      "category": "Марафон",
+      "style": "classic",
+      "time": "1:53:24",
+      "absPlace": 54,
+      "group": "М 50-54",
+      "groupPlace": 9,
+      "source": "https://russialoppet.ru/results/2026/207722/"
+    },
+    {
+      "year": 2026,
+      "event": "Вологда-Марафон Кирики-Улита",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:20:14",
+      "absPlace": 56,
+      "group": "М 50-54",
+      "groupPlace": 5,
+      "source": "https://russialoppet.ru/results/2026/327336/"
+    },
+    {
+      "year": 2025,
+      "event": "Праздник Севера",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:45:54",
+      "absPlace": 155,
+      "group": "М 50-54",
+      "groupPlace": 11,
+      "source": "https://russialoppet.ru/results/2025/842/"
+    },
+    {
+      "year": 2025,
+      "event": "Сахалинский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:58:53",
+      "absPlace": 90,
+      "group": "М 50-54",
+      "groupPlace": 10,
+      "source": "https://russialoppet.ru/results/2025/856/"
+    },
+    {
+      "year": 2025,
+      "event": "Веденинский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:10:29",
+      "absPlace": 32,
+      "group": "М 50-54",
+      "groupPlace": 5,
+      "source": "https://russialoppet.ru/results/2025/170590/"
+    },
+    {
+      "year": 2024,
+      "event": "Праздник Севера",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:35:31",
+      "absPlace": 119,
+      "group": "М 50-54",
+      "groupPlace": 5,
+      "source": "https://russialoppet.ru/results/2024/842/"
+    },
+    {
+      "year": 2024,
+      "event": "Праздник Севера КЛ",
+      "category": "25 км",
+      "style": "classic",
+      "time": "2:13:19",
+      "absPlace": 157,
+      "group": "М 50-54",
+      "groupPlace": 25,
+      "source": "https://russialoppet.ru/results/2024/1997/"
+    },
+    {
+      "year": 2024,
+      "event": "Воронежский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:40:38",
+      "absPlace": 18,
+      "group": "М 50-54",
+      "groupPlace": 1,
+      "source": "https://russialoppet.ru/results/2024/831/"
+    },
+    {
+      "year": 2024,
+      "event": "Экопарк-Алмаз-Ski",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "1:59:54",
+      "absPlace": 34,
+      "group": "М 50-54",
+      "groupPlace": 5,
+      "source": "https://russialoppet.ru/results/2024/370738/"
+    },
+    {
+      "year": 2023,
+      "event": "Праздник Севера КЛ",
+      "category": "25 км",
+      "style": "classic",
+      "time": "2:22:04",
+      "absPlace": 125,
+      "group": "М 45-49",
+      "groupPlace": 13,
+      "source": "https://russialoppet.ru/results/2023/1997/"
+    },
+    {
+      "year": 2023,
+      "event": "Праздник Севера",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:53:41",
+      "absPlace": 115,
+      "group": "М 45-49",
+      "groupPlace": 11,
+      "source": "https://russialoppet.ru/results/2023/842/"
+    },
+    {
+      "year": 2023,
+      "event": "Экопарк-Алмаз-Ski",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:04:25",
+      "absPlace": 52,
+      "group": "М 45-49",
+      "groupPlace": 16,
+      "source": "https://russialoppet.ru/results/2023/370738/"
+    },
+    {
+      "year": 2022,
+      "event": "Воронежский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:25:59",
+      "absPlace": 42,
+      "group": "М 45-49",
+      "groupPlace": 3,
+      "source": "https://russialoppet.ru/results/2022/831/"
+    },
+    {
+      "year": 2021,
+      "event": "Воронежский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:23:15",
+      "absPlace": 38,
+      "group": "М 45-49",
+      "groupPlace": 7,
+      "source": "https://russialoppet.ru/results/2021/831/"
+    },
+    {
+      "year": 2017,
+      "event": "Воронежский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:45:24",
+      "absPlace": 94,
+      "group": "М 40-44",
+      "groupPlace": 14,
+      "source": "https://russialoppet.ru/results/2017/831/"
+    },
+    {
+      "year": 2014,
+      "event": "Воронежский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:21:58",
+      "absPlace": 33,
+      "group": "М 40-44",
+      "groupPlace": 8,
+      "source": "https://russialoppet.ru/results/2014/831/"
+    }
+  ]
+}
