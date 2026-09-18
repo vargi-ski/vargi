@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Связаться со стаей — ВАРГИ</title>
-  <meta name="description" content="Напишите команде ВАРГИ о подготовке, вступлении в стаю, экипировке или партнёрстве. Ответим на вашу почту.">
+  <meta name="description" content="Свяжитесь с командой ВАРГИ по почте или в Telegram: подготовка, вступление в стаю, экипировка и партнёрство.">
   <meta name="robots" content="noindex,follow">
   <meta name="theme-color" content="#070b0f">
   <link rel="canonical" href="https://xn----7sbbfg4a6clj5k.xn--p1ai/contact/">
@@ -20,18 +20,27 @@
     .brand{display:flex;align-items:center;gap:10px;color:var(--text);font:600 21px Oswald,Arial,sans-serif;letter-spacing:.16em;text-decoration:none}.brand img{width:32px;height:32px;padding:5px;border:1.5px solid var(--ice);border-radius:6px}
     .back{font-size:13px}.intro{padding:30px 0 16px}.eyebrow{margin:0;color:var(--ice);text-transform:uppercase;letter-spacing:.18em;font-size:11px;font-weight:600}
     h1{font:600 clamp(30px,6vw,46px)/1.15 Oswald,Arial,sans-serif;margin:10px 0 14px}h1 span{color:var(--ice)}.intro p:last-child{max-width:600px;margin:0;color:var(--muted)}
+    .contact-options{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:4px 0 24px}.contact-button{display:flex;align-items:center;justify-content:center;gap:12px;min-height:58px;padding:15px 18px;border:1px solid var(--ice);border-radius:10px;text-align:center;text-decoration:none;font-weight:600;line-height:1.35}.contact-button.telegram{background:var(--ice);color:#06131b}.contact-button.email{background:#101c25;color:var(--text)}.contact-button.telegram:hover{background:#77c5e8}.contact-button.email:hover{background:#1b303e}
+    .email-section{scroll-margin-top:20px}.email-section h2{font:500 22px/1.3 Oswald,Arial,sans-serif;margin:0 0 8px}.email-section>p{margin:0 0 16px;color:var(--muted);font-size:13px}
     .form-shell{background:#17191b;border:1px solid var(--line);border-radius:16px;overflow:hidden;padding:20px 16px 4px}iframe{display:block;width:100%;height:880px;border:0;background:#17191b}
-    .help{font-size:13px;color:var(--muted);margin:16px 0 24px}.help p{margin:10px 0}.other{border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .help{font-size:13px;color:var(--muted);margin:16px 0 24px}.help p{margin:10px 0}
     footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--muted);font-size:12px}footer .wrap{display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap}
-    @media(max-width:480px){.wrap{width:calc(100% - 24px)}.intro{padding-top:22px}.header .wrap{min-height:60px}.form-shell{border-radius:12px}.help{margin-bottom:20px}iframe{height:1010px}}
+    @media(max-width:480px){.wrap{width:calc(100% - 24px)}.intro{padding-top:22px}.header .wrap{min-height:60px}.contact-options{grid-template-columns:1fr;gap:10px;margin-bottom:22px}.contact-button{min-height:54px}.form-shell{border-radius:12px}.help{margin-bottom:20px}iframe{height:1010px}}
   </style>
 </head>
 <body>
   <header class="header"><div class="wrap"><a class="brand" href="/" aria-label="ВАРГИ — главная"><img src="/assets/vargi-rune.svg" alt="" width="32" height="32">ВАРГИ</a><a class="back" href="/training-plan/">Подготовка</a></div></header>
   <main class="wrap">
-    <div class="intro"><p class="eyebrow">На связи со стаей</p><h1>Напишите нам.<br><span>Ответим по почте.</span></h1><p>О подготовке, вступлении в команду, экипировке или партнёрстве. Укажите свою почту и коротко расскажите, чем можем помочь.</p></div>
-    <div class="form-shell"><iframe id="contactForm" title="Заявка в команду ВАРГИ" name="ya-form-6aacf2a849af472ed76c9d3d" src="https://forms.yandex.ru/u/6aacf2a849af472ed76c9d3d?iframe=1&amp;theme=dark" width="650" height="880" referrerpolicy="no-referrer"></iframe></div>
-    <div class="help"><p>Форма не открылась? <a id="openForm" href="https://forms.yandex.ru/u/6aacf2a849af472ed76c9d3d?theme=dark" target="_blank" rel="noopener noreferrer">Открыть её отдельно →</a></p><div class="other"><span>Удобнее в мессенджере?</span><a id="telegramContact" href="https://t.me/TomMurman" target="_blank" rel="noopener noreferrer">Написать в Telegram →</a></div></div>
+    <div class="intro"><p class="eyebrow">На связи со стаей</p><h1>Напишите нам.<br><span>Почта или Telegram.</span></h1><p>О подготовке, вступлении в команду, экипировке или партнёрстве. Выберите удобный способ связи.</p></div>
+    <nav class="contact-options" aria-label="Способ связи">
+      <a class="contact-button telegram" id="telegramContact" href="https://t.me/TomMurman" target="_blank" rel="noopener noreferrer">Написать в Telegram <span aria-hidden="true">↗</span></a>
+      <a class="contact-button email" href="#email-form">Оставить заявку по почте <span aria-hidden="true">↓</span></a>
+    </nav>
+    <section class="email-section" id="email-form" aria-labelledby="email-heading" tabindex="-1">
+      <h2 id="email-heading">Заявка по почте</h2><p>Заполните форму ниже — ответим на указанный вами адрес.</p>
+      <div class="form-shell"><iframe id="contactForm" title="Заявка в команду ВАРГИ" name="ya-form-6aacf2a849af472ed76c9d3d" src="https://forms.yandex.ru/u/6aacf2a849af472ed76c9d3d?iframe=1&amp;theme=dark" width="650" height="880" referrerpolicy="no-referrer"></iframe></div>
+    </section>
+    <div class="help"><p>Форма не открылась? <a id="openForm" href="https://forms.yandex.ru/u/6aacf2a849af472ed76c9d3d?theme=dark" target="_blank" rel="noopener noreferrer">Открыть её отдельно →</a></p></div>
   </main>
   <footer><div class="wrap"><span>© 2026 ВАРГИ</span><a href="/privacy.html">Политика конфиденциальности</a><a href="/">На главную</a></div></footer>
   <script src="/assets/contact-form.js?v=20260918"></script>
