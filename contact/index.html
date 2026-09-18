@@ -17,17 +17,17 @@
     *{box-sizing:border-box}body{margin:0;background:#070b0f;color:var(--text);font:15px/1.6 Inter,Arial,sans-serif}
     a{color:#8dd2f0;text-underline-offset:4px}a:focus-visible,button:focus-visible{outline:2px solid #8dd2f0;outline-offset:5px}
     .wrap{width:min(100% - 36px,740px);margin:auto}.header{border-bottom:1px solid var(--line)}.header .wrap{display:flex;justify-content:space-between;align-items:center;min-height:70px;gap:20px}
-    .brand{display:flex;align-items:center;gap:10px;color:var(--text);font:600 21px Oswald,Arial,sans-serif;letter-spacing:.16em;text-decoration:none}.brand img{width:32px;height:32px}
+    .brand{display:flex;align-items:center;gap:10px;color:var(--text);font:600 21px Oswald,Arial,sans-serif;letter-spacing:.16em;text-decoration:none}.brand img{width:32px;height:32px;padding:5px;border:1.5px solid var(--ice);border-radius:6px}
     .back{font-size:13px}.intro{padding:30px 0 16px}.eyebrow{margin:0;color:var(--ice);text-transform:uppercase;letter-spacing:.18em;font-size:11px;font-weight:600}
     h1{font:600 clamp(30px,6vw,46px)/1.15 Oswald,Arial,sans-serif;margin:10px 0 14px}h1 span{color:var(--ice)}.intro p:last-child{max-width:600px;margin:0;color:var(--muted)}
-    .form-shell{background:#17191b;border:1px solid var(--line);border-radius:16px;overflow:hidden}iframe{display:block;width:100%;height:880px;border:0;background:#17191b}
+    .form-shell{background:#17191b;border:1px solid var(--line);border-radius:16px;overflow:hidden;padding:20px 16px 4px}iframe{display:block;width:100%;height:880px;border:0;background:#17191b}
     .help{font-size:13px;color:var(--muted);margin:16px 0 24px}.help p{margin:10px 0}.other{border-top:1px solid var(--line);padding-top:16px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
     footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--muted);font-size:12px}footer .wrap{display:flex;gap:14px;justify-content:space-between;flex-wrap:wrap}
     @media(max-width:480px){.wrap{width:calc(100% - 24px)}.intro{padding-top:22px}.header .wrap{min-height:60px}.form-shell{border-radius:12px}.help{margin-bottom:20px}iframe{height:1010px}}
   </style>
 </head>
 <body>
-  <header class="header"><div class="wrap"><a class="brand" href="/" aria-label="ВАРГИ — главная"><img src="/assets/favicon.svg" alt="" width="32" height="32">ВАРГИ</a><a class="back" href="/training-plan/">Подготовка</a></div></header>
+  <header class="header"><div class="wrap"><a class="brand" href="/" aria-label="ВАРГИ — главная"><img src="/assets/vargi-rune.svg" alt="" width="32" height="32">ВАРГИ</a><a class="back" href="/training-plan/">Подготовка</a></div></header>
   <main class="wrap">
     <div class="intro"><p class="eyebrow">На связи со стаей</p><h1>Напишите нам.<br><span>Ответим по почте.</span></h1><p>О подготовке, вступлении в команду, экипировке или партнёрстве. Укажите свою почту и коротко расскажите, чем можем помочь.</p></div>
     <div class="form-shell"><iframe id="contactForm" title="Заявка в команду ВАРГИ" name="ya-form-6aacf2a849af472ed76c9d3d" src="https://forms.yandex.ru/u/6aacf2a849af472ed76c9d3d?iframe=1&amp;theme=dark" width="650" height="880" referrerpolicy="no-referrer"></iframe></div>
