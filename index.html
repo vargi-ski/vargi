@@ -954,7 +954,7 @@
     <a href="#top" class="brand"><span class="mark">❅</span> ВАРГИ</a>
     <div class="socials">
       <a href="#" data-link="telegram" data-goal="telegram_social_click">Telegram</a>
-      <a href="#" data-link="email">E-mail</a>
+      <a href="/contact/" data-link="email" data-goal="email_contact_open">Написать на почту</a>
     </div>
     <a href="privacy.html">Политика конфиденциальности</a>
     <small>© 2026 ВАРГИ · Лыжная марафонская стая</small>
@@ -979,14 +979,14 @@
    ============================================================ */
 
 const LINKS = {
-  telegram: "https://t.me/TomMurman",               // Telegram для заявок (Артем)
-  email:     "mailto:artemgruazev@yandex.ru"        // Написать Артему по e-mail
+  telegram: "https://t.me/TomMurman",               // Telegram как дополнительный канал
+  email: "/contact/"                              // Связь по почте
 };
-const TG_USER = "TomMurman"; // куда приходят заявки из формы
 const aiDemoCta = document.getElementById("aiDemoCta");
 if (aiDemoCta) {
   const aiDemoText = encodeURIComponent("Здравствуйте, Артем! Хочу получить демонстрационный разбор одной тренировки с ИИ-агентом ВАРГИ.");
-  aiDemoCta.href = "https://t.me/" + TG_USER + "?text=" + aiDemoText;
+  aiDemoCta.href = "/contact/#message=" + aiDemoText;
+  aiDemoCta.removeAttribute("target");
 }
 const mobileTrainingCta = document.getElementById("mobileTrainingCta");
 if (mobileTrainingCta) {
@@ -1331,7 +1331,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   addEventListener("resize", render);
 })();
 
-// Reserve roster — компактная горизонтальная лента и анкета с переходом в Telegram
+// Reserve roster — компактная горизонтальная лента и заявка по почте
 (function(){
   const track=$("#reservePack");
   if(!track) return;
@@ -1585,7 +1585,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const btn = p.soon
       ? `<button class="btn ghost order" disabled>Скоро</button>`
       : p.available
-        ? `<a class="btn ghost order" href="https://t.me/${TG_USER}?text=${orderText}" target="_blank" rel="noopener noreferrer" data-goal="shop_order_click">Заказать</a>`
+        ? `<a class="btn ghost order" href="/contact/#message=${orderText}" data-goal="shop_order_click">Заказать</a>`
         : `<button class="btn ghost order">Узнать о выходе</button>`;
     const material = p.material ? `<div class="material">${p.material}</div>` : "";
     card.innerHTML = `<div class="img">${imgInner}</div>
@@ -1647,7 +1647,8 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
 // Socials links
 document.querySelectorAll('[data-link]').forEach(a=>{ a.href = LINKS[a.dataset.link]||"#"; if(a.dataset.link!=="email")a.target="_blank"; });
 const partnerText=encodeURIComponent("Здравствуйте, Артем! Хочу обсудить партнёрство с лыжной марафонской стаей ВАРГИ.");
-$("#partnerCta").href="https://t.me/"+TG_USER+"?text="+partnerText;
+$("#partnerCta").href="/contact/#message="+partnerText;
+$("#partnerCta").removeAttribute("target");
 
 /* ============================================================
    INTERACTIONS
@@ -1682,39 +1683,18 @@ window.VargiAtlas.render({members:ALL_MEMBERS,onCity:(city,members)=>{
   if(window.vargiTrack)window.vargiTrack("geography_region_click",{region:city});
 }});
 function openReserveForm(){
-  showOverlay(`<div class="modal"><div class="eyebrow">Расширенный состав</div><h3>Вступить в ВАРГИ</h3><p>Несколько вопросов, после которых откроется готовая заявка в Telegram.</p>
-    <form class="reserve-form" id="reserveForm">
-      <label>Имя и фамилия<input name="name" autocomplete="name" required maxlength="80" placeholder="Как к вам обращаться"></label>
-      <label>Город<input name="city" required maxlength="80" placeholder="Город проживания"></label>
-      <label>Год рождения<input name="year" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required placeholder="Например, 1988"></label>
-      <label>Профиль RussiaLoppet — если есть<input name="profile" type="url" inputmode="url" placeholder="https://russialoppet.ru/athletes/..."></label>
-      <label>Опыт в лыжах<select name="experience" required><option value="">Выберите</option><option>Готовлюсь к первому марафону</option><option>Финишировал на марафоне</option><option>Регулярно участвую в марафонах</option><option>Выступаю на высоком уровне</option></select></label>
-      <label>Почему хотите в ВАРГИ?<textarea name="reason" required maxlength="500" placeholder="Коротко о себе и своей цели"></textarea></label>
-      <button class="btn" type="submit">Продолжить в Telegram →</button>
-      <div class="reserve-form-note">Сайт не сохраняет ответы. После нажатия откроется Telegram, где вы сами отправите заявку Артёму.</div>
-    </form></div>`);
-  const form=$("#reserveForm");
-  form?.addEventListener("submit",event=>{
-    event.preventDefault();
-    const data=new FormData(form);
-    const message=[
-      "Здравствуйте, Артём! Хочу вступить в расширенный состав ВАРГИ.",
-      "",
-      `Имя: ${data.get("name")}`,
-      `Город: ${data.get("city")}`,
-      `Год рождения: ${data.get("year")}`,
-      `Профиль RussiaLoppet: ${data.get("profile")||"нет"}`,
-      `Опыт: ${data.get("experience")}`,
-      `Почему ВАРГИ: ${data.get("reason")}`
-    ].join("\n");
-    if(window.vargiTrack) window.vargiTrack("reserve_application_click");
-    window.open(`https://t.me/${TG_USER}?text=${encodeURIComponent(message)}`,"_blank","noopener,noreferrer");
-  });
+  const message=[
+    "Здравствуйте! Хочу вступить в расширенный состав ВАРГИ.",
+    "", "Мой город: ...", "Опыт в лыжах и марафонах: ...",
+    "Профиль RussiaLoppet — если есть: ...", "Почему хочу в ВАРГИ: ..."
+  ].join("\n");
+  if(window.vargiTrack) window.vargiTrack("reserve_application_open");
+  window.location.assign("/contact/#message="+encodeURIComponent(message));
 }
 function openOrder(name){
   const interestText=encodeURIComponent(`Здравствуйте! Хочу первым узнать о выходе «${name}» ВАРГИ и условиях заказа.`);
   showOverlay(`<div class="modal"><h3>Первый дроп ВАРГИ</h3><p>Оставьте интерес к «${name}». Когда готовые образцы пройдут проверку, пришлём реальные фотографии, характеристики и условия заказа.</p>
-    <a class="btn" href="https://t.me/${TG_USER}?text=${interestText}" target="_blank" rel="noopener noreferrer" data-goal="shop_interest_click">Сообщить об интересе</a></div>`);
+    <a class="btn" href="/contact/#message=${interestText}" data-goal="shop_interest_click">Сообщить об интересе</a></div>`);
 }
 $("#overlayClose").onclick=hideOverlay;
 overlay.onclick=e=>{ if(e.target===overlay) hideOverlay(); };
