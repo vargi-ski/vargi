@@ -367,21 +367,43 @@
   .results-toggle[aria-expanded="true"] .results-toggle-arrow{transform:rotate(180deg)}
 
   /* ---------- CALENDAR ---------- */
-  .cal{display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-top:24px}
-  .race{border:1px solid var(--line); border-radius:12px; padding:20px; background:var(--card); position:relative}
-  .race .date{font-family:'Oswald'; font-weight:700; font-size:22px}
-  .race .date span{color:var(--ice)}
-  .race .nm{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.06em; margin-top:8px; font-size:17px}
-  .race .city{color:var(--muted); font-size:14px; margin-top:4px}
-  .badge{display:inline-block; margin-top:14px; font-family:'Oswald'; text-transform:uppercase;
-    letter-spacing:.1em; font-size:11px; padding:5px 10px; border-radius:6px; border:1px solid var(--line2)}
-  .badge.open{color:#0a0d10; background:var(--ice); border-color:var(--ice)}
-  .badge.soon{color:var(--ice); background:rgba(62,155,214,.1)}
-  .badge.done{color:var(--muted2)}
-  .cal-month{grid-column:1/-1; margin-top:18px; padding-bottom:10px; border-bottom:1px solid var(--line2);
-    font-family:'Oswald'; font-weight:600; font-size:25px; text-transform:uppercase; letter-spacing:.12em; color:var(--ice)}
+  .cal{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); align-items:start; gap:10px; margin-top:16px}
+  .race{min-width:0; border:1px solid var(--line2); border-radius:12px; background:var(--card); overflow:hidden}
+  .race summary{display:grid; grid-template-columns:64px minmax(0,1fr) 18px; align-items:center; gap:12px;
+    min-height:96px; padding:12px; cursor:pointer; list-style:none}
+  .race summary::-webkit-details-marker{display:none}
+  .race summary:hover{background:rgba(62,155,214,.07)}
+  .race summary:focus-visible{outline:2px solid var(--ice-hi); outline-offset:-3px; border-radius:11px}
+  .race[open]{border-color:var(--ice)}
+  .race-date{display:flex; flex-direction:column; align-items:center; justify-content:center; gap:3px; min-height:68px;
+    border:1px solid rgba(143,208,239,.22); border-radius:8px; background:rgba(62,155,214,.08); color:var(--ice-hi);
+    font-family:'Oswald',sans-serif; line-height:1.15; text-align:center}
+  .race-date svg{width:14px; height:14px}
+  .race-day{font-size:20px; font-weight:600; white-space:nowrap}
+  .race-month{font-size:10px; letter-spacing:.04em; text-transform:uppercase}
+  .race-name{font-family:'Oswald',sans-serif; font-size:17px; line-height:1.3; text-transform:uppercase; overflow-wrap:anywhere}
+  .race-arrow{width:18px; height:18px; color:var(--ice-hi); transition:transform .2s}
+  .race[open] .race-arrow{transform:rotate(180deg)}
+  .race-body{margin:0 12px; padding:12px 0 14px; border-top:1px solid var(--line2)}
+  .race .city{color:var(--muted); font-size:14px; margin:0}
+  .race .badge{display:inline-block; margin-top:8px; font:500 11px 'Oswald',sans-serif; text-transform:uppercase;
+    letter-spacing:.08em; padding:4px 8px; border-radius:5px; border:1px solid var(--line2)}
+  .race .badge.open{color:var(--bg); background:var(--ice); border-color:var(--ice)}
+  .race .badge.soon{color:var(--ice-hi); background:rgba(62,155,214,.1)}
+  .race .badge.done{color:var(--muted2)}
+  .calendar-countdown{display:flex; align-items:center; flex-wrap:wrap; gap:5px; margin:12px 0 0; font-size:13px; color:var(--muted)}
+  .calendar-countdown strong{color:var(--ice-hi)}
+  .calendar-countdown[hidden]{display:none}
+  .calendar-pulse{width:6px; height:6px; margin-right:3px; border-radius:50%; background:var(--ice-hi); box-shadow:0 0 9px rgba(143,208,239,.5)}
   .cal .cal-extra{display:none}
   .cal.expanded .cal-extra{display:block}
+  .calendar-actions{display:flex; align-items:center; justify-content:space-between; gap:10px 18px; flex-wrap:wrap; margin-top:14px}
+  #calendar .calendar-toggle{margin:0; min-height:44px; padding:10px 14px}
+  #calendar .calendar-toggle[hidden]{display:none}
+  .calendar-source{display:inline-flex; align-items:center; min-height:44px; font-size:13px; color:var(--muted); text-decoration:underline; text-underline-offset:4px}
+  .calendar-source:hover{color:var(--ice-hi)}
+  .calendar-source:focus-visible{outline:2px solid var(--ice-hi); outline-offset:3px}
+  @media(prefers-reduced-motion:reduce){.race-arrow{transition:none}}
   .calendar-toggle{display:flex; align-items:center; justify-content:center; gap:11px; margin:24px auto 0; padding:12px 20px;
     border:1px solid var(--line2); border-radius:8px; background:rgba(62,155,214,.08); color:var(--ice); cursor:pointer;
     font-family:'Oswald'; font-size:14px; font-weight:600; letter-spacing:.1em; text-transform:uppercase; transition:.2s}
@@ -389,15 +411,6 @@
   .calendar-toggle:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
   .calendar-toggle-arrow{font-size:21px; line-height:1; transition:transform .25s ease}
   .calendar-toggle[aria-expanded="true"] .calendar-toggle-arrow{transform:rotate(180deg)}
-  .calendar-poster-toggle{display:flex; width:100%; align-items:center; justify-content:space-between; gap:20px; margin-top:24px;
-    padding:18px 20px; border:1px solid var(--line2); border-radius:12px; background:var(--card); color:var(--ink);
-    cursor:pointer; text-align:left; text-decoration:none; transition:border-color .2s,background .2s}
-  .calendar-poster-toggle:hover{border-color:var(--ice); background:rgba(62,155,214,.07)}
-  .calendar-poster-toggle:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
-  .calendar-poster-toggle-copy{display:flex; flex-direction:column; gap:5px}
-  .calendar-poster-toggle-title{font-family:'Oswald'; font-size:clamp(21px,3vw,30px); font-weight:700; text-transform:uppercase}
-  .calendar-poster-toggle-arrow{color:var(--ice); font-size:28px; line-height:1}
-
   /* ---------- GALLERY ---------- */
   .gal{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:24px}
   .gal .cell{aspect-ratio:1; border-radius:10px; overflow:hidden; cursor:pointer; border:1px solid var(--line);
@@ -491,24 +504,6 @@
   @media(prefers-reduced-motion:reduce){.atlas-beacon{animation:none;opacity:.8;transform:none}}
   @media(max-width:560px){.geo-section .wrap{width:100%;padding:0 12px}.pack-atlas{margin-top:20px;border-radius:12px}.pack-atlas-svg{min-width:880px}}
 
-  /* ---------- NEXT HUNT ---------- */
-  .hunt-section{padding-bottom:0}
-  .hunt-card{display:grid; grid-template-columns:220px minmax(0,1fr) auto; gap:28px; align-items:center;
-    margin-top:26px; padding:28px; border:1px solid rgba(143,208,239,.5); border-radius:16px;
-    background:linear-gradient(110deg,rgba(62,155,214,.2),rgba(16,22,27,.92) 44%,rgba(7,10,13,.98));
-    box-shadow:0 22px 60px rgba(0,0,0,.24)}
-  .hunt-count{padding-right:24px; border-right:1px solid var(--line2)}
-  .hunt-count span{display:block; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.16em; color:var(--ice); font-size:11px}
-  .hunt-count strong{display:block; margin-top:4px; font-family:'Oswald'; font-size:clamp(42px,6vw,70px); line-height:.95}
-  .hunt-count small{display:block; margin-top:4px; color:var(--muted); font-size:12px}
-  .hunt-main .hunt-date{color:var(--ice-hi); font-family:'Oswald'; text-transform:uppercase; letter-spacing:.12em; font-size:12px}
-  .hunt-main h3{margin:7px 0 6px; font-family:'Oswald'; text-transform:uppercase; font-size:clamp(23px,3vw,34px)}
-  .hunt-main p{margin:0; color:var(--muted); font-size:14px}
-  .hunt-side{display:flex; flex-direction:column; align-items:stretch; gap:8px; min-width:190px}
-  .hunt-status{padding:7px 10px; border:1px solid var(--line2); border-radius:8px; color:var(--muted);
-    font-family:'Oswald'; text-align:center; text-transform:uppercase; letter-spacing:.08em; font-size:10px}
-  .hunt-side .btn{justify-content:center; text-align:center}
-
   /* ---------- PARTNERS ---------- */
   .partners{display:grid; grid-template-columns:repeat(5,1fr); gap:16px; margin-top:24px}
   .partner{border:1px dashed var(--line2); border-radius:10px; aspect-ratio:16/9; display:grid; place-items:center;
@@ -586,16 +581,14 @@
     .burger{display:block}
     .about-grid{grid-template-columns:1fr; gap:30px}
     .stats{grid-template-columns:repeat(2,1fr)}
-    .cal,.shop{grid-template-columns:1fr 1fr}
+    .cal{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .shop{grid-template-columns:1fr 1fr}
     .partners{grid-template-columns:repeat(3,1fr)}
     .pack{gap:14px}
     .wolf.alpha{max-width:none}
     .training-services{grid-template-columns:1fr}
     .ai-demo{grid-template-columns:1fr}
     .ai-demo-visual{border-left:0; border-top:1px solid var(--line2)}
-    .hunt-card{grid-template-columns:170px minmax(0,1fr)}
-    .hunt-side{grid-column:1/-1; flex-direction:row}
-    .hunt-side>*{flex:1}
     .wolf-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
     .team-table{font-size:11.5px}
   }
@@ -621,9 +614,6 @@
     .ai-demo-actions .btn{width:100%}
     .ai-demo-visual{min-height:250px; order:-1; border-left:0; border-top:0; border-bottom:1px solid var(--line2);
       background-position:62% center}
-    .hunt-card{grid-template-columns:1fr; gap:18px; padding:22px}
-    .hunt-count{padding:0 0 16px; border-right:0; border-bottom:1px solid var(--line2)}
-    .hunt-side{grid-column:auto; flex-direction:column; min-width:0}
     .wolf-stats-grid{grid-template-columns:1fr}
     .wolf-stat-card{padding:11px}
     .team-table-wrap{margin-top:18px; border-radius:10px}
@@ -849,44 +839,24 @@
 
 <hr class="track">
 
-<!-- ===== NEXT HUNT ===== -->
-<section class="section hunt-section" id="nextHunt">
-  <div class="wrap">
-    <div class="eyebrow">Пульс сезона</div>
-    <h2>Ближайшая <span class="ice">охота стаи</span></h2>
-    <div class="hunt-card reveal" aria-live="polite">
-      <div class="hunt-count"><span>До старта</span><strong id="nextHuntDays">—</strong><small id="nextHuntDayWord">дней</small></div>
-      <div class="hunt-main">
-        <div class="hunt-date" id="nextHuntDate">Календарь обновляется</div>
-        <h3 id="nextHuntName">Ближайший старт</h3>
-        <p id="nextHuntCity">Состав выезда уточняется</p>
-      </div>
-      <div class="hunt-side">
-        <div class="hunt-status" id="nextHuntStatus">Состав выезда уточняется</div>
-        <a class="btn ghost" href="#calendar" data-goal="next_hunt_calendar_click">Смотреть календарь →</a>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ===== CALENDAR ===== -->
 <section class="section" id="calendar">
   <div class="wrap">
     <div class="eyebrow">Календарь</div>
     <h2>Ближайшие <span class="ice">старты</span></h2>
-    <p class="lead">Марафоны предварительного календаря RussiaLoppet 2027, на которых планирует выступать стая: только Центральный и Северо-Западный федеральные округа.</p>
+    <p class="lead">Предварительный календарь 2027 · ЦФО и СЗФО. Подробности — по нажатию на старт.</p>
+    <p class="calendar-countdown" id="nextHunt" aria-live="polite">
+      <span class="calendar-pulse" aria-hidden="true"></span>
+      До ближайшего старта <strong id="nextHuntDays">—</strong> <span id="nextHuntDayWord">дней</span>
+    </p>
     <div class="cal" id="calList"></div>
-    <button class="calendar-toggle" id="calendarToggle" type="button" aria-expanded="false">
-      <span class="calendar-toggle-label">Показать все старты</span>
-      <span class="calendar-toggle-arrow" aria-hidden="true">⌄</span>
-    </button>
-    <a class="calendar-poster-toggle" href="https://russialoppet.ru/events/2027/" target="_blank" rel="noopener noreferrer" data-goal="calendar_russialoppet_click">
-      <span class="calendar-poster-toggle-copy">
-        <span class="eyebrow">Для спортсменов</span>
-        <span class="calendar-poster-toggle-title">Актуальный календарь <span class="ice">RussiaLoppet 2027</span></span>
-      </span>
-      <span class="calendar-poster-toggle-arrow" aria-hidden="true">↗</span>
-    </a>
+    <div class="calendar-actions">
+      <button class="calendar-toggle" id="calendarToggle" type="button" aria-expanded="false" aria-controls="calList" hidden>
+        <span class="calendar-toggle-label">Весь календарь</span>
+        <span class="calendar-toggle-arrow" aria-hidden="true">⌄</span>
+      </button>
+      <a class="calendar-source" href="https://russialoppet.ru/events/2027/" target="_blank" rel="noopener noreferrer" data-goal="calendar_russialoppet_click">Календарь RussiaLoppet ↗</a>
+    </div>
   </div>
 </section>
 
@@ -1474,11 +1444,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   const upcoming=CALENDAR.map(r=>({race:r,date:raceDate(r)})).find(item=>item.date>=today);
   const daysNode=$("#nextHuntDays");
   if(!upcoming){
-    daysNode.textContent="—";
-    $("#nextHuntDayWord").textContent="сезон завершён";
-    $("#nextHuntDate").textContent="Новый календарь появится после публикации";
-    $("#nextHuntName").textContent="Следующая охота готовится";
-    $("#nextHuntCity").textContent="Следите за обновлениями ВАРГИ";
+    $("#nextHunt").hidden=true;
     return;
   }
   const days=Math.max(0,Math.ceil((upcoming.date-now)/86400000));
@@ -1487,39 +1453,60 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   const dayWord=lastTwo>=11&&lastTwo<=14 ? "дней" : last===1 ? "день" : last>=2&&last<=4 ? "дня" : "дней";
   daysNode.textContent=days;
   $("#nextHuntDayWord").textContent=dayWord;
-  $("#nextHuntDate").textContent=`${upcoming.race.d} ${upcoming.race.m} ${upcoming.race.year}`;
-  $("#nextHuntName").textContent=upcoming.race.name;
-  $("#nextHuntCity").textContent=upcoming.race.city;
-  $("#nextHuntStatus").textContent="Состав выезда уточняется";
 })();
 
-// Calendar
+// Calendar: compact cards; details open only when requested.
 (function(){
   const wrap = $("#calList");
   const toggle = $("#calendarToggle");
-  const initialLimit = 6;
-  const map = {open:"Регистрация открыта", soon:"Предварительно", done:"Завершён"};
-  let currentGroup="";
+  const label = $(".calendar-toggle-label",toggle);
+  const initialLimit = 3;
+  const statusLabels = {open:"Регистрация открыта", soon:"Предварительно", done:"Завершён"};
+  const calendarIcon = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16"/></svg>';
+  const arrowIcon = '<svg class="race-arrow" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="m5 7.5 5 5 5-5"/></svg>';
   CALENDAR.forEach((r,index)=>{
-    if(r.group!==currentGroup){
-      currentGroup=r.group;
-      const month=el("div","cal-month");
-      if(index>=initialLimit) month.classList.add("cal-extra");
-      month.textContent=currentGroup;
-      wrap.appendChild(month);
-    }
-    const c = el("div","race"); c.classList.add("reveal");
-    if(index>=initialLimit) c.classList.add("cal-extra");
-    c.innerHTML = `<div class="date"><span>${r.d}</span> ${r.m} ${r.year}</div>
-      <div class="nm">${r.name}</div><div class="city">${r.city}</div>
-      <span class="badge ${r.status}">${map[r.status]}</span>`;
-    wrap.appendChild(c);
+    const card = el("details","race");
+    if(index>=initialLimit) card.classList.add("cal-extra");
+    const summary = el("summary");
+    const date = el("span","race-date");
+    date.innerHTML=calendarIcon;
+    const day = el("span","race-day");
+    day.textContent=r.d;
+    const month = el("span","race-month");
+    month.textContent=r.m+" "+r.year;
+    date.append(day,month);
+    const name = el("span","race-name");
+    name.textContent=r.name;
+    summary.append(date,name);
+    summary.insertAdjacentHTML("beforeend",arrowIcon);
+    const body = el("div","race-body");
+    const city = el("p","city");
+    city.textContent=r.city;
+    const badge = el("span","badge");
+    const status=Object.hasOwn(statusLabels,r.status) ? r.status : "soon";
+    badge.classList.add(status);
+    badge.textContent=statusLabels[status];
+    body.append(city,badge);
+    card.append(summary,body);
+    card.addEventListener("toggle",()=>{
+      if(card.open) wrap.querySelectorAll(".race[open]").forEach(other=>{
+        if(other!==card) other.open=false;
+      });
+    });
+    wrap.appendChild(card);
   });
+  const total=CALENDAR.length;
+  const showAllLabel="Весь календарь · "+total;
+  label.textContent=showAllLabel;
+  toggle.hidden=total<=initialLimit;
   toggle.onclick=()=>{
     const expanded=wrap.classList.toggle("expanded");
     toggle.setAttribute("aria-expanded",String(expanded));
-    $(".calendar-toggle-label",toggle).textContent=expanded ? "Скрыть остальные старты" : "Показать все старты";
-    if(expanded) wrap.querySelectorAll(".cal-extra.reveal").forEach(item=>item.classList.add("in"));
+    label.textContent=expanded ? "Свернуть календарь" : showAllLabel;
+    if(!expanded){
+      wrap.querySelectorAll(".cal-extra[open]").forEach(card=>{card.open=false;});
+      if(toggle.getBoundingClientRect().top<78) $("#calendar").scrollIntoView({block:"start"});
+    }
   };
 })();
 
