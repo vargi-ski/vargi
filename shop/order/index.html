@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Заказ экипировки — ВАРГИ</title>
+  <meta name="description" content="Закажите футболки и кепки ВАРГИ на сайте. Наличие, доставку и оплату согласуем по почте.">
+  <meta name="robots" content="noindex,follow">
+  <meta name="theme-color" content="#070b0f">
+  <link rel="canonical" href="https://xn----7sbbfg4a6clj5k.xn--p1ai/shop/order/">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/assets/shop-order.css?v=20260918">
+</head>
+<body>
+  <header><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ — главная"><img src="/assets/vargi-rune.svg" width="32" height="32" alt="">ВАРГИ</a><a href="/#shop">К товарам</a></div></header>
+  <main class="wrap">
+    <div class="intro"><p class="eyebrow">Экипировка стаи</p><h1>Твой заказ.<br><span>Твой характер.</span></h1><p>Выберите товары и оставьте заявку. Подтвердим наличие, согласуем доставку и оплату по почте.</p><div class="notice">Оплачивать сейчас ничего не нужно.</div></div>
+    <noscript><p class="notice">Для выбора товаров включите JavaScript или <a href="/contact/">напишите нам</a>.</p></noscript>
+    <form id="orderBuilder" hidden>
+      <h2>1. Выберите экипировку</h2>
+      <p class="hint">Укажите привычный размер или выберите помощь с подбором. Наличие нужного размера подтвердим отдельно.</p>
+      <div id="orderItems"></div>
+      <button class="button secondary add-item" type="button" id="addItem">+ Добавить ещё товар</button>
+      <div class="total-panel"><div><span>Предварительная стоимость товаров</span><strong id="orderTotal" aria-live="polite"></strong></div><p>Цены в каталоге указаны «от». Итоговую стоимость и доставку согласуем до оплаты.</p></div>
+      <p id="orderError" class="error" role="alert" hidden></p>
+      <button class="button primary full" type="submit">Продолжить оформление →</button>
+      <p class="hint">На следующем шаге — имя, почта для ответа и город доставки.</p>
+    </form>
+    <section id="orderCheckout" aria-labelledby="checkoutHeading" hidden>
+      <div class="step-head"><h2 id="checkoutHeading" tabindex="-1">2. Отправьте заявку</h2><button class="text-button" type="button" id="editOrder">Изменить товары</button></div>
+      <div class="order-summary"><ul id="summaryItems"></ul><strong id="summaryTotal"></strong><p>Доставка рассчитывается отдельно. Наличие и окончательную сумму подтвердим по почте до оплаты.</p></div>
+      <p class="hint">Проверьте состав заказа в форме, укажите контакты и нажмите «Оформить заказ».</p>
+      <div class="form-shell"><iframe id="orderForm" title="Контакты покупателя и отправка заказа" name="ya-form-6aad189e84227c2dd4dbd7a6" width="650" height="980" referrerpolicy="no-referrer"></iframe></div>
+      <p class="hint">Форма не открылась? <a id="openOrderForm" href="https://forms.yandex.ru/u/6aad189e84227c2dd4dbd7a6?theme=dark" target="_blank" rel="noopener noreferrer">Открыть отдельно →</a></p>
+      <a class="button secondary full" id="telegramOrder" href="https://t.me/TomMurman" target="_blank" rel="noopener noreferrer">Обсудить этот заказ в Telegram ↗</a>
+    </section>
+    <p class="help">Нужна помощь перед заказом? <a href="/contact/">Связаться со стаей</a></p>
+  </main>
+  <footer><div class="wrap"><span>© 2026 ВАРГИ</span><a href="/privacy.html">Политика конфиденциальности</a><a href="/#shop">Магазин</a></div></footer>
+  <template id="orderItemTemplate">
+    <fieldset class="order-item">
+      <legend></legend>
+      <div class="item-layout"><img class="product-photo" alt="" width="140" height="160">
+        <div class="item-fields">
+          <label>Товар<select class="product" required></select></label>
+          <p class="product-material"></p>
+          <div class="item-options"><label class="size-label"><span>Размер</span><input class="size" type="text" maxlength="40" required autocomplete="off"></label><label>Количество<input class="quantity" type="number" min="1" max="99" step="1" value="1" inputmode="numeric" required></label></div>
+          <label class="size-help"><input class="help-size" type="checkbox">Нужна помощь с размером</label>
+          <div class="item-bottom"><span class="item-price"></span><button class="text-button remove" type="button">Убрать товар</button></div>
+        </div>
+      </div>
+    </fieldset>
+  </template>
+  <script src="/assets/shop-catalog.js?v=20260918"></script>
+  <script src="/assets/shop-order.js?v=20260918"></script>
+  <script src="https://forms.yandex.ru/_static/embed.js" defer></script>
+</body>
+</html>
