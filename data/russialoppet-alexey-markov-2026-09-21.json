@@ -1,0 +1,96 @@
+{
+  "verifiedOn": "2026-09-21",
+  "name": "Алексей Марков",
+  "birthYear": 1998,
+  "city": "Северодвинск",
+  "profile": "https://russialoppet.ru/athletes/596404/",
+  "rules": {
+    "marathonCount": "Только четыре строки категории «Марафон» в официальном профиле. Старт на 25 км не входит в счёт марафонов.",
+    "fastest50km": "Дистанция Деминского марафона 2025 подтверждена выбранным пунктом «Марафон (50 км)» в итоговом протоколе.",
+    "seasonMax": "По два марафона в 2025 и 2026. Полумарафон 2025 не учитывается."
+  },
+  "summary": {
+    "marathons": 4,
+    "halfMarathons": 1,
+    "skate": 4,
+    "classic": 0,
+    "federalDistricts": 2,
+    "regions": 2,
+    "seasonMax": 2,
+    "seasonYears": [
+      2025,
+      2026
+    ],
+    "fastest50km": {
+      "time": "2:12:35",
+      "event": "Деминский марафон",
+      "year": 2025
+    }
+  },
+  "distanceEvidence": [
+    {
+      "event": "Деминский марафон",
+      "year": 2025,
+      "actualKm": 50,
+      "source": "https://russialoppet.ru/results/2025/850/",
+      "note": "В HTML итогового протокола выбран пункт «Марафон (50 км)»; значение marathon-50-km."
+    }
+  ],
+  "results": [
+    {
+      "year": 2026,
+      "event": "Кубок Устьи",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:27:55",
+      "absPlace": 40,
+      "group": "М 24-29",
+      "groupPlace": 4,
+      "source": "https://russialoppet.ru/results/2026/851/"
+    },
+    {
+      "year": 2026,
+      "event": "Деминский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:18:31",
+      "absPlace": 110,
+      "group": "М 24-29",
+      "groupPlace": 14,
+      "source": "https://russialoppet.ru/results/2026/850/"
+    },
+    {
+      "year": 2025,
+      "event": "Поморский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:41:19",
+      "absPlace": 61,
+      "group": "М 24-29",
+      "groupPlace": 3,
+      "source": "https://russialoppet.ru/results/2025/246602/"
+    },
+    {
+      "year": 2025,
+      "event": "Кубок Устьи",
+      "category": "25 км",
+      "style": "skate",
+      "time": "1:16:43",
+      "absPlace": 21,
+      "group": "М 24-29",
+      "groupPlace": 1,
+      "source": "https://russialoppet.ru/results/2025/851/"
+    },
+    {
+      "year": 2025,
+      "event": "Деминский марафон",
+      "category": "Марафон",
+      "style": "skate",
+      "time": "2:12:35",
+      "absPlace": 272,
+      "group": "М 24-29",
+      "groupPlace": 23,
+      "source": "https://russialoppet.ru/results/2025/850/"
+    }
+  ]
+}

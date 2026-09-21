@@ -12,7 +12,7 @@ const {buildCities}=context.window.VargiAtlas;
 assert.ok(!fs.readFileSync(path.join(root,'assets/geography/pack-atlas.js'),'utf8').includes('"data-count"'),'Do not reuse the site counter hook: it replaces child nodes.');
 const cities=buildCities(context.members);
 assert.equal(cities.length,14);
-assert.equal(cities.reduce((sum,c)=>sum+c.members.length,0),21);
+assert.equal(cities.reduce((sum,c)=>sum+c.members.length,0),22);
 assert.equal(cities.find(c=>c.city==='Петрозаводск').members.length,4);
 assert.equal(cities.find(c=>c.city==='Мурманск').members.length,4);
 assert.equal(cities.find(c=>c.city==='Долгопрудный').members[0].name,'Мария Новоселова');
@@ -30,4 +30,4 @@ assert.throws(()=>buildCities([{name:'Некорректная точка',city:
 assert.ok(html.includes('@media(prefers-reduced-motion:reduce){.atlas-beacon'));
 assert.deepEqual(Array.from(context.members.slice(15,19),m=>m.name),['Андрей Лисов','Андрей Касьяненко','Даниил Махов','Виталий Ильин']);
 assert.equal(context.members.find(m=>m.name==='Андрей Касьяненко').rl,'https://russialoppet.ru/athletes/807465/');
-console.log('PASS: 21 members / 14 cities; requested expanded roster order; updated RL link; exact wolf counts; new members/cities validated.');
+console.log('PASS: 22 members / 14 cities; requested expanded roster order; updated RL link; exact wolf counts; new members/cities validated.');
