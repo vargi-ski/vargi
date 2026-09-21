@@ -391,10 +391,15 @@
   .race .badge.open{color:var(--bg); background:var(--ice); border-color:var(--ice)}
   .race .badge.soon{color:var(--ice-hi); background:rgba(62,155,214,.1)}
   .race .badge.done{color:var(--muted2)}
-  .calendar-countdown{display:flex; align-items:center; flex-wrap:wrap; gap:5px; margin:12px 0 0; font-size:13px; color:var(--muted)}
-  .calendar-countdown strong{color:var(--ice-hi)}
+  .calendar-heading{display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px 32px; margin:14px 0 8px}
+  #calendar .calendar-heading h2{margin:0}
+  .calendar-countdown{flex:0 1 320px; width:100%; max-width:100%; margin-left:auto; color:var(--muted)}
+  .countdown-caption{margin:0 0 8px; font-size:14px; line-height:1.4; text-align:right}
+  .countdown-clock{display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:8px}
+  .countdown-unit{padding:8px 4px; border:1px solid var(--line2); border-radius:8px; background:var(--card); text-align:center}
+  .countdown-unit strong{display:block; color:var(--ice-hi); font:500 32px/1.1 'Oswald',sans-serif; font-variant-numeric:tabular-nums}
+  .countdown-unit span{display:block; margin-top:4px; font-size:14px; line-height:1.2}
   .calendar-countdown[hidden]{display:none}
-  .calendar-pulse{width:6px; height:6px; margin-right:3px; border-radius:50%; background:var(--ice-hi); box-shadow:0 0 9px rgba(143,208,239,.5)}
   .cal .cal-extra{display:none}
   .cal.expanded .cal-extra{display:block}
   .calendar-actions{display:flex; align-items:center; justify-content:space-between; gap:10px 18px; flex-wrap:wrap; margin-top:14px}
@@ -843,12 +848,19 @@
 <section class="section" id="calendar">
   <div class="wrap">
     <div class="eyebrow">Календарь</div>
-    <h2>Ближайшие <span class="ice">старты</span></h2>
+    <div class="calendar-heading">
+      <h2>Ближайшие <span class="ice">старты</span></h2>
+      <div class="calendar-countdown" id="nextHunt" hidden>
+        <p class="countdown-caption" id="nextHuntCaption">До даты старта · МСК</p>
+        <div class="countdown-clock" role="timer" aria-live="off" aria-labelledby="nextHuntCaption">
+          <div class="countdown-unit"><strong id="nextHuntDays">—</strong><span>дней</span></div>
+          <div class="countdown-unit"><strong id="nextHuntHours">—</strong><span>часов</span></div>
+          <div class="countdown-unit"><strong id="nextHuntMinutes">—</strong><span>минут</span></div>
+          <div class="countdown-unit"><strong id="nextHuntSeconds">—</strong><span>секунд</span></div>
+        </div>
+      </div>
+    </div>
     <p class="lead">Предварительный календарь 2027 · ЦФО и СЗФО. Подробности — по нажатию на старт.</p>
-    <p class="calendar-countdown" id="nextHunt" aria-live="polite">
-      <span class="calendar-pulse" aria-hidden="true"></span>
-      До ближайшего старта <strong id="nextHuntDays">—</strong> <span id="nextHuntDayWord">дней</span>
-    </p>
     <div class="cal" id="calList"></div>
     <div class="calendar-actions">
       <button class="calendar-toggle" id="calendarToggle" type="button" aria-expanded="false" aria-controls="calList" hidden>
@@ -1439,24 +1451,36 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   }
 })();
 
-// Ближайшая охота стаи — автоматически берёт первый будущий старт из календаря.
+// До даты ближайшего старта: точное время гонки пока не опубликовано.
+// Все даты считаются по Москве, независимо от часового пояса посетителя.
 (function(){
   const monthIndex={янв:0,фев:1,мар:2,апр:3,май:4,июн:5,июл:6,авг:7,сен:8,окт:9,ноя:10,дек:11};
-  const raceDate=r=>new Date(Number(r.year),monthIndex[r.m],parseInt(r.d,10),9,0,0);
-  const now=new Date();
-  const today=new Date(now.getFullYear(),now.getMonth(),now.getDate());
-  const upcoming=CALENDAR.map(r=>({race:r,date:raceDate(r)})).find(item=>item.date>=today);
-  const daysNode=$("#nextHuntDays");
-  if(!upcoming){
-    $("#nextHunt").hidden=true;
-    return;
+  const dayMs=86400000;
+  const races=CALENDAR.filter(r=>r.status!=="done").map(r=>{
+    const days=r.d.match(/\d+/g).map(Number);
+    const midnight=day=>Date.UTC(Number(r.year),monthIndex[r.m],day)-3*3600000;
+    return {race:r,start:midnight(days[0]),end:midnight(days[days.length-1])+dayMs};
+  }).sort((a,b)=>a.start-b.start);
+  const countdown=$("#nextHunt");
+  const caption=$("#nextHuntCaption");
+  const nodes=["Days","Hours","Minutes","Seconds"].map(unit=>$("#nextHunt"+unit));
+  function updateCountdown(){
+    const now=Date.now();
+    const upcoming=races.find(item=>item.end>now);
+    countdown.hidden=!upcoming;
+    if(!upcoming) return;
+    const seconds=Math.max(0,Math.ceil((upcoming.start-now)/1000));
+    const values=[Math.floor(seconds/86400),Math.floor(seconds/3600)%24,Math.floor(seconds/60)%60,seconds%60];
+    values.forEach((value,index)=>{
+      const text=String(value).padStart(2,"0");
+      if(nodes[index].textContent!==text) nodes[index].textContent=text;
+    });
+    caption.textContent=upcoming.start>now ? "До даты старта · МСК" : now<upcoming.start+dayMs ? "Старт сегодня" : "Старт проходит";
+    countdown.title=`${upcoming.race.name} · ${upcoming.race.d} ${upcoming.race.m} ${upcoming.race.year}. Отсчёт до 00:00 МСК; время гонки уточняется.`;
   }
-  const days=Math.max(0,Math.ceil((upcoming.date-now)/86400000));
-  const lastTwo=days%100;
-  const last=days%10;
-  const dayWord=lastTwo>=11&&lastTwo<=14 ? "дней" : last===1 ? "день" : last>=2&&last<=4 ? "дня" : "дней";
-  daysNode.textContent=days;
-  $("#nextHuntDayWord").textContent=dayWord;
+  updateCountdown();
+  setInterval(updateCountdown,1000);
+  document.addEventListener("visibilitychange",()=>{if(!document.hidden) updateCountdown();});
 })();
 
 // Calendar: compact cards; details open only when requested.
