@@ -289,6 +289,8 @@
     gap:10px; width:min(100%,1180px); margin:14px auto 0}
   .stats-tier + .stats-tier,.results-tier + .results-tier{margin-top:28px; padding-top:18px; border-top:1px solid var(--line)}
   .stats-tier .roster-tier-head,.results-tier .roster-tier-head{margin-top:18px}
+  .collapsible-tier[hidden]{display:none}
+  .collapsible-tier:not([hidden]){animation:drawerReveal .28s ease both}
   .wolf-stat-card{border:1px solid var(--line); border-radius:11px; background:
     linear-gradient(145deg,rgba(23,34,43,.95),rgba(10,14,18,.97)); padding:8px 9px; overflow:hidden}
   .wolf-stat-card.leader{border-color:var(--line2); background:
@@ -818,10 +820,14 @@
       <div class="roster-tier-head"><div class="roster-tier-title">Основной состав</div><div class="roster-tier-note">15 спортсменов · ядро стаи</div></div>
       <div class="wolf-stats-grid" id="wolfStatsMain" aria-label="Статистика основного состава"></div>
     </div>
-    <div class="stats-tier">
+    <div class="stats-tier collapsible-tier" id="wolfStatsReserveTier" hidden>
       <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">8 спортсменов · единая команда</div></div>
       <div class="wolf-stats-grid" id="wolfStatsReserve" aria-label="Статистика расширенного состава"></div>
     </div>
+    <button class="results-toggle" id="statsToggle" type="button" aria-expanded="false" aria-controls="wolfStatsMain wolfStatsReserveTier">
+      <span class="results-toggle-label">Показать всю стаю</span>
+      <span class="results-toggle-arrow" aria-hidden="true">⌄</span>
+    </button>
   </div>
 </section>
 
@@ -836,13 +842,13 @@
     <div class="results-tier">
       <div class="roster-tier-head"><div class="roster-tier-title">Основной состав</div><div class="roster-tier-note">15 спортсменов</div></div>
       <div class="team-table-wrap">
-        <table class="team-table results-table" aria-label="Крайние марафоны основного состава">
+        <table class="team-table results-table" id="resultsMainTable" aria-label="Крайние марафоны основного состава">
           <thead><tr><th>Спортсмен</th><th class="center-head">Год</th><th>Марафон</th><th>Время</th><th>Абсолют</th><th>Группа</th><th>В группе</th></tr></thead>
           <tbody id="resultsMain"></tbody>
         </table>
       </div>
     </div>
-    <div class="results-tier">
+    <div class="results-tier collapsible-tier" id="resultsReserveTier" hidden>
       <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">8 спортсменов</div></div>
       <div class="team-table-wrap">
         <table class="team-table results-table" aria-label="Крайние марафоны расширенного состава">
@@ -851,6 +857,10 @@
         </table>
       </div>
     </div>
+    <button class="results-toggle" id="resultsToggle" type="button" aria-expanded="false" aria-controls="resultsMainTable resultsReserveTier">
+      <span class="results-toggle-label">Показать весь след стаи</span>
+      <span class="results-toggle-arrow" aria-hidden="true">⌄</span>
+    </button>
   </div>
 </section>
 
@@ -1359,11 +1369,17 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   addEventListener("resize",updateArrows);
 })();
 
-// Pack statistics — основной и расширенный состав показаны отдельными компактными сетками.
+// Pack statistics — одна компактная строка основного состава, остальное раскрывается по кнопке.
 (function(){
   const hasNumber = value => value!==null && value!=="" && Number.isFinite(Number(value));
   const number = value => hasNumber(value) ? Number(value) : 0;
   const statsByName=new Map(WOLF_STATS.map(wolf=>[wolf.name,wolf]));
+  const mainGrid=$("#wolfStatsMain");
+  const reserveGrid=$("#wolfStatsReserve");
+  const reserveTier=$("#wolfStatsReserveTier");
+  const toggle=$("#statsToggle");
+  const label=toggle.querySelector(".results-toggle-label");
+  const initialLimit=6;
 
   const cardFor=member=>{
     const wolf=statsByName.get(member.name) || {name:member.name};
@@ -1405,17 +1421,37 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     return card;
   };
 
-  const renderGroup=(selector,members)=>{
-    const grid=$(selector);
-    members.forEach(member=>grid.appendChild(cardFor(member)));
-  };
-  renderGroup("#wolfStatsMain",ROSTER);
-  renderGroup("#wolfStatsReserve",RESERVE_ROSTER.filter(member=>!member.join));
+  ROSTER.forEach((member,index)=>{
+    const card=cardFor(member);
+    if(index>=initialLimit) card.classList.add("stat-extra");
+    mainGrid.appendChild(card);
+  });
+  RESERVE_ROSTER.filter(member=>!member.join).forEach(member=>reserveGrid.appendChild(cardFor(member)));
+
+  toggle.addEventListener("click",()=>{
+    const expanded=toggle.getAttribute("aria-expanded")==="true";
+    toggle.setAttribute("aria-expanded",String(!expanded));
+    mainGrid.classList.toggle("expanded",!expanded);
+    reserveTier.hidden=expanded;
+    label.textContent=expanded ? "Показать всю стаю" : "Скрыть остальных волков";
+    if(!expanded){
+      mainGrid.querySelectorAll(".stat-extra.reveal").forEach(card=>card.classList.add("in"));
+      reserveGrid.querySelectorAll(".reveal").forEach(card=>card.classList.add("in"));
+    }
+  });
 })();
 
-// Results — основной и расширенный состав разделены небольшим визуальным промежутком.
+// Results — первые четыре результата видимы, остальные и расширенный состав раскрываются по кнопке.
 (function(){
   const resultsByName=new Map(RESULTS.map(result=>[result.athlete,result]));
+  const mainBody=$("#resultsMain");
+  const mainTable=$("#resultsMainTable");
+  const reserveBody=$("#resultsReserve");
+  const reserveTier=$("#resultsReserveTier");
+  const toggle=$("#resultsToggle");
+  const label=toggle.querySelector(".results-toggle-label");
+  const initialLimit=4;
+
   const fallbackFor=member=>({
     athlete:member.name,
     year:"—",
@@ -1425,28 +1461,39 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     group:"—",
     groupPlace:null
   });
-  const renderGroup=(selector,members)=>{
-    const body=$(selector);
-    members.forEach(member=>{
-      const r=resultsByName.get(member.name) || fallbackFor(member);
-      const profileUrl=ATHLETE_PROFILE_LINKS[r.athlete] || member.rl || "";
-      const athlete=profileUrl
-        ? `<a href="${profileUrl}" target="_blank" rel="noopener noreferrer">${r.athlete}</a>`
-        : r.athlete;
-      const row=el("tr");
-      row.innerHTML=`
-        <td class="athlete-cell">${athlete}</td>
-        <td class="number-cell">${r.year}</td>
-        <td class="detail-cell"><b>${r.event}</b></td>
-        <td class="time-cell">${r.time}</td>
-        <td class="place-cell ${r.absPlace!==null && r.absPlace<=3 ? "podium" : ""}">${r.absPlace!==null ? `${r.absPlace} место` : "—"}</td>
-        <td class="number-cell">${r.group}</td>
-        <td class="place-cell ${r.groupPlace!==null && r.groupPlace<=3 ? "podium" : ""}">${r.groupPlace!==null ? `${r.groupPlace} место` : "—"}</td>`;
-      body.appendChild(row);
-    });
+
+  const rowFor=member=>{
+    const r=resultsByName.get(member.name) || fallbackFor(member);
+    const profileUrl=ATHLETE_PROFILE_LINKS[r.athlete] || member.rl || "";
+    const athlete=profileUrl
+      ? `<a href="${profileUrl}" target="_blank" rel="noopener noreferrer">${r.athlete}</a>`
+      : r.athlete;
+    const row=el("tr");
+    row.innerHTML=`
+      <td class="athlete-cell">${athlete}</td>
+      <td class="number-cell">${r.year}</td>
+      <td class="detail-cell"><b>${r.event}</b></td>
+      <td class="time-cell">${r.time}</td>
+      <td class="place-cell ${r.absPlace!==null && r.absPlace<=3 ? "podium" : ""}">${r.absPlace!==null ? `${r.absPlace} место` : "—"}</td>
+      <td class="number-cell">${r.group}</td>
+      <td class="place-cell ${r.groupPlace!==null && r.groupPlace<=3 ? "podium" : ""}">${r.groupPlace!==null ? `${r.groupPlace} место` : "—"}</td>`;
+    return row;
   };
-  renderGroup("#resultsMain",ROSTER);
-  renderGroup("#resultsReserve",RESERVE_ROSTER.filter(member=>!member.join));
+
+  ROSTER.forEach((member,index)=>{
+    const row=rowFor(member);
+    if(index>=initialLimit) row.classList.add("result-extra");
+    mainBody.appendChild(row);
+  });
+  RESERVE_ROSTER.filter(member=>!member.join).forEach(member=>reserveBody.appendChild(rowFor(member)));
+
+  toggle.addEventListener("click",()=>{
+    const expanded=toggle.getAttribute("aria-expanded")==="true";
+    toggle.setAttribute("aria-expanded",String(!expanded));
+    mainTable.classList.toggle("expanded",!expanded);
+    reserveTier.hidden=expanded;
+    label.textContent=expanded ? "Показать весь след стаи" : "Скрыть остальные результаты";
+  });
 })();
 
 // До даты ближайшего старта: точное время гонки пока не опубликовано.
