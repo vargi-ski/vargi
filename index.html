@@ -234,6 +234,10 @@
   .reserve-card:hover{transform:translateY(-3px); border-color:var(--line2)}
   .reserve-photo{position:relative; display:block; height:205px; overflow:hidden; background:#0e151b}
   .reserve-photo img{width:100%; height:100%; object-fit:cover; object-position:center 32%}
+  .reserve-photo-placeholder{width:100%; height:100%; display:grid; place-items:center; align-content:center; gap:9px;
+    background:radial-gradient(circle at 50% 42%,rgba(62,155,214,.18),transparent 46%),#0a1116; color:var(--muted2);
+    font:500 10px 'Oswald',sans-serif; letter-spacing:.14em; text-transform:uppercase}
+  .reserve-photo-placeholder img{width:48px; height:48px; object-fit:contain; opacity:.78}
   .reserve-body{display:flex; flex:1; flex-direction:column; padding:13px 14px 15px}
   .reserve-role{color:var(--ice); font-family:'Oswald'; font-size:9px; letter-spacing:.14em; text-transform:uppercase}
   .reserve-name{margin:0 0 3px; font-family:'Oswald'; font-size:18px; font-weight:600; line-height:1.15; text-transform:uppercase}
@@ -281,8 +285,10 @@
   .pack-stats-section{position:relative; overflow:hidden}
   .pack-stats-section:before{content:""; position:absolute; inset:10% -20% auto 35%; height:420px;
     background:radial-gradient(ellipse,rgba(62,155,214,.12),transparent 66%); pointer-events:none}
-  .wolf-stats-grid{position:relative; display:grid; grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:10px; width:min(100%,1180px); margin:22px auto 0}
+  .wolf-stats-grid{position:relative; display:grid; grid-template-columns:repeat(6,minmax(0,1fr));
+    gap:10px; width:min(100%,1180px); margin:14px auto 0}
+  .stats-tier + .stats-tier,.results-tier + .results-tier{margin-top:28px; padding-top:18px; border-top:1px solid var(--line)}
+  .stats-tier .roster-tier-head,.results-tier .roster-tier-head{margin-top:18px}
   .wolf-stat-card{border:1px solid var(--line); border-radius:11px; background:
     linear-gradient(145deg,rgba(23,34,43,.95),rgba(10,14,18,.97)); padding:8px 9px; overflow:hidden}
   .wolf-stat-card.leader{border-color:var(--line2); background:
@@ -447,7 +453,8 @@
   .prod .stock{margin-top:6px; font-size:14px; line-height:1.5; color:var(--muted)}
   .prod .stock-label{display:block; color:var(--ice-hi); margin-bottom:5px}
   .prod .stock-sizes{display:flex; flex-wrap:wrap; gap:6px}
-  .prod .stock-size{padding:3px 7px; border:1px solid var(--line2); border-radius:5px; white-space:nowrap}
+  .prod .stock-size{padding:3px 7px; border:1px solid var(--line2); border-radius:5px; white-space:nowrap; color:inherit; text-decoration:none; transition:.18s; cursor:pointer}
+  .prod .stock-size:hover,.prod .stock-size:focus-visible{border-color:var(--ice); background:rgba(62,155,214,.11); color:var(--ice-hi); outline:none}
   .prod .pf{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:10px}
   .prod .pf .btn{padding:9px 14px; font-size:13px}
   .prod .price{font-family:'Oswald'; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
@@ -807,11 +814,14 @@
     <h2>Стая в <span class="ice">цифрах</span></h2>
     <p class="lead">У каждого волка — свой след на дистанции: все марафоны RussiaLoppet, стиль, скорость и рекорд по количеству марафонов за сезон.</p>
 
-    <div class="wolf-stats-grid" id="wolfStatsGrid" aria-label="Личная статистика участников"></div>
-    <button class="results-toggle" id="statsToggle" type="button" aria-expanded="false" aria-controls="wolfStatsGrid" hidden>
-      <span class="results-toggle-label">Показать всю стаю</span>
-      <span class="results-toggle-arrow" aria-hidden="true">⌄</span>
-    </button>
+    <div class="stats-tier">
+      <div class="roster-tier-head"><div class="roster-tier-title">Основной состав</div><div class="roster-tier-note">15 спортсменов · ядро стаи</div></div>
+      <div class="wolf-stats-grid" id="wolfStatsMain" aria-label="Статистика основного состава"></div>
+    </div>
+    <div class="stats-tier">
+      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">8 спортсменов · единая команда</div></div>
+      <div class="wolf-stats-grid" id="wolfStatsReserve" aria-label="Статистика расширенного состава"></div>
+    </div>
   </div>
 </section>
 
@@ -823,26 +833,24 @@
     <div class="eyebrow">Достижения</div>
     <h2>След <span class="ice">стаи</span></h2>
     <p class="lead">Крайний марафон каждого волка. Место в абсолюте и возрастной группе — по протоколам RussiaLoppet.</p>
-    <div class="team-table-wrap">
-      <table class="team-table results-table" aria-label="Крайние марафоны участников">
-        <thead>
-          <tr>
-            <th>Спортсмен</th>
-            <th class="center-head">Год</th>
-            <th>Марафон</th>
-            <th>Время</th>
-            <th>Абсолют</th>
-            <th>Группа</th>
-            <th>В группе</th>
-          </tr>
-        </thead>
-        <tbody id="resultsList"></tbody>
-      </table>
+    <div class="results-tier">
+      <div class="roster-tier-head"><div class="roster-tier-title">Основной состав</div><div class="roster-tier-note">15 спортсменов</div></div>
+      <div class="team-table-wrap">
+        <table class="team-table results-table" aria-label="Крайние марафоны основного состава">
+          <thead><tr><th>Спортсмен</th><th class="center-head">Год</th><th>Марафон</th><th>Время</th><th>Абсолют</th><th>Группа</th><th>В группе</th></tr></thead>
+          <tbody id="resultsMain"></tbody>
+        </table>
+      </div>
     </div>
-    <button class="results-toggle" id="resultsToggle" type="button" aria-expanded="false" aria-controls="resultsList" hidden>
-      <span class="results-toggle-label">Показать весь след стаи</span>
-      <span class="results-toggle-arrow" aria-hidden="true">⌄</span>
-    </button>
+    <div class="results-tier">
+      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">8 спортсменов</div></div>
+      <div class="team-table-wrap">
+        <table class="team-table results-table" aria-label="Крайние марафоны расширенного состава">
+          <thead><tr><th>Спортсмен</th><th class="center-head">Год</th><th>Марафон</th><th>Время</th><th>Абсолют</th><th>Группа</th><th>В группе</th></tr></thead>
+          <tbody id="resultsReserve"></tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </section>
 
@@ -1018,6 +1026,7 @@ const RESERVE_ROSTER = [
   { name:"Василий Соснин", city:"Северодвинск", record:"19 марафонов · КМС RL", photo:"assets/vasiliy-sosnin.webp", rl:"https://russialoppet.ru/athletes/21759/" },
   { name:"Александр Сучков", city:"Воронеж", record:"17 марафонов · Золотой мастер RL", photo:"assets/alexander-suchkov.jpg", rl:"https://russialoppet.ru/athletes/24502/" },
   { name:"Алексей Марков", city:"Северодвинск", record:"4 марафона RussiaLoppet", photo:"assets/alexey-markov.jpg", rl:"https://russialoppet.ru/athletes/596404/" },
+  { name:"Кирилл Гречников", city:"Москва", record:"5 марафонов RussiaLoppet", photo:"", rl:"https://russialoppet.ru/athletes/742977/" },
   { join:true }
 ];
 
@@ -1060,7 +1069,8 @@ WOLF_STATS.push(
   {name:"Андрей Касьяненко",skate:0,classic:0,fastestNote:"Дебютант RussiaLoppet",seasonMax:0,seasonNote:"Дебют в серии впереди"},
   {name:"Виталий Ильин",skate:9,classic:1,fastest:"2:40:23",fastestEvent:"Праздник Севера",fastestYear:"2019",seasonMax:1,seasonNote:"По одному марафону за сезон"},
   {name:"Александр Сучков",skate:14,classic:3,fastest:"1:59:54",fastestEvent:"Экопарк-Алмаз-Ski",fastestYear:"2024",seasonMax:5,seasonYear:"2026"},
-  {name:"Алексей Марков",skate:4,classic:0,fastest:"2:12:35",fastestEvent:"Деминский марафон",fastestYear:"2025",seasonMax:2,seasonNote:"Сезоны 2025 и 2026"}
+  {name:"Алексей Марков",skate:4,classic:0,fastest:"2:12:35",fastestEvent:"Деминский марафон",fastestYear:"2025",seasonMax:2,seasonNote:"Сезоны 2025 и 2026"},
+  {name:"Кирилл Гречников",skate:5,classic:0,fastest:"2:26:47",fastestEvent:"Байкальский марафон",fastestYear:"2026",seasonMax:5,seasonYear:"2026"}
 );
 const ATHLETE_PROFILE_LINKS = {
   "Артем Грязев":"https://russialoppet.ru/athletes/17489/",
@@ -1076,11 +1086,13 @@ const ATHLETE_PROFILE_LINKS = {
   "Лариса Иванова":"https://russialoppet.ru/athletes/433930/",
   "Алексей Кондратьев":"https://russialoppet.ru/athletes/530678/",
   "Полина Сероносова":"https://russialoppet.ru/athletes/29562/",
-  "Климентий Агалаков":"https://russialoppet.ru/athletes/806162/"
+  "Климентий Агалаков":"https://russialoppet.ru/athletes/806162/",
+  "Кирилл Гречников":"https://russialoppet.ru/athletes/742977/"
 };
 
 // Крайний марафон каждого действующего волка. Места — по протоколам RussiaLoppet.
 const RESULTS = [
+  {year:"2026",athlete:"Кирилл Гречников",event:"Байкальский марафон",time:"2:26:47",absPlace:75,group:"М35–39",groupPlace:12},
   {year:"2026",athlete:"Алексей Марков",event:"Кубок Устьи",time:"2:27:55",absPlace:40,group:"М24–29",groupPlace:4},
   {year:"2026",athlete:"Александр Сучков",event:"Азия-Европа-Азия",time:"3:33:18",absPlace:62,group:"М50–54",groupPlace:7},
   {year:"2025",athlete:"Андрей Лисов",event:"Вологда-Марафон Кирики-Улита · 40 км",time:"2:04:50",absPlace:208,group:"М35–39",groupPlace:40},
@@ -1319,9 +1331,12 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       <p>Заполни короткую анкету и расскажи, почему хочешь идти со стаей.</p>
       <button class="btn" type="button" data-reserve-join>Стать частью стаи →</button>
     </article>`;
+    const photo=item.photo
+      ? `<img src="${item.photo}" alt="${item.name}" loading="lazy" decoding="async">`
+      : `<span class="reserve-photo-placeholder"><img src="assets/vargi-rune.svg" alt="" aria-hidden="true"><span>Фото скоро</span></span>`;
     return `<article class="reserve-card">
       <a class="reserve-photo" href="${item.rl}" target="_blank" rel="noopener noreferrer" aria-label="${item.profileLabel || "Профиль RussiaLoppet"}: ${item.name}">
-        <img src="${item.photo}" alt="${item.name}" loading="lazy" decoding="async">
+        ${photo}
       </a>
       <div class="reserve-body">
         <div class="reserve-name">${item.name}</div>
@@ -1344,18 +1359,13 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   addEventListener("resize",updateArrows);
 })();
 
-// Pack statistics — первые четыре карточки видимы, остальные раскрываются
+// Pack statistics — основной и расширенный состав показаны отдельными компактными сетками.
 (function(){
   const hasNumber = value => value!==null && value!=="" && Number.isFinite(Number(value));
   const number = value => hasNumber(value) ? Number(value) : 0;
-  const grid=$("#wolfStatsGrid");
-  const toggle=$("#statsToggle");
-  const label=toggle.querySelector(".results-toggle-label");
-  const initialLimit=4;
-
   const statsByName=new Map(WOLF_STATS.map(wolf=>[wolf.name,wolf]));
 
-  ALL_MEMBERS.forEach((member,index)=>{
+  const cardFor=member=>{
     const wolf=statsByName.get(member.name) || {name:member.name};
     const skate=number(wolf.skate);
     const classic=number(wolf.classic);
@@ -1364,7 +1374,6 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const seasonDetail=wolf.seasonNote || (wolf.seasonYear ? `Сезон ${wolf.seasonYear}` : "Данные собираются");
     const roleTag=wolf.name==="Артем Грязев" ? `<span class="wolf-stat-role">Вожак</span>` : "";
     const card=el("article",`wolf-stat-card reveal${wolf.name==="Артем Грязев" ? " leader" : ""}`);
-    if(index>=initialLimit) card.classList.add("stat-extra");
     card.innerHTML=`
       <div class="wolf-stat-head">
         <div class="wolf-stat-name">${wolf.name}</div>
@@ -1393,30 +1402,21 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
           <small>${seasonDetail}</small>
         </div>
       </div>`;
-    grid.appendChild(card);
-  });
+    return card;
+  };
 
-  if(ALL_MEMBERS.length>initialLimit){
-    toggle.hidden=false;
-    toggle.addEventListener("click",()=>{
-      const expanded=toggle.getAttribute("aria-expanded")==="true";
-      toggle.setAttribute("aria-expanded",String(!expanded));
-      grid.classList.toggle("expanded",!expanded);
-      label.textContent=expanded ? "Показать всю стаю" : "Скрыть остальных волков";
-      if(!expanded) grid.querySelectorAll(".stat-extra.reveal").forEach(card=>card.classList.add("in"));
-    });
-  }
+  const renderGroup=(selector,members)=>{
+    const grid=$(selector);
+    members.forEach(member=>grid.appendChild(cardFor(member)));
+  };
+  renderGroup("#wolfStatsMain",ROSTER);
+  renderGroup("#wolfStatsReserve",RESERVE_ROSTER.filter(member=>!member.join));
 })();
 
-// Results — первые четыре строки видимы, остальные раскрываются
+// Results — основной и расширенный состав разделены небольшим визуальным промежутком.
 (function(){
-  const body=$("#resultsList");
-  const table=body.closest(".results-table");
-  const toggle=$("#resultsToggle");
-  const label=toggle.querySelector(".results-toggle-label");
-  const initialLimit=4;
   const resultsByName=new Map(RESULTS.map(result=>[result.athlete,result]));
-  const packResults=ALL_MEMBERS.map(member=>resultsByName.get(member.name) || {
+  const fallbackFor=member=>({
     athlete:member.name,
     year:"—",
     event:member.name==="Андрей Касьяненко" ? "Дебютант RussiaLoppet" : "Нет подтверждённых данных",
@@ -1425,34 +1425,28 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     group:"—",
     groupPlace:null
   });
-
-  packResults.forEach((r,index)=>{
-    const profileUrl=ATHLETE_PROFILE_LINKS[r.athlete] || ALL_MEMBERS.find(w=>w.name===r.athlete)?.rl || "";
-    const athlete=profileUrl
-      ? `<a href="${profileUrl}" target="_blank" rel="noopener noreferrer">${r.athlete}</a>`
-      : r.athlete;
-    const row=el("tr");
-    if(index>=initialLimit) row.classList.add("result-extra");
-    row.innerHTML=`
-      <td class="athlete-cell">${athlete}</td>
-      <td class="number-cell">${r.year}</td>
-      <td class="detail-cell"><b>${r.event}</b></td>
-      <td class="time-cell">${r.time}</td>
-      <td class="place-cell ${r.absPlace!==null && r.absPlace<=3 ? "podium" : ""}">${r.absPlace!==null ? `${r.absPlace} место` : "—"}</td>
-      <td class="number-cell">${r.group}</td>
-      <td class="place-cell ${r.groupPlace!==null && r.groupPlace<=3 ? "podium" : ""}">${r.groupPlace!==null ? `${r.groupPlace} место` : "—"}</td>`;
-    body.appendChild(row);
-  });
-
-  if(packResults.length>initialLimit){
-    toggle.hidden=false;
-    toggle.addEventListener("click",()=>{
-      const expanded=toggle.getAttribute("aria-expanded")==="true";
-      toggle.setAttribute("aria-expanded",String(!expanded));
-      table.classList.toggle("expanded",!expanded);
-      label.textContent=expanded ? "Показать весь след стаи" : "Скрыть остальные результаты";
+  const renderGroup=(selector,members)=>{
+    const body=$(selector);
+    members.forEach(member=>{
+      const r=resultsByName.get(member.name) || fallbackFor(member);
+      const profileUrl=ATHLETE_PROFILE_LINKS[r.athlete] || member.rl || "";
+      const athlete=profileUrl
+        ? `<a href="${profileUrl}" target="_blank" rel="noopener noreferrer">${r.athlete}</a>`
+        : r.athlete;
+      const row=el("tr");
+      row.innerHTML=`
+        <td class="athlete-cell">${athlete}</td>
+        <td class="number-cell">${r.year}</td>
+        <td class="detail-cell"><b>${r.event}</b></td>
+        <td class="time-cell">${r.time}</td>
+        <td class="place-cell ${r.absPlace!==null && r.absPlace<=3 ? "podium" : ""}">${r.absPlace!==null ? `${r.absPlace} место` : "—"}</td>
+        <td class="number-cell">${r.group}</td>
+        <td class="place-cell ${r.groupPlace!==null && r.groupPlace<=3 ? "podium" : ""}">${r.groupPlace!==null ? `${r.groupPlace} место` : "—"}</td>`;
+      body.appendChild(row);
     });
-  }
+  };
+  renderGroup("#resultsMain",ROSTER);
+  renderGroup("#resultsReserve",RESERVE_ROSTER.filter(member=>!member.join));
 })();
 
 // До даты ближайшего старта: точное время гонки пока не опубликовано.
@@ -1594,7 +1588,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     const material = p.material ? `<div class="material">${p.material}</div>` : "";
     const stock = p.preorder
       ? `<div class="stock"><span class="stock-label">Товар закончился</span>Возможен предзаказ. Срок — ${p.preorderLeadTime}.</div>`
-      : p.stock ? `<div class="stock"><span class="stock-label">В наличии</span><div class="stock-sizes">${Object.entries(p.stock).filter(([,quantity])=>quantity>0).map(([size,quantity])=>`<span class="stock-size">${size} — ${quantity} шт.</span>`).join("")}</div></div>` : "";
+      : p.stock ? `<div class="stock"><span class="stock-label">В наличии</span><div class="stock-sizes">${Object.entries(p.stock).filter(([,quantity])=>quantity>0).map(([size,quantity])=>`<a class="stock-size" href="/shop/order/?product=${encodeURIComponent(p.id)}&size=${encodeURIComponent(size)}" data-goal="shop_size_click" aria-label="Заказать ${p.name}, размер ${size}">${size} — ${quantity} шт.</a>`).join("")}</div></div>` : "";
     card.innerHTML = `<div class="img">${imgInner}</div>
       <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>${material}${stock}
       <div class="pf"><div class="price">${p.price}</div>${btn}</div></div>`;
