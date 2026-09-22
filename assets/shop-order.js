@@ -171,6 +171,19 @@
     checkout.hidden = true; builder.hidden = false;
     items.querySelector('.product').focus();
   });
-  addItem(new URLSearchParams(window.location.search).get('product'), false);
+  var initialParams = new URLSearchParams(window.location.search);
+  addItem(initialParams.get('product'), false);
+  var initialSize = initialParams.get('size');
+  if (initialSize) {
+    var firstRow = rows()[0];
+    var firstProduct = productFor(firstRow);
+    if (firstProduct && firstProduct.sizeKind !== 'cap') {
+      var sizeSelect = firstRow.querySelector('.size');
+      if (Array.from(sizeSelect.options).some(function (option) { return option.value === initialSize; })) {
+        sizeSelect.value = initialSize;
+        refresh();
+      }
+    }
+  }
   builder.hidden = false;
 })();
