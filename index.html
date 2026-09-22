@@ -444,6 +444,10 @@
   .prod .pn{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.05em; font-size:17px}
   .prod .pd{color:var(--muted); font-size:14px; flex:1}
   .prod .material{color:var(--ice); font-family:'Oswald'; font-size:12px; line-height:1.35; text-transform:uppercase; letter-spacing:.09em}
+  .prod .stock{margin-top:6px; font-size:14px; line-height:1.5; color:var(--muted)}
+  .prod .stock-label{display:block; color:var(--ice-hi); margin-bottom:5px}
+  .prod .stock-sizes{display:flex; flex-wrap:wrap; gap:6px}
+  .prod .stock-size{padding:3px 7px; border:1px solid var(--line2); border-radius:5px; white-space:nowrap}
   .prod .pf{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:10px}
   .prod .pf .btn{padding:9px 14px; font-size:13px}
   .prod .price{font-family:'Oswald'; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
@@ -900,9 +904,9 @@
   <div class="wrap">
     <div class="eyebrow">Первый дроп</div>
     <h2>Экипировка <span class="ice">стаи</span></h2>
-    <p class="lead">Футболки и кепки ВАРГИ можно заказать на сайте: выберите модель, размер и количество. Наличие, доставку и оплату согласуем по почте. Остальная экипировка готовится к выпуску.</p>
+    <p class="lead">Футболки ВАРГИ в наличии — выберите модель, размер и количество. Кепки доступны по предзаказу, срок — 1 месяц. Доставку и оплату согласуем по почте.</p>
     <div class="shop" id="shopList"></div>
-    <p class="shop-note">Наличие размеров и условия доставки уточняйте при заказе.<br>Вся продукция изготовлена в России.</p>
+    <p class="shop-note">Остатки на 22 сентября 2026. Наличие подтверждаем при обработке заявки. Доставка оплачивается отдельно.<br>Вся продукция изготовлена в России.</p>
   </div>
 </section>
 
@@ -953,7 +957,7 @@
 
 <!-- Для быстрого отката старые image-data-*.js сохранены в репозитории. -->
 <script src="/assets/image-paths.js"></script>
-<script src="/assets/shop-catalog.js?v=20260918"></script>
+<script src="/assets/shop-catalog.js?v=20260922"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script src="assets/geography/pack-atlas.js?v=20260916"></script>
 <script>
@@ -1584,12 +1588,15 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       : (p.soon?"В РАЗРАБОТКЕ":"ФОТО ТОВАРА");
     const btn = p.soon
       ? `<button class="btn ghost order" disabled>Скоро</button>`
-      : p.available
-        ? `<a class="btn ghost order" href="/shop/order/?product=${encodeURIComponent(p.id)}" data-goal="shop_order_click">Заказать</a>`
+      : p.available || p.preorder
+        ? `<a class="btn ghost order" href="/shop/order/?product=${encodeURIComponent(p.id)}" data-goal="shop_order_click">${p.preorder ? "Предзаказ" : "Заказать"}</a>`
         : `<button class="btn ghost order">Узнать о выходе</button>`;
     const material = p.material ? `<div class="material">${p.material}</div>` : "";
+    const stock = p.preorder
+      ? `<div class="stock"><span class="stock-label">Товар закончился</span>Возможен предзаказ. Срок — ${p.preorderLeadTime}.</div>`
+      : p.stock ? `<div class="stock"><span class="stock-label">В наличии</span><div class="stock-sizes">${Object.entries(p.stock).filter(([,quantity])=>quantity>0).map(([size,quantity])=>`<span class="stock-size">${size} — ${quantity} шт.</span>`).join("")}</div></div>` : "";
     card.innerHTML = `<div class="img">${imgInner}</div>
-      <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>${material}
+      <div class="pb"><div class="pn">${p.name}</div><div class="pd">${p.desc}</div>${material}${stock}
       <div class="pf"><div class="price">${p.price}</div>${btn}</div></div>`;
     if(p.img){
       const imageBox = card.querySelector(".img");
@@ -1605,7 +1612,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
         }
       };
     }
-    if(!p.soon && !p.available) card.querySelector(".order").onclick=()=>openOrder(p.name);
+    if(!p.soon && !p.available && !p.preorder) card.querySelector(".order").onclick=()=>openOrder(p.name);
     wrap.appendChild(card);
   });
 })();

@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/shop-order.css?v=20260918">
+  <link rel="stylesheet" href="/assets/shop-order.css?v=20260922">
 </head>
 <body>
   <header><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ — главная"><img src="/assets/vargi-rune.svg" width="32" height="32" alt="">ВАРГИ</a><a href="/#shop">К товарам</a></div></header>
@@ -21,10 +21,10 @@
     <noscript><p class="notice">Для выбора товаров включите JavaScript или <a href="/contact/">напишите нам</a>.</p></noscript>
     <form id="orderBuilder" hidden>
       <h2>1. Выберите экипировку</h2>
-      <p class="hint">Укажите привычный размер или выберите помощь с подбором. Наличие нужного размера подтвердим отдельно.</p>
+      <p class="hint">Выберите размер из наличия или помощь с подбором. Кепки — по предзаказу, срок 1 месяц. Остатки на 22 сентября 2026; наличие подтвердим при обработке заявки.</p>
       <div id="orderItems"></div>
       <button class="button secondary add-item" type="button" id="addItem">+ Добавить ещё товар</button>
-      <div class="total-panel"><div><span>Предварительная стоимость товаров</span><strong id="orderTotal" aria-live="polite"></strong></div><p>Цены в каталоге указаны «от». Итоговую стоимость и доставку согласуем до оплаты.</p></div>
+      <div class="total-panel"><div><span>Стоимость товаров</span><strong id="orderTotal" aria-live="polite"></strong></div><p>Цены фиксированные. Доставка рассчитывается отдельно и согласуется до оплаты.</p></div>
       <p id="orderError" class="error" role="alert" hidden></p>
       <button class="button primary full" type="submit">Продолжить оформление →</button>
       <p class="hint">На следующем шаге — имя, почта для ответа и город доставки.</p>
@@ -47,15 +47,16 @@
         <div class="item-fields">
           <label>Товар<select class="product" required></select></label>
           <p class="product-material"></p>
-          <div class="item-options"><label class="size-label"><span>Размер</span><input class="size" type="text" maxlength="40" required autocomplete="off"></label><label>Количество<input class="quantity" type="number" min="1" max="99" step="1" value="1" inputmode="numeric" required></label></div>
+          <p class="stock-note"></p>
+          <div class="item-options"><label class="size-label"><span>Размер</span><select class="size" required></select><input class="cap-size" type="text" maxlength="40" autocomplete="off" hidden disabled></label><label>Количество<input class="quantity" type="number" min="1" max="99" step="1" value="1" inputmode="numeric" required></label></div>
           <label class="size-help"><input class="help-size" type="checkbox">Нужна помощь с размером</label>
           <div class="item-bottom"><span class="item-price"></span><button class="text-button remove" type="button">Убрать товар</button></div>
         </div>
       </div>
     </fieldset>
   </template>
-  <script src="/assets/shop-catalog.js?v=20260918"></script>
-  <script src="/assets/shop-order.js?v=20260918"></script>
+  <script src="/assets/shop-catalog.js?v=20260922"></script>
+  <script src="/assets/shop-order.js?v=20260922"></script>
   <script src="https://forms.yandex.ru/_static/embed.js" defer></script>
 </body>
 </html>
