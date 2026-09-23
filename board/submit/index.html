@@ -26,7 +26,7 @@
 <fieldset><legend><span class="n">01</span>Что размещаем</legend><div class="grid">
 <label class="field"><span>Тип объявления *</span><select name="kind" id="kind"><option value="sell">Продаю</option><option value="buy">Куплю</option><option value="exchange">Обмен</option></select></label>
 <label class="field"><span>Категория *</span><select name="category" id="category"><option value="skis">Лыжи</option><option value="boots">Ботинки и крепления</option><option value="poles">Палки</option><option value="rollers">Лыжероллеры</option><option value="clothes">Одежда и аксессуары</option></select></label>
-<label class="field full"><span>Название объявления *</span><input name="title" required minlength="6" maxlength="100" placeholder="Например: коньковые лыжи Fischer Speedmax, 191 см"></label>
+<label class="field full"><span>Название объявления *</span><input name="title" required minlength="2" maxlength="100" placeholder="Например: коньковые лыжи Fischer Speedmax, 191 см"></label>
 <label class="field"><span>Город *</span><input name="city" required minlength="2" maxlength="60" placeholder="Город, без точного адреса"></label>
 <label class="field"><span id="priceLabel">Цена, ₽ *</span><input name="price" id="price" type="number" required min="1" max="10000000" step="1" placeholder="Сумма в рублях"></label>
 <label class="field"><span>Бренд</span><input name="brand" maxlength="60" placeholder="Если известен"></label>
@@ -123,7 +123,7 @@ function showPreview(a){
  $('#emailButton').href='/contact/#message='+encodeURIComponent(message.slice(0,3500));
  scrollTo({top:0,behavior:'smooth'});
 }
-$('#adForm').onsubmit=e=>{e.preventDefault();if(busy||!e.currentTarget.reportValidity())return;const a=collect(e.currentTarget);if(a.title.length<6||a.city.length<2||a.description.length<20||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
+$('#adForm').onsubmit=e=>{e.preventDefault();if(busy||!e.currentTarget.reportValidity())return;const a=collect(e.currentTarget);if(a.title.length<2||a.city.length<2||a.description.length<20||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
 $('#editButton').onclick=()=>{$('#previewPanel').classList.remove('active');$('#formPanel').hidden=false;scrollTo({top:0,behavior:'smooth'})};
 window.addEventListener('pagehide',()=>photos.forEach(p=>URL.revokeObjectURL(p.url)));
 sync();
