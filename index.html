@@ -167,29 +167,38 @@
   .value b{display:block; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.07em; font-size:15px; line-height:1.25}
   .value p{margin:5px 0 0; color:var(--muted); font-size:14px; line-height:1.5}
 
-  /* ---------- CLASSIFIEDS PROMO ---------- */
-  .classifieds-promo-section{padding:20px 0 22px; position:relative}
-  .classifieds-promo{position:relative; overflow:hidden; display:grid; grid-template-columns:minmax(0,1fr) auto;
-    gap:28px; align-items:center; padding:24px 28px; border:1px solid rgba(143,208,239,.5); border-radius:16px;
-    background:
-      radial-gradient(circle at 78% 18%,rgba(62,155,214,.22),transparent 38%),
-      linear-gradient(130deg,rgba(18,30,39,.98),rgba(8,12,16,.98))}
-  .classifieds-promo:before{content:""; position:absolute; right:-32px; bottom:-58px; width:210px; height:210px;
-    background:url('assets/vargi-rune.svg') center/contain no-repeat; opacity:.055; transform:rotate(9deg); pointer-events:none}
-  .classifieds-promo-copy{position:relative; z-index:1; min-width:0}
-  .classifieds-promo h2{margin:7px 0 8px; font-size:clamp(26px,3.6vw,38px); text-transform:uppercase}
-  .classifieds-promo p{margin:0; max-width:720px; color:var(--muted); font-size:14px; line-height:1.55}
-  .classifieds-promo-tags{display:flex; flex-wrap:wrap; gap:7px; margin-top:13px}
-  .classifieds-promo-tags span{border:1px solid var(--line2); border-radius:99px; padding:4px 9px; color:var(--ice-hi);
-    background:rgba(62,155,214,.07); font:500 10px 'Oswald',sans-serif; letter-spacing:.08em; text-transform:uppercase}
-  .classifieds-promo-actions{position:relative; z-index:1; display:flex; flex-direction:column; gap:9px; min-width:210px}
-  .classifieds-promo-actions .btn{justify-content:center; text-align:center}
+  /* ---------- NORTHERN MARKET DOCK ---------- */
+  .market-dock{position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:44}
+  .market-dock-tab{position:relative; z-index:2; display:flex; align-items:center; justify-content:center; gap:10px;
+    width:52px; min-height:230px; padding:14px 10px; border:1px solid rgba(143,208,239,.58); border-right:0;
+    border-radius:14px 0 0 14px; background:linear-gradient(180deg,#152630,#091016); color:var(--ice-hi);
+    font:600 13px 'Oswald',sans-serif; letter-spacing:.14em; text-transform:uppercase; text-decoration:none;
+    writing-mode:vertical-rl; transform:rotate(180deg); box-shadow:0 14px 38px rgba(0,0,0,.28)}
+  .market-dock-tab:before{content:""; width:21px; height:21px; flex:0 0 21px;
+    background:url('assets/vargi-rune.svg') center/contain no-repeat; opacity:.9}
+  .market-dock-panel{position:absolute; right:52px; top:50%; width:270px; padding:18px; border:1px solid rgba(143,208,239,.48);
+    border-radius:14px 0 0 14px; background:rgba(8,14,18,.97); backdrop-filter:blur(12px);
+    transform:translate(14px,-50%); opacity:0; visibility:hidden; pointer-events:none;
+    transition:opacity .2s,transform .2s,visibility .2s; box-shadow:0 20px 50px rgba(0,0,0,.34)}
+  .market-dock:hover .market-dock-panel,.market-dock:focus-within .market-dock-panel{
+    transform:translate(0,-50%); opacity:1; visibility:visible; pointer-events:auto}
+  .market-dock-panel .eyebrow{font-size:10px}
+  .market-dock-panel h2{margin:6px 0 8px; font-size:24px; text-transform:uppercase}
+  .market-dock-panel p{margin:0 0 14px; color:var(--muted); font-size:12px; line-height:1.5}
+  .market-dock-actions{display:grid; gap:8px}
+  .market-dock-actions .btn{width:100%; justify-content:center; text-align:center; padding:10px 12px; font-size:12px}
   @media(max-width:760px){
-    .classifieds-promo-section{padding:15px 0 18px}
-    .classifieds-promo{grid-template-columns:1fr; gap:17px; padding:20px 18px; border-radius:13px}
-    .classifieds-promo-actions{min-width:0; flex-direction:row; flex-wrap:wrap}
-    .classifieds-promo-actions .btn{flex:1 1 180px}
+    .market-dock{position:static; transform:none; width:min(100% - 32px,720px); margin:14px auto 20px; display:grid; grid-template-columns:1fr}
+    .market-dock-tab{width:100%; min-height:0; padding:11px 14px; border:1px solid rgba(143,208,239,.55);
+      border-radius:12px 12px 0 0; writing-mode:horizontal-tb; transform:none; flex-direction:row}
+    .market-dock-panel{position:static; width:100%; padding:15px; border-top:0; border-radius:0 0 12px 12px;
+      transform:none; opacity:1; visibility:visible; pointer-events:auto; box-shadow:none; background:rgba(10,16,21,.92)}
+    .market-dock:hover .market-dock-panel,.market-dock:focus-within .market-dock-panel{transform:none}
+    .market-dock-panel h2{font-size:22px}
+    .market-dock-panel p{margin-bottom:12px}
+    .market-dock-actions{grid-template-columns:1fr 1fr}
   }
+  @media(max-width:430px){.market-dock-actions{grid-template-columns:1fr}}
 
   /* ---------- ROSTER (pack formation) ---------- */
   .pack{display:flex; justify-content:center; align-items:flex-end; gap:18px; margin-top:24px;
@@ -747,24 +756,18 @@
   </div>
 </section>
 
-<section class="classifieds-promo-section" aria-labelledby="classifiedsPromoTitle">
-  <div class="wrap">
-    <article class="classifieds-promo reveal">
-      <div class="classifieds-promo-copy">
-        <div class="eyebrow">Новый раздел · объявления</div>
-        <h2 id="classifiedsPromoTitle">Северный <span class="ice">маркет</span></h2>
-        <p>Купить, продать или обменять лыжи и экипировку. Северный маркет ВАРГИ — объявления для лыжников по всей России. Для лыж можно указать ростовку, жёсткость, крепления и структуру. Объявления публикуются после модерации.</p>
-        <div class="classifieds-promo-tags" aria-label="Возможности раздела">
-          <span>Продаю</span><span>Куплю</span><span>Обмен</span><span>По всей России</span>
-        </div>
-      </div>
-      <div class="classifieds-promo-actions">
-        <a class="btn" href="/board/" data-goal="classifieds_promo_view">Смотреть объявления →</a>
-        <a class="btn ghost" href="/board/#submit" data-goal="classifieds_promo_submit">Подать объявление</a>
-      </div>
-    </article>
+<aside class="market-dock" aria-label="Северный маркет ВАРГИ">
+  <div class="market-dock-panel">
+    <div class="eyebrow">Объявления ВАРГИ</div>
+    <h2>Северный <span class="ice">маркет</span></h2>
+    <p>Купить, продать или обменять лыжи и экипировку. Публикация после модерации.</p>
+    <div class="market-dock-actions">
+      <a class="btn" href="/board/" data-goal="classifieds_dock_view">Смотреть объявления</a>
+      <a class="btn ghost" href="/board/submit/" data-goal="classifieds_dock_submit">Подать объявление</a>
+    </div>
   </div>
-</section>
+  <a class="market-dock-tab" href="/board/" data-goal="classifieds_dock_tab">Северный маркет</a>
+</aside>
 
 <hr class="track">
 
