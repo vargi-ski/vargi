@@ -68,22 +68,7 @@
 <div class="preview-card"><div class="preview-media" id="previewMedia"></div><div class="preview-body"><div class="preview-kind" id="previewKind"></div><h2 id="previewTitle"></h2><div class="preview-meta" id="previewMeta"></div><div class="preview-price" id="previewPrice"></div><dl class="specs" id="previewSpecs"></dl><h3>Описание</h3><p class="description" id="previewDescription"></p></div></div>
 <div class="submit-box"><p>Если всё верно, отправьте заявку на модерацию. Данные объявления и выбранные фотографии уйдут одним отправлением — открывать почту и прикреплять файлы вручную не нужно.</p><div class="submit-actions"><button class="button secondary" id="editButton" type="button">← Изменить</button><button class="button" id="sendButton" type="button">Отправить на модерацию →</button><a class="button secondary" id="telegramButton" target="_blank" rel="noopener noreferrer">Резервно: Telegram ↗</a></div><div class="direct-submit-note">Фото отправляются вместе с заявкой. Не закрывайте вкладку после нажатия, пока не появится страница подтверждения.</div><span class="send-status" id="sendStatus" role="status" aria-live="polite"></span></div>
 </section>
-<form id="deliveryForm" action="https://formsubmit.co/artemgruazev@yandex.ru" method="POST" enctype="multipart/form-data" hidden>
-  <input type="hidden" name="_subject" id="deliverySubject">
-  <input type="hidden" name="_template" value="table">
-  <input type="hidden" name="_captcha" value="false">
-  <input type="hidden" name="_url" value="https://xn----7sbbfg4a6clj5k.xn--p1ai/board/submit/">
-  <input type="hidden" name="_next" value="https://xn----7sbbfg4a6clj5k.xn--p1ai/board/submit/success/">
-  <input type="text" name="_honey" value="" tabindex="-1" autocomplete="off">
-  <input type="hidden" name="Тип объявления" id="deliveryKind">
-  <input type="hidden" name="Категория" id="deliveryCategory">
-  <input type="hidden" name="Название" id="deliveryTitle">
-  <input type="hidden" name="Город" id="deliveryCity">
-  <input type="hidden" name="Цена / бюджет" id="deliveryPrice">
-  <input type="hidden" name="Контакт" id="deliveryContact">
-  <textarea name="Полное объявление" id="deliveryMessage" hidden></textarea>
-  <input type="file" name="attachment" id="deliveryPhotos" multiple hidden>
-</form>
+
 </main>
 <footer class="footer"><div class="wrap">ВАРГИ / Северный маркет · публикация только после модерации</div></footer>
 <script>
@@ -91,6 +76,7 @@
 const $=s=>document.querySelector(s);
 const categories={skis:'Лыжи',boots:'Ботинки и крепления',poles:'Палки',rollers:'Лыжероллеры',clothes:'Одежда и аксессуары'};
 const kinds={sell:'Продаю',buy:'Куплю',exchange:'Обмен'};
+const MARKET_API='https://market-api-production-d9ab.up.railway.app';
 let photos=[],photoBytes=0,busy=false,current=null,preparedSubmission=null;
 const money=n=>new Intl.NumberFormat('ru-RU').format(n)+' ₽';
 function structure(a){return a.structureKind==='factory'?'Заводская, код неизвестен':(['known','custom'].includes(a.structureKind)&&a.structureValue?a.structureValue:'Не указана / не знаю')}
@@ -159,23 +145,29 @@ function showPreview(a){
 }
 $('#adForm').onsubmit=e=>{e.preventDefault();if(busy||!e.currentTarget.reportValidity())return;const a=collect(e.currentTarget);if(a.title.length<2||a.city.length<2||a.description.length<20||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
 $('#editButton').onclick=()=>{$('#previewPanel').classList.remove('active');$('#formPanel').hidden=false;scrollTo({top:0,behavior:'smooth'})};
-$('#sendButton').onclick=()=>{
+$('#sendButton').onclick=async()=>{
  if(!current||!preparedSubmission)return;
  const button=$('#sendButton'),status=$('#sendStatus');
- if(photos.length&&!window.DataTransfer){status.textContent='Этот браузер не поддерживает автоматическую передачу выбранных фото. Используйте резервную отправку в Telegram.';return}
+ const data=new FormData();
+ data.append('kind',kinds[current.kind]);
+ data.append('category',categories[current.category]);
+ data.append('title',current.title);
+ data.append('city',current.city);
+ data.append('price',priceText(current));
+ data.append('contact',current.contactName+' — '+current.publicContact);
+ data.append('message',preparedSubmission.message);
+ data.append('website','');
+ photos.forEach((p,i)=>data.append('photos',p.file,p.file.name||('photo-'+(i+1)+'.jpg')));
+ button.disabled=true;button.textContent='Отправляем…';status.textContent='Загружаем заявку и фотографии. Не закрывайте вкладку.';
  try{
-  const dt=new DataTransfer();photos.forEach(p=>dt.items.add(p.file));$('#deliveryPhotos').files=dt.files;
-  $('#deliverySubject').value=preparedSubmission.subject;
-  $('#deliveryKind').value=kinds[current.kind];
-  $('#deliveryCategory').value=categories[current.category];
-  $('#deliveryTitle').value=current.title;
-  $('#deliveryCity').value=current.city;
-  $('#deliveryPrice').value=priceText(current);
-  $('#deliveryContact').value=current.contactName+' — '+current.publicContact;
-  $('#deliveryMessage').value=preparedSubmission.message;
-  button.disabled=true;button.textContent='Отправляем…';status.textContent='Загружаем заявку и фотографии. Не закрывайте вкладку.';
-  setTimeout(()=>$('#deliveryForm').submit(),80);
- }catch(_){button.disabled=false;button.textContent='Отправить на модерацию →';status.textContent='Не удалось подготовить отправку. Попробуйте ещё раз или используйте Telegram.'}
+  const response=await fetch(MARKET_API+'/submit',{method:'POST',body:data,mode:'cors',credentials:'omit'});
+  let result={};try{result=await response.json()}catch(_){}
+  if(!response.ok||!result.ok)throw Error(result.error||'Ошибка отправки.');
+  location.href='/board/submit/success/';
+ }catch(error){
+  button.disabled=false;button.textContent='Отправить на модерацию →';
+  status.textContent=error?.message||'Не удалось отправить заявку. Попробуйте ещё раз или используйте Telegram.';
+ }
 };
 window.addEventListener('pagehide',()=>photos.forEach(p=>URL.revokeObjectURL(p.url)));
 sync();
