@@ -94,6 +94,8 @@
   .nav .links{display:flex; gap:22px; margin-left:auto; font-size:14px; color:var(--muted);
     font-family:'Oswald'; text-transform:uppercase; letter-spacing:.08em}
   .nav .links a:hover{color:var(--ink)}
+  .nav .links .nav-board-link{color:var(--ice-hi)}
+  .nav .links .nav-board-link:hover{color:#fff}
   .btn{display:inline-flex; align-items:center; gap:8px; font-family:'Oswald'; text-transform:uppercase;
     letter-spacing:.1em; font-weight:600; font-size:14px; padding:11px 20px; border-radius:8px;
     border:1px solid var(--ice); color:var(--bg); background:var(--ice); cursor:pointer; transition:.2s}
@@ -164,6 +166,30 @@
   .value{border-left:2px solid var(--ice); padding:6px 0 6px 16px}
   .value b{display:block; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.07em; font-size:15px; line-height:1.25}
   .value p{margin:5px 0 0; color:var(--muted); font-size:14px; line-height:1.5}
+
+  /* ---------- CLASSIFIEDS PROMO ---------- */
+  .classifieds-promo-section{padding:20px 0 22px; position:relative}
+  .classifieds-promo{position:relative; overflow:hidden; display:grid; grid-template-columns:minmax(0,1fr) auto;
+    gap:28px; align-items:center; padding:24px 28px; border:1px solid rgba(143,208,239,.5); border-radius:16px;
+    background:
+      radial-gradient(circle at 78% 18%,rgba(62,155,214,.22),transparent 38%),
+      linear-gradient(130deg,rgba(18,30,39,.98),rgba(8,12,16,.98))}
+  .classifieds-promo:before{content:""; position:absolute; right:-32px; bottom:-58px; width:210px; height:210px;
+    background:url('assets/vargi-rune.svg') center/contain no-repeat; opacity:.055; transform:rotate(9deg); pointer-events:none}
+  .classifieds-promo-copy{position:relative; z-index:1; min-width:0}
+  .classifieds-promo h2{margin:7px 0 8px; font-size:clamp(26px,3.6vw,38px); text-transform:uppercase}
+  .classifieds-promo p{margin:0; max-width:720px; color:var(--muted); font-size:14px; line-height:1.55}
+  .classifieds-promo-tags{display:flex; flex-wrap:wrap; gap:7px; margin-top:13px}
+  .classifieds-promo-tags span{border:1px solid var(--line2); border-radius:99px; padding:4px 9px; color:var(--ice-hi);
+    background:rgba(62,155,214,.07); font:500 10px 'Oswald',sans-serif; letter-spacing:.08em; text-transform:uppercase}
+  .classifieds-promo-actions{position:relative; z-index:1; display:flex; flex-direction:column; gap:9px; min-width:210px}
+  .classifieds-promo-actions .btn{justify-content:center; text-align:center}
+  @media(max-width:760px){
+    .classifieds-promo-section{padding:15px 0 18px}
+    .classifieds-promo{grid-template-columns:1fr; gap:17px; padding:20px 18px; border-radius:13px}
+    .classifieds-promo-actions{min-width:0; flex-direction:row; flex-wrap:wrap}
+    .classifieds-promo-actions .btn{flex:1 1 180px}
+  }
 
   /* ---------- ROSTER (pack formation) ---------- */
   .pack{display:flex; justify-content:center; align-items:flex-end; gap:18px; margin-top:24px;
@@ -689,7 +715,7 @@
       <a href="#training">Подготовка</a>
       <a href="#calendar">Старты</a>
       <a href="#shop">Магазин</a>
-      <a href="/board/" data-goal="classifieds_nav_click">Объявления</a>
+      <a class="nav-board-link" href="/board/" data-goal="classifieds_nav_click">Объявления</a>
       <a href="#contacts">Контакты</a>
     </nav>
   </div>
@@ -718,6 +744,25 @@
         <a href="/training-plan/" class="btn ghost" data-goal="hero_training_click">Обсудить подготовку →</a>
       </div>
     </div>
+  </div>
+</section>
+
+<section class="classifieds-promo-section" aria-labelledby="classifiedsPromoTitle">
+  <div class="wrap">
+    <article class="classifieds-promo reveal">
+      <div class="classifieds-promo-copy">
+        <div class="eyebrow">Новый раздел · объявления</div>
+        <h2 id="classifiedsPromoTitle">Лыжная барахолка <span class="ice">ВАРГИ</span></h2>
+        <p>Купить, продать или обменять лыжи и экипировку. Для лыж можно указать ростовку, жёсткость, крепления и структуру. Объявления публикуются после модерации.</p>
+        <div class="classifieds-promo-tags" aria-label="Возможности раздела">
+          <span>Продаю</span><span>Куплю</span><span>Обмен</span><span>По всей России</span>
+        </div>
+      </div>
+      <div class="classifieds-promo-actions">
+        <a class="btn" href="/board/" data-goal="classifieds_promo_view">Смотреть объявления →</a>
+        <a class="btn ghost" href="/board/#submit" data-goal="classifieds_promo_submit">Подать объявление</a>
+      </div>
+    </article>
   </div>
 </section>
 
