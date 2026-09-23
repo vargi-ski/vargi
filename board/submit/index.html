@@ -66,7 +66,7 @@
 <section class="panel preview" id="previewPanel" aria-live="polite">
 <div class="eyebrow">Предпросмотр · не опубликовано</div>
 <div class="preview-card"><div class="preview-media" id="previewMedia"></div><div class="preview-body"><div class="preview-kind" id="previewKind"></div><h2 id="previewTitle"></h2><div class="preview-meta" id="previewMeta"></div><div class="preview-price" id="previewPrice"></div><dl class="specs" id="previewSpecs"></dl><h3>Описание</h3><p class="description" id="previewDescription"></p></div></div>
-<div class="submit-box"><p>Если всё верно, отправьте заявку модератору. Через Telegram текст уже будет подготовлен; фотографии прикрепите к сообщению. В варианте «по почте» откроется форма ВАРГИ с подготовленным текстом.</p><div class="submit-actions"><button class="button secondary" id="editButton" type="button">← Изменить</button><a class="button" id="telegramButton" target="_blank" rel="noopener noreferrer">Отправить в Telegram ↗</a><a class="button secondary" id="emailButton">Отправить по почте →</a></div></div>
+<div class="submit-box"><p>Если всё верно, отправьте заявку модератору. В Telegram и по почте текст объявления будет подготовлен автоматически; фотографии прикрепите к сообщению или письму вручную.</p><div class="submit-actions"><button class="button secondary" id="editButton" type="button">← Изменить</button><a class="button" id="telegramButton" target="_blank" rel="noopener noreferrer">Отправить в Telegram ↗</a><a class="button secondary" id="emailButton">Отправить по почте →</a></div></div>
 </section>
 </main>
 <footer class="footer"><div class="wrap">ВАРГИ / Северный маркет · публикация только после модерации</div></footer>
@@ -120,7 +120,10 @@ function showPreview(a){
  lines.push('Состояние: '+(a.condition||'не указано'),'Передача: '+(a.delivery||'обсудим'),'','Описание: '+a.description,'','Контакт: '+a.contactName+' — '+a.publicContact,'','Фотографий подготовлено: '+photos.length+'. Прикреплю их к сообщению / досылаю модератору.');
  const message=lines.join('\n');
  const tg=new URL('https://t.me/TomMurman');tg.searchParams.set('text',message);$('#telegramButton').href=tg.href;
- $('#emailButton').href='/contact/#message='+encodeURIComponent(message.slice(0,3500));
+ const mail=new URL('mailto:artemgruazev@yandex.ru');
+ mail.searchParams.set('subject','Объявление ВАРГИ — '+a.title);
+ mail.searchParams.set('body',message);
+ $('#emailButton').href=mail.href;
  scrollTo({top:0,behavior:'smooth'});
 }
 $('#adForm').onsubmit=e=>{e.preventDefault();if(busy||!e.currentTarget.reportValidity())return;const a=collect(e.currentTarget);if(a.title.length<2||a.city.length<2||a.description.length<20||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
