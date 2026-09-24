@@ -239,19 +239,152 @@ function publicListing(item, req) {
 
 function h(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
 
+const MARKET_CATEGORIES = {
+  skis: 'Лыжи',
+  boots: 'Ботинки и крепления',
+  poles: 'Палки',
+  rollers: 'Лыжероллеры',
+  clothes: 'Одежда и аксессуары'
+};
+
+function marketMoney(value) {
+  const n = Number(value);
+  return Number.isFinite(n) ? new Intl.NumberFormat('ru-RU').format(n) + ' ₽' : 'Цена по запросу';
+}
+
+function marketPage(title, body) {
+  return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>' + h(title) + ' — Северный маркет ВАРГИ</title>' +
+    '<meta name="robots" content="noindex,follow"><meta name="theme-color" content="#07080a">' +
+    '<style>' +
+    ':root{color-scheme:dark;--bg:#07080a;--panel:#10161b;--panel2:#0b1116;--line:#263d4a;--ink:#edf3f7;--muted:#9fb0bc;--ice:#8fd0ef;--accent:#3e9bd6}' +
+    '*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Arial,system-ui,sans-serif}a{color:inherit}.wrap{width:min(1180px,calc(100% - 32px));margin:auto}' +
+    '.header{border-bottom:1px solid var(--line);background:#07080a}.header-row{min-height:70px;display:flex;align-items:center;gap:18px}.brand{font-size:21px;font-weight:800;letter-spacing:.14em;text-decoration:none}.brand b{color:var(--accent)}.header-title{color:var(--muted)}.header-actions{margin-left:auto;display:flex;gap:10px;align-items:center}' +
+    '.button{display:inline-flex;align-items:center;justify-content:center;min-height:42px;padding:10px 15px;border:1px solid var(--ice);border-radius:8px;background:var(--ice);color:#07131b;text-decoration:none;font-weight:700}.button.secondary{background:transparent;color:var(--ice);border-color:var(--line)}' +
+    '.hero{padding:34px 0 18px}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ice);font-weight:700}.hero h1{font-size:clamp(34px,5vw,54px);line-height:1.04;margin:8px 0 12px;letter-spacing:-.035em}.hero p{max-width:720px;color:var(--muted);margin:0}' +
+    '.filters{display:grid;grid-template-columns:2fr 1fr 1fr 130px 130px 160px auto;gap:9px;margin:24px 0 22px}.filters input,.filters select{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;background:#080e13;color:var(--ink);padding:10px 11px}.filters button{cursor:pointer}' +
+    '.catalog-head{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.counter{font-size:12px;color:var(--muted)}' +
+    '.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;padding-bottom:42px}.card{display:flex;flex-direction:column;min-width:0;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--panel);text-decoration:none;transition:border-color .18s,transform .18s}.card:hover{border-color:#5d7e92;transform:translateY(-2px)}' +
+    '.photo{height:220px;background:radial-gradient(circle at 50% 42%,#1a3342,#090f13 72%);display:flex;align-items:center;justify-content:center;overflow:hidden;color:#7694a6}.photo img{width:100%;height:100%;object-fit:cover}.photo-empty{font-size:12px;letter-spacing:.12em;text-transform:uppercase}' +
+    '.card-body{padding:16px;display:flex;flex-direction:column;gap:9px;flex:1}.kind{font-size:10px;color:var(--ice);text-transform:uppercase;letter-spacing:.12em}.title{font-size:19px;font-weight:700;line-height:1.25}.meta{font-size:12px;color:var(--muted)}.desc{font-size:13px;color:#c4d0d8;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.price{font-size:25px;font-weight:800;letter-spacing:-.03em;margin-top:auto;padding-top:5px}.more{color:var(--ice);font-size:12px;margin-top:2px}' +
+    '.empty{padding:64px 24px;text-align:center;border:1px dashed var(--line);border-radius:14px;color:var(--muted)}' +
+    '.detail-wrap{padding:26px 0 42px}.back{display:inline-block;color:var(--ice);text-decoration:none;margin-bottom:18px}.detail{border:1px solid var(--line);border-radius:16px;background:var(--panel);overflow:hidden}.detail-top{display:grid;grid-template-columns:1.15fr 1fr}.detail-hero{min-height:420px;background:#0a1116}.detail-hero img{width:100%;height:100%;max-height:520px;object-fit:contain}.detail-copy{padding:26px}.detail-copy h1{font-size:34px;line-height:1.1;margin:8px 0 10px}.detail-price{font-size:31px;font-weight:800;margin:18px 0}.gallery{display:flex;gap:8px;overflow:auto;padding:14px;border-top:1px solid var(--line)}.gallery img{width:130px;height:100px;object-fit:cover;border-radius:8px;border:1px solid var(--line)}.detail-body{padding:0 26px 26px}.specs{display:grid;grid-template-columns:1fr 1fr;gap:0 22px;margin:10px 0 24px}.spec{padding:10px 0;border-bottom:1px solid var(--line)}.spec span{display:block;font-size:11px;color:var(--muted)}.description{white-space:pre-wrap;overflow-wrap:anywhere;color:#c7d2da}.contact{margin-top:20px;padding:14px;border:1px solid #42677b;border-radius:10px;background:#0a151c}' +
+    '.footer{border-top:1px solid var(--line);padding:18px 0 26px;color:var(--muted);font-size:12px}' +
+    '@media(max-width:980px){.filters{grid-template-columns:repeat(3,1fr)}.filters .wide{grid-column:1/-1}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-top{grid-template-columns:1fr}}' +
+    '@media(max-width:620px){.wrap{width:calc(100% - 20px)}.header-row{min-height:60px}.header-title,.header-actions .secondary{display:none}.button{padding:9px 11px}.hero{padding-top:24px}.filters{grid-template-columns:1fr}.filters .wide{grid-column:auto}.cards{grid-template-columns:1fr}.photo{height:240px}.detail-copy,.detail-body{padding:18px}.detail-copy h1{font-size:28px}.specs{grid-template-columns:1fr}.detail-hero{min-height:280px}}' +
+    '</style></head><body>' +
+    '<header class="header"><div class="wrap header-row"><a class="brand" href="' + h(SITE_ORIGIN) + '/" aria-label="ВАРГИ">В<b>А</b>Р<b>Г</b>И</a><span class="header-title">Северный маркет</span><div class="header-actions"><a class="button secondary" href="' + h(SITE_ORIGIN) + '/">На основной сайт</a><a class="button" href="' + h(SITE_ORIGIN) + '/board/submit/">+ Подать объявление</a></div></div></header>' +
+    body +
+    '<footer class="footer"><div class="wrap">ВАРГИ / Северный маркет · публикация только после модерации</div></footer></body></html>';
+}
+
 app.get('/market', async (req, res) => {
   try {
-    const items = (await listSubmissions()).filter(item => item.status === 'published');
+    let items = (await listSubmissions())
+      .filter(item => item.status === 'published')
+      .map(item => publicListing(item, req));
+
+    const q = clean(req.query.q, 120).toLocaleLowerCase('ru');
+    const category = clean(req.query.category, 30);
+    const city = clean(req.query.city, 80).toLocaleLowerCase('ru');
+    const min = req.query.min === undefined || req.query.min === '' ? null : Number(req.query.min);
+    const max = req.query.max === undefined || req.query.max === '' ? null : Number(req.query.max);
+    const sort = clean(req.query.sort, 20) || 'newest';
+
+    items = items.filter(item =>
+      (!category || item.category === category) &&
+      (!city || String(item.city || '').toLocaleLowerCase('ru').includes(city)) &&
+      (!q || [item.title,item.brand,item.model,item.city,item.description,item.otherSpec,item.style].join(' ').toLocaleLowerCase('ru').includes(q)) &&
+      (min === null || (item.price !== null && item.price >= min)) &&
+      (max === null || (item.price !== null && item.price <= max))
+    );
+
+    items.sort((a,b) => sort === 'cheap'
+      ? (a.price ?? Infinity) - (b.price ?? Infinity)
+      : sort === 'expensive'
+        ? (b.price ?? -Infinity) - (a.price ?? -Infinity)
+        : String(b.date || '').localeCompare(String(a.date || ''))
+    );
+
+    const options = Object.entries(MARKET_CATEGORIES)
+      .map(([key,label]) => '<option value="' + h(key) + '"' + (category === key ? ' selected' : '') + '>' + h(label) + '</option>')
+      .join('');
+
     const cards = items.map(item => {
-      const first = item.photos?.[0];
-      const photo = first ? '<img src="/listings/' + encodeURIComponent(item.id) + '/photos/' + encodeURIComponent(first.filename) + '" alt="" style="width:180px;height:140px;object-fit:cover;border-radius:8px">' : '';
-      return '<article style="border:1px solid #263d4a;border-radius:12px;padding:14px;background:#10161b">' +
-        photo + '<h2>' + h(item.title) + '</h2><p>' + h(item.city) + '</p><p><b>' + h(item.price || '') + '</b></p>' +
-        '<p>' + h(item.description || '') + '</p><p>Контакт: ' + h(item.contact || '') + '</p></article>';
+      const first = item.photos?.[0]?.url;
+      const photo = first
+        ? '<img src="' + h(first) + '" alt="Фото объявления">'
+        : '<span class="photo-empty">Фото не добавлено</span>';
+      const desc = clean(item.description, 180);
+      return '<a class="card" href="/market/' + encodeURIComponent(item.id) + '">' +
+        '<div class="photo">' + photo + '</div>' +
+        '<div class="card-body"><div class="kind">' + h(MARKET_CATEGORIES[item.category] || item.category) + '</div>' +
+        '<div class="title">' + h(item.title) + '</div>' +
+        '<div class="meta">' + h(item.city) + (item.condition ? ' · ' + h(item.condition) : '') + '</div>' +
+        (desc ? '<div class="desc">' + h(desc) + '</div>' : '') +
+        '<div class="price">' + h(marketMoney(item.price)) + '</div><div class="more">Подробнее →</div></div></a>';
     }).join('');
-    res.type('html').send('<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Северный маркет ВАРГИ</title></head><body style="margin:0;background:#07080a;color:#edf3f7;font:14px Arial"><main style="max-width:1100px;margin:auto;padding:24px"><p><a style="color:#8fd0ef" href="' + SITE_ORIGIN + '/">← ВАРГИ</a></p><h1>Северный маркет</h1><p><a style="color:#8fd0ef" href="' + SITE_ORIGIN + '/board/submit/">+ Подать объявление</a></p><section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">' + (cards || '<p>Объявлений пока нет.</p>') + '</section></main></body></html>');
+
+    const body = '<main class="wrap"><section class="hero"><div class="eyebrow">Северный маркет</div><h1>Экипировка для следующего старта.</h1><p>Частные объявления о продаже лыж и экипировки. Публикация только после ручной модерации ВАРГИ.</p></section>' +
+      '<form class="filters" method="get" action="/market">' +
+      '<input class="wide" name="q" value="' + h(req.query.q || '') + '" placeholder="Лыжи, модель, размер, структура…">' +
+      '<select name="category"><option value="">Все категории</option>' + options + '</select>' +
+      '<input name="city" value="' + h(req.query.city || '') + '" placeholder="Город">' +
+      '<input name="min" type="number" min="0" value="' + h(req.query.min || '') + '" placeholder="Цена от">' +
+      '<input name="max" type="number" min="0" value="' + h(req.query.max || '') + '" placeholder="Цена до">' +
+      '<select name="sort"><option value="newest"' + (sort === 'newest' ? ' selected' : '') + '>Сначала новые</option><option value="cheap"' + (sort === 'cheap' ? ' selected' : '') + '>Сначала дешевле</option><option value="expensive"' + (sort === 'expensive' ? ' selected' : '') + '>Сначала дороже</option></select>' +
+      '<button class="button" type="submit">Найти</button></form>' +
+      '<div class="catalog-head"><div class="counter">' + items.length + ' объявлений</div></div>' +
+      (cards ? '<section class="cards">' + cards + '</section>' : '<div class="empty"><h2>Пока нет подходящих объявлений</h2><p>Измените фильтры или станьте первым продавцом в этом разделе.</p></div>') +
+      '</main>';
+
+    res.type('html').send(marketPage('Северный маркет', body));
   } catch (error) {
-    res.status(500).send('Не удалось загрузить объявления');
+    console.error('market_page_error', error?.message || error);
+    res.status(500).type('html').send(marketPage('Ошибка', '<main class="wrap"><div class="empty">Не удалось загрузить объявления.</div></main>'));
+  }
+});
+
+app.get('/market/:id', async (req, res) => {
+  try {
+    const raw = await loadSubmission(req.params.id);
+    if (raw.status !== 'published') return res.sendStatus(404);
+    const item = publicListing(raw, req);
+    const categoryLabel = MARKET_CATEGORIES[item.category] || item.category;
+
+    const photos = item.photos || [];
+    const heroPhoto = photos[0]?.url
+      ? '<div class="detail-hero"><img src="' + h(photos[0].url) + '" alt="Фото объявления"></div>'
+      : '<div class="detail-hero"></div>';
+
+    const gallery = photos.length > 1
+      ? '<div class="gallery">' + photos.slice(1).map(photo => '<img src="' + h(photo.url) + '" alt="Дополнительное фото">').join('') + '</div>'
+      : '';
+
+    const values = [
+      ['Категория',categoryLabel],['Город',item.city],['Состояние',item.condition],
+      ['Бренд / модель',[item.brand,item.model].filter(Boolean).join(' ')],['Передача',item.delivery],
+      ['Стиль',item.style],['Длина',item.length ? String(item.length) + ' см' : ''],
+      ['Структура',item.structureValue || item.structureKind],['Жёсткость / маркировка',item.flex],
+      ['Вес по подбору',item.weight],['Крепления',item.bindings],['Характеристики',item.otherSpec]
+    ].filter(pair => pair[1]);
+
+    const specs = '<div class="specs">' + values.map(([key,value]) =>
+      '<div class="spec"><span>' + h(key) + '</span><b>' + h(value) + '</b></div>'
+    ).join('') + '</div>';
+
+    const body = '<main class="wrap detail-wrap"><a class="back" href="/market">← К объявлениям</a>' +
+      '<article class="detail"><div class="detail-top">' + heroPhoto +
+      '<div class="detail-copy"><div class="eyebrow">' + h(categoryLabel) + '</div><h1>' + h(item.title) + '</h1>' +
+      '<p class="meta">' + h(item.city) + (item.condition ? ' · ' + h(item.condition) : '') + '</p>' +
+      '<div class="detail-price">' + h(marketMoney(item.price)) + '</div></div></div>' +
+      gallery +
+      '<div class="detail-body">' + specs + '<h2>Описание</h2><p class="description">' + h(item.description || '') + '</p>' +
+      '<div class="contact"><b>Контакт продавца</b><br>' + h(item.contact || item.publicContact || 'Не указан') + '</div></div></article></main>';
+
+    res.type('html').send(marketPage(item.title, body));
+  } catch {
+    res.sendStatus(404);
   }
 });
 
