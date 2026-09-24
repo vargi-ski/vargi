@@ -152,7 +152,7 @@ function showPreview(a){
  $('#sendStatus').textContent='';
  scrollTo({top:0,behavior:'smooth'});
 }
-$('#adForm').onsubmit=e=>{e.preventDefault();if(busy||!e.currentTarget.reportValidity())return;if(!photos.length){photoError('Добавьте хотя бы одну фотографию товара.');$('#photosInput').focus();return}const a=collect(e.currentTarget);if(a.title.length<2||a.city.length<2||!a.description||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
+$('#adForm').onsubmit=e=>{e.preventDefault();if(busy)return;const fileInput=$('#photosInput');fileInput.required=false;fileInput.removeAttribute('required');fileInput.disabled=true;const valid=e.currentTarget.reportValidity();fileInput.disabled=false;if(!valid)return;if(!photos.length){photoError('Добавьте хотя бы одну фотографию товара.');fileInput.focus();return}const a=collect(e.currentTarget);if(a.title.length<2||a.city.length<2||!a.description||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
 $('#editButton').onclick=()=>{$('#previewPanel').classList.remove('active');$('#formPanel').hidden=false;scrollTo({top:0,behavior:'smooth'})};
 $('#sendButton').onclick=async()=>{
  if(!current||!preparedSubmission)return;
