@@ -589,13 +589,16 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
     }
 
     const files = Array.isArray(req.files) ? req.files : [];
-    const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
-    if (totalBytes > 9 * 1024 * 1024) {
-      return res.status(413).json({ ok: false, error: 'Суммарный размер фотографий слишком большой.' });
+    if (!files.length) {
+      return res.status(400).json({ ok: false, error: 'Добавьте хотя бы одну фотографию товара.' });
+    }
+    const inputBytes = files.reduce((sum, f) => sum + f.size, 0);
+    if (inputBytes > 24 * 1024 * 1024) {
+      return res.status(413).json({ ok: false, error: 'Исходные фотографии слишком большие: максимум 24 МБ суммарно.' });
     }
     for (const file of files) {
       if (!isImageSignature(file.buffer, file.mimetype)) {
-        return res.status(400).json({ ok: false, error: 'Один из файлов не является корректным изображением.' });
+        return res.status(400).json({ ok: false, error: 'Один из файлов не является корректным JPEG, PNG, WebP или HEIC.' });
       }
     }
 
@@ -604,15 +607,22 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
     await mkdir(submissionDir, { recursive: false });
 
     const savedPhotos = [];
+    let normalizedTotal = 0;
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
-      const filename = `photo-${String(i + 1).padStart(2, '0')}${extensionFor(file.mimetype)}`;
-      await writeFile(path.join(submissionDir, filename), file.buffer, { flag: 'wx' });
+      const normalized = await normalizeImage(file);
+      normalizedTotal += normalized.length;
+      if (normalizedTotal > 9 * 1024 * 1024) {
+        throw Object.assign(new Error('normalized_photos_too_large'), { statusCode: 413 });
+      }
+      const filename = `photo-${String(i + 1).padStart(2, '0')}.jpg`;
+      await writeFile(path.join(submissionDir, filename), normalized, { flag: 'wx' });
       savedPhotos.push({
         filename,
         originalName: clean(file.originalname, 180),
-        mimeType: file.mimetype,
-        size: file.size
+        originalMimeType: file.mimetype,
+        mimeType: 'image/jpeg',
+        size: normalized.length
       });
     }
 
@@ -655,7 +665,8 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
     if (submissionDir) {
       try { await rm(submissionDir, { recursive: true, force: true }); } catch (_) {}
     }
-    res.status(500).json({ ok: false, error: 'Не удалось сохранить заявку. Попробуйте ещё раз.' });
+    const statusCode = Number(error?.statusCode) || 500;
+    res.status(statusCode).json({ ok: false, error: statusCode === 413 ? 'Фотографии после обработки всё ещё слишком большие. Уменьшите количество или размер снимков.' : 'Не удалось сохранить заявку. Попробуйте ещё раз.' });
   }
 });
 
