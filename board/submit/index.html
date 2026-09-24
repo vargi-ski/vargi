@@ -22,7 +22,7 @@
 
 <section class="panel" id="formPanel">
 <div class="notice">До финального нажатия «Отправить на модерацию» фотографии остаются только в этой вкладке. Перед отправкой сайт автоматически уменьшит тяжёлые снимки и отправит их вместе с заявкой.</div>
-<form id="adForm" autocomplete="off">
+<form id="adForm" autocomplete="off" novalidate>
 <fieldset><legend><span class="n">01</span>Что размещаем</legend><div class="grid">
 <input type="hidden" name="kind" id="kind" value="sell">
 <label class="field full"><span>Категория *</span><select name="category" id="category"><option value="skis">Лыжи</option><option value="boots">Ботинки и крепления</option><option value="poles">Палки</option><option value="rollers">Лыжероллеры</option><option value="clothes">Одежда и аксессуары</option></select></label>
@@ -59,7 +59,7 @@
 <label class="field"><span>Telegram / телефон / другой контакт *</span><input name="publicContact" required minlength="4" maxlength="120" placeholder="@username или номер телефона"></label>
 </div><label class="check"><input name="consent" type="checkbox" required><span>Согласен на обработку заявки, передачу её модератору и публикацию указанного контакта после модерации. <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки данных</a>.</span></label></fieldset>
 
-<div class="actions"><p class="hint">Предпросмотр ничего не публикует.</p><button class="button" id="previewButton" type="submit">Проверить объявление →</button></div>
+<div class="actions"><p class="hint">Предпросмотр ничего не публикует.</p><button class="button" id="previewButton" type="submit" formnovalidate>Проверить объявление →</button></div>
 </form>
 </section>
 
@@ -152,7 +152,30 @@ function showPreview(a){
  $('#sendStatus').textContent='';
  scrollTo({top:0,behavior:'smooth'});
 }
-$('#adForm').onsubmit=e=>{e.preventDefault();if(busy)return;const fileInput=$('#photosInput');fileInput.required=false;fileInput.removeAttribute('required');fileInput.disabled=true;const valid=e.currentTarget.reportValidity();fileInput.disabled=false;if(!valid)return;if(!photos.length){photoError('Добавьте хотя бы одну фотографию товара.');fileInput.focus();return}const a=collect(e.currentTarget);if(a.title.length<2||a.city.length<2||!a.description||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
+function failForm(message,selector){
+ alert(message);
+ const el=selector?$(selector):null;
+ if(el){el.focus();el.scrollIntoView({behavior:'smooth',block:'center'});}
+}
+$('#adForm').onsubmit=e=>{
+ e.preventDefault();
+ if(busy)return;
+ const a=collect(e.currentTarget);
+ if(a.title.length<2)return failForm('Укажите название объявления. Минимум 2 символа.','[name="title"]');
+ if(a.city.length<2)return failForm('Укажите город.','[name="city"]');
+ if(!Number.isFinite(a.price)||a.price<1||a.price>10000000)return failForm('Укажите корректную цену от 1 до 10 000 000 ₽.','#price');
+ if(a.category==='skis'){
+  const length=Number(a.length);
+  if(!Number.isFinite(length)||length<60||length>230)return failForm('Укажите длину лыж от 60 до 230 см.','[name="length"]');
+ }
+ if(!a.description)return failForm('Добавьте описание объявления.','[name="description"]');
+ if(!photos.length){photoError('Добавьте хотя бы одну фотографию товара.');return failForm('Добавьте хотя бы одну фотографию товара.','#photosInput');}
+ if(a.contactName.length<2)return failForm('Укажите имя. Минимум 2 символа.','[name="contactName"]');
+ if(a.publicContact.length<4)return failForm('Укажите Telegram, телефон или другой контакт.','[name="publicContact"]');
+ if(!a.consent)return failForm('Подтвердите согласие на обработку заявки.','[name="consent"]');
+ photoError('');
+ showPreview(a);
+};
 $('#editButton').onclick=()=>{$('#previewPanel').classList.remove('active');$('#formPanel').hidden=false;scrollTo({top:0,behavior:'smooth'})};
 $('#sendButton').onclick=async()=>{
  if(!current||!preparedSubmission)return;
