@@ -387,16 +387,21 @@ const MARKET_CATEGORIES = {
   rollers: 'Лыжероллеры',
   clothes: 'Одежда и аксессуары'
 };
+const MARKET_CUSTOM_HOST = 'market.xn----7sbbfg4a6clj5k.xn--p1ai';
+const MARKET_CUSTOM_ORIGIN = 'https://' + MARKET_CUSTOM_HOST;
 
 function marketMoney(value) {
   const n = Number(value);
   return Number.isFinite(n) ? new Intl.NumberFormat('ru-RU').format(n) + ' ₽' : 'Цена по запросу';
 }
 
-function marketPage(title, body) {
+function marketPage(title, body, req, canonicalPath = '/market') {
+  const requestHost = String(req?.get('host') || '').toLowerCase();
+  const robots = requestHost === MARKET_CUSTOM_HOST ? 'index,follow,max-image-preview:large' : 'noindex,follow';
+  const canonical = MARKET_CUSTOM_ORIGIN + canonicalPath;
   return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
     '<title>' + h(title) + ' — Северный маркет ВАРГИ</title>' +
-    '<meta name="robots" content="noindex,follow"><meta name="theme-color" content="#07080a">' +
+    '<meta name="robots" content="' + robots + '"><link rel="canonical" href="' + h(canonical) + '"><meta name="theme-color" content="#07080a">' +
     '<style>' +
     ':root{color-scheme:dark;--bg:#07080a;--panel:#10161b;--panel2:#0b1116;--line:#263d4a;--ink:#edf3f7;--muted:#9fb0bc;--ice:#8fd0ef;--accent:#3e9bd6}' +
     '*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Arial,system-ui,sans-serif}a{color:inherit}.wrap{width:min(1180px,calc(100% - 32px));margin:auto}' +
@@ -421,9 +426,31 @@ function marketPage(title, body) {
 
 app.get('/', (req,res)=>res.redirect(302,'/market'));
 app.get('/robots.txt', (req,res)=>{
-  res.type('text/plain').send('User-agent: *\nDisallow: /admin\nDisallow: /submit\nAllow: /market\n');
+  const host = String(req.get('host') || '').toLowerCase();
+  if (host === MARKET_CUSTOM_HOST) {
+    res.type('text/plain').send('User-agent: *\nDisallow: /admin\nDisallow: /submit\nAllow: /market\nSitemap: ' + MARKET_CUSTOM_ORIGIN + '/sitemap.xml\n');
+  } else {
+    res.type('text/plain').send('User-agent: *\nDisallow: /\n');
+  }
 });
 app.get('/favicon.ico', (req,res)=>res.redirect(302, SITE_ORIGIN + '/assets/favicon.svg'));
+
+app.get('/sitemap.xml', async (req,res)=>{
+  try {
+    const items = (await listSubmissions()).filter(item => item.status === 'published');
+    const urls = [
+      MARKET_CUSTOM_ORIGIN + '/market',
+      ...items.map(item => MARKET_CUSTOM_ORIGIN + '/market/' + encodeURIComponent(item.id))
+    ];
+    const xml = '<?xml version="1.0" encoding="UTF-8"?>' +
+      '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' +
+      urls.map(url => '<url><loc>' + h(url) + '</loc></url>').join('') +
+      '</urlset>';
+    res.type('application/xml').send(xml);
+  } catch {
+    res.status(500).type('text/plain').send('sitemap unavailable');
+  }
+});
 
 app.get('/market', async (req, res) => {
   try {
@@ -485,10 +512,10 @@ app.get('/market', async (req, res) => {
       (cards ? '<section class="cards">' + cards + '</section>' : '<div class="empty"><h2>Пока нет подходящих объявлений</h2><p>Измените фильтры или станьте первым продавцом в этом разделе.</p></div>') +
       '</main>';
 
-    res.type('html').send(marketPage('Северный маркет', body));
+    res.type('html').send(marketPage('Северный маркет', body, req, '/market'));
   } catch (error) {
     console.error('market_page_error', error?.message || error);
-    res.status(500).type('html').send(marketPage('Ошибка', '<main class="wrap"><div class="empty">Не удалось загрузить объявления.</div></main>'));
+    res.status(500).type('html').send(marketPage('Ошибка', '<main class="wrap"><div class="empty">Не удалось загрузить объявления.</div></main>', req, '/market'));
   }
 });
 
@@ -529,7 +556,7 @@ app.get('/market/:id', async (req, res) => {
       '<div class="detail-body">' + specs + '<h2>Описание</h2><p class="description">' + h(item.description || '') + '</p>' +
       '<div class="contact"><b>Контакт продавца</b><br>' + h(item.contact || item.publicContact || 'Не указан') + '</div></div></article></main>';
 
-    res.type('html').send(marketPage(item.title, body));
+    res.type('html').send(marketPage(item.title, body, req, '/market/' + encodeURIComponent(item.id)));
   } catch {
     res.sendStatus(404);
   }
