@@ -37,6 +37,8 @@ const AUTH_FILE = path.join(DATA_ROOT, 'admin-auth.json');
 const ADMIN_SETUP_TOKEN = process.env.ADMIN_SETUP_TOKEN || '';
 const ADMIN_RECOVERY_TOKEN = process.env.ADMIN_RECOVERY_TOKEN || '';
 const ADMIN_SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || '';
+const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
+const TELEGRAM_CONFIG_FILE = path.join(DATA_ROOT, 'telegram-notify.json');
 const BACKUP_S3_ENDPOINT = process.env.BACKUP_S3_ENDPOINT || '';
 const BACKUP_S3_REGION = process.env.BACKUP_S3_REGION || '';
 const BACKUP_S3_BUCKET = process.env.BACKUP_S3_BUCKET || '';
@@ -259,6 +261,61 @@ async function authState() {
   } catch {
     return null;
   }
+}
+
+async function telegramConfig() {
+  try { return await readJson(TELEGRAM_CONFIG_FILE); }
+  catch { return null; }
+}
+
+async function telegramApi(method, payload = {}) {
+  if (!TELEGRAM_BOT_TOKEN) throw new Error('telegram_token_missing');
+  const response = await fetch('https://api.telegram.org/bot' + TELEGRAM_BOT_TOKEN + '/' + method, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(7000)
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok || !data.ok) {
+    const error = new Error(data.description || 'telegram_api_error');
+    error.statusCode = response.status;
+    throw error;
+  }
+  return data.result;
+}
+
+function telegramChatLabel(message) {
+  const chat = message?.chat || {};
+  if (chat.username) return '@' + chat.username;
+  const name = [chat.first_name, chat.last_name].filter(Boolean).join(' ').trim();
+  return name || chat.title || 'Telegram';
+}
+
+async function notifyNewSubmission(item) {
+  const cfg = await telegramConfig();
+  if (!TELEGRAM_BOT_TOKEN || !cfg?.chatId) return false;
+  const lines = [
+    'Новая заявка на модерацию',
+    '',
+    item.title || 'Без названия',
+    'Категория: ' + (item.category || 'не указана'),
+    item.city ? 'Город: ' + item.city : '',
+    item.price ? 'Цена: ' + item.price : '',
+    'Фото: ' + String(item.photos?.length || 0)
+  ].filter(Boolean);
+  await telegramApi('sendMessage', {
+    chat_id: cfg.chatId,
+    text: lines.join('\n'),
+    disable_web_page_preview: true,
+    reply_markup: {
+      inline_keyboard: [[{
+        text: 'Открыть админку',
+        url: SITE_ORIGIN + '/board/admin/'
+      }]]
+    }
+  });
+  return true;
 }
 
 function safeEqualText(a, b) {
@@ -703,6 +760,7 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
 
     await writeJsonAtomic(path.join(submissionDir, 'submission.json'), metadata);
     console.log(`submission_saved id=${id} photos=${savedPhotos.length}`);
+    void notifyNewSubmission(metadata).catch(error => console.error('telegram_notify_error', error?.message || error));
     res.status(201).json({ ok: true, id });
   } catch (error) {
     console.error('submit_error', error?.message || error);
@@ -913,6 +971,95 @@ app.post('/admin/backup', requireAdmin, async (req, res) => {
   const result = await createVolumeBackup(true);
   if (!result.ok) return res.status(503).json({ ok: false, error: 'Не удалось создать резервную копию.', details: result.reason || result.error || '' });
   res.json({ ok: true, key: result.key });
+});
+
+app.get('/admin/telegram/status', requireAdmin, async (req, res) => {
+  const cfg = await telegramConfig();
+  let botUsername = '';
+  let botReachable = false;
+  if (TELEGRAM_BOT_TOKEN) {
+    try {
+      const bot = await telegramApi('getMe');
+      botUsername = bot?.username ? '@' + bot.username : '';
+      botReachable = true;
+    } catch (error) {
+      console.error('telegram_status_error', error?.message || error);
+    }
+  }
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    ok: true,
+    tokenConfigured: Boolean(TELEGRAM_BOT_TOKEN),
+    botReachable,
+    botUsername,
+    connected: Boolean(cfg?.chatId),
+    chatLabel: cfg?.chatLabel || ''
+  });
+});
+
+app.post('/admin/telegram/connect', requireAdmin, async (req, res) => {
+  try {
+    if (!TELEGRAM_BOT_TOKEN) {
+      return res.status(503).json({ ok: false, error: 'Сначала добавьте TELEGRAM_BOT_TOKEN в Railway Variables.' });
+    }
+    const updates = await telegramApi('getUpdates', {
+      limit: 50,
+      allowed_updates: ['message']
+    });
+    const message = [...(updates || [])].reverse()
+      .map(update => update.message)
+      .find(msg => {
+        const text = String(msg?.text || '').trim().toLowerCase();
+        return text === '/vargi' || text === '/start' || text.startsWith('/vargi ');
+      });
+    if (!message?.chat?.id) {
+      return res.status(409).json({ ok: false, error: 'Напишите вашему боту в Telegram команду /vargi и нажмите «Подключить» ещё раз.' });
+    }
+    const cfg = {
+      chatId: message.chat.id,
+      chatLabel: telegramChatLabel(message),
+      connectedAt: new Date().toISOString()
+    };
+    await writeJsonAtomic(TELEGRAM_CONFIG_FILE, cfg);
+    await telegramApi('sendMessage', {
+      chat_id: cfg.chatId,
+      text: 'Уведомления Северного маркета ВАРГИ подключены. Новые заявки на модерацию будут приходить сюда.'
+    });
+    res.json({ ok: true, connected: true, chatLabel: cfg.chatLabel });
+  } catch (error) {
+    console.error('telegram_connect_error', error?.message || error);
+    res.status(502).json({ ok: false, error: 'Не удалось подключить Telegram. Проверьте токен бота и повторите.' });
+  }
+});
+
+app.post('/admin/telegram/test', requireAdmin, async (req, res) => {
+  try {
+    const cfg = await telegramConfig();
+    if (!cfg?.chatId) return res.status(409).json({ ok: false, error: 'Telegram ещё не подключён.' });
+    await telegramApi('sendMessage', {
+      chat_id: cfg.chatId,
+      text: 'Тест ВАРГИ: уведомления о новых заявках работают.',
+      reply_markup: {
+        inline_keyboard: [[{
+          text: 'Открыть админку',
+          url: SITE_ORIGIN + '/board/admin/'
+        }]]
+      }
+    });
+    res.json({ ok: true });
+  } catch (error) {
+    console.error('telegram_test_error', error?.message || error);
+    res.status(502).json({ ok: false, error: 'Не удалось отправить тестовое сообщение.' });
+  }
+});
+
+app.delete('/admin/telegram', requireAdmin, async (req, res) => {
+  try {
+    await rm(TELEGRAM_CONFIG_FILE, { force: true });
+    res.json({ ok: true, connected: false });
+  } catch {
+    res.status(500).json({ ok: false, error: 'Не удалось отключить Telegram.' });
+  }
 });
 
 app.use((error, req, res, next) => {
