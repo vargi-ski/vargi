@@ -671,13 +671,17 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
 });
 
 app.get('/admin/status', async (req, res) => {
-  res.json({ ok: true, initialized: Boolean(await authState()) });
+  res.json({
+    ok: true,
+    initialized: Boolean(await authState()),
+    recoveryAvailable: Boolean(ADMIN_RECOVERY_TOKEN)
+  });
 });
 
 app.post('/admin/setup', async (req, res) => {
   try {
     if (await authState()) return res.status(409).json({ ok: false, error: 'Администратор уже настроен.' });
-    if (!ADMIN_SETUP_TOKEN || !ADMIN_SESSION_SECRET) return res.status(503).json({ ok: false, error: 'Настройка администратора недоступна.' });
+    if (!ADMIN_SETUP_TOKEN || !ADMIN_SESSION_SECRET) return res.status(503).json({ ok: false, error: 'Первичная настройка отключена. Используйте восстановление доступа.' });
     const setupToken = clean(req.body.setupToken, 200);
     const password = String(req.body.password || '');
     if (!safeEqualText(setupToken, ADMIN_SETUP_TOKEN)) return res.status(403).json({ ok: false, error: 'Неверный setup-ключ.' });
@@ -692,6 +696,27 @@ app.post('/admin/setup', async (req, res) => {
   } catch (error) {
     console.error('admin_setup_error', error?.message || error);
     res.status(500).json({ ok: false, error: 'Не удалось создать администратора.' });
+  }
+});
+
+app.post('/admin/recover', async (req, res) => {
+  try {
+    if (!ADMIN_RECOVERY_TOKEN || !ADMIN_SESSION_SECRET) return res.status(503).json({ ok: false, error: 'Восстановление доступа не настроено.' });
+    const recoveryToken = clean(req.body.recoveryToken, 200);
+    const password = String(req.body.password || '');
+    if (!safeEqualText(recoveryToken, ADMIN_RECOVERY_TOKEN)) return res.status(403).json({ ok: false, error: 'Неверный recovery-ключ.' });
+    if (password.length < 10 || password.length > 200) return res.status(400).json({ ok: false, error: 'Пароль должен содержать не менее 10 символов.' });
+    const passwordData = hashPassword(password);
+    await writeJsonAtomic(AUTH_FILE, {
+      version: 1,
+      createdAt: new Date().toISOString(),
+      recoveredAt: new Date().toISOString(),
+      ...passwordData
+    });
+    res.json({ ok: true, token: signSession() });
+  } catch (error) {
+    console.error('admin_recover_error', error?.message || error);
+    res.status(500).json({ ok: false, error: 'Не удалось восстановить доступ.' });
   }
 });
 
@@ -711,10 +736,11 @@ app.post('/admin/login', async (req, res) => {
 app.get('/admin/submissions', requireAdmin, async (req, res) => {
   try {
     const status = clean(req.query.status, 20) || 'pending';
-    const allowed = new Set(['pending', 'published', 'rejected', 'all']);
+    const allowed = new Set(['pending', 'published', 'sold', 'archived', 'rejected', 'trash', 'all']);
     if (!allowed.has(status)) return res.status(400).json({ ok: false, error: 'Неизвестный статус.' });
     let items = await listSubmissions();
     if (status !== 'all') items = items.filter(item => item.status === status);
+    res.set('Cache-Control', 'no-store');
     res.json({ ok: true, submissions: items });
   } catch (error) {
     console.error('admin_list_error', error?.message || error);
@@ -735,13 +761,67 @@ app.get('/admin/submissions/:id/photos/:filename', requireAdmin, async (req, res
   }
 });
 
+app.put('/admin/submissions/:id', requireAdmin, async (req, res) => {
+  try {
+    const item = await loadSubmission(req.params.id);
+    if (item.status === 'trash') return res.status(409).json({ ok: false, error: 'Сначала восстановите объявление из корзины.' });
+
+    const textFields = {
+      title: 120, city: 100, contactName: 80, publicContact: 140, condition: 80,
+      brand: 80, model: 100, delivery: 100, style: 50, length: 30,
+      structureKind: 30, structureValue: 120, flex: 100, weight: 80,
+      bindings: 120, otherSpec: 220, description: 4000
+    };
+    for (const [key, max] of Object.entries(textFields)) {
+      if (Object.prototype.hasOwnProperty.call(req.body, key)) item[key] = clean(req.body[key], max);
+    }
+
+    if (Object.prototype.hasOwnProperty.call(req.body, 'categoryKey')) {
+      const key = clean(req.body.categoryKey, 30);
+      if (!MARKET_CATEGORIES[key]) return res.status(400).json({ ok: false, error: 'Неизвестная категория.' });
+      item.categoryKey = key;
+      item.category = MARKET_CATEGORIES[key];
+    }
+
+    if (Object.prototype.hasOwnProperty.call(req.body, 'priceValue')) {
+      const priceValue = Number(req.body.priceValue);
+      if (!Number.isFinite(priceValue) || priceValue < 0 || priceValue > 10000000) {
+        return res.status(400).json({ ok: false, error: 'Некорректная цена.' });
+      }
+      item.priceValue = priceValue;
+      item.price = new Intl.NumberFormat('ru-RU').format(priceValue) + ' ₽';
+    }
+
+    if (item.title.length < 2 || item.city.length < 2 || item.description.length < 20) {
+      return res.status(400).json({ ok: false, error: 'Название, город и описание должны быть заполнены.' });
+    }
+
+    item.contact = [item.contactName, item.publicContact].filter(Boolean).join(' — ');
+    item.updatedAt = new Date().toISOString();
+    await writeJsonAtomic(path.join(submissionPath(item.id), 'submission.json'), item);
+    res.json({ ok: true, submission: item });
+  } catch (error) {
+    console.error('admin_edit_error', error?.message || error);
+    res.status(404).json({ ok: false, error: 'Заявка не найдена.' });
+  }
+});
+
 async function changeStatus(req, res, status) {
   try {
     const item = await loadSubmission(req.params.id);
+    if (item.status === 'trash') return res.status(409).json({ ok: false, error: 'Сначала восстановите объявление из корзины.' });
+    const now = new Date().toISOString();
     item.status = status;
-    item.updatedAt = new Date().toISOString();
-    if (status === 'published') item.publishedAt = item.updatedAt;
-    if (status === 'rejected') item.rejectedAt = item.updatedAt;
+    item.updatedAt = now;
+    if (status === 'published') {
+      item.publishedAt = now;
+      delete item.soldAt;
+      delete item.archivedAt;
+      delete item.rejectedAt;
+    }
+    if (status === 'sold') item.soldAt = now;
+    if (status === 'archived') item.archivedAt = now;
+    if (status === 'rejected') item.rejectedAt = now;
     await writeJsonAtomic(path.join(submissionPath(item.id), 'submission.json'), item);
     res.json({ ok: true, submission: item });
   } catch (error) {
@@ -752,14 +832,43 @@ async function changeStatus(req, res, status) {
 
 app.post('/admin/submissions/:id/publish', requireAdmin, (req, res) => changeStatus(req, res, 'published'));
 app.post('/admin/submissions/:id/reject', requireAdmin, (req, res) => changeStatus(req, res, 'rejected'));
+app.post('/admin/submissions/:id/sold', requireAdmin, (req, res) => changeStatus(req, res, 'sold'));
+app.post('/admin/submissions/:id/archive', requireAdmin, (req, res) => changeStatus(req, res, 'archived'));
 
-app.delete('/admin/submissions/:id', requireAdmin, async (req, res) => {
+app.post('/admin/submissions/:id/restore', requireAdmin, async (req, res) => {
   try {
-    await rm(submissionPath(req.params.id), { recursive: true, force: false });
-    res.json({ ok: true });
+    const item = await loadSubmission(req.params.id);
+    if (item.status !== 'trash') return res.status(409).json({ ok: false, error: 'Заявка не находится в корзине.' });
+    item.status = ['pending','published','sold','archived','rejected'].includes(item.previousStatus) ? item.previousStatus : 'pending';
+    item.updatedAt = new Date().toISOString();
+    delete item.deletedAt;
+    delete item.previousStatus;
+    await writeJsonAtomic(path.join(submissionPath(item.id), 'submission.json'), item);
+    res.json({ ok: true, submission: item });
   } catch {
     res.status(404).json({ ok: false, error: 'Заявка не найдена.' });
   }
+});
+
+app.delete('/admin/submissions/:id', requireAdmin, async (req, res) => {
+  try {
+    const item = await loadSubmission(req.params.id);
+    if (item.status === 'trash') return res.json({ ok: true, submission: item });
+    item.previousStatus = item.status;
+    item.status = 'trash';
+    item.deletedAt = new Date().toISOString();
+    item.updatedAt = item.deletedAt;
+    await writeJsonAtomic(path.join(submissionPath(item.id), 'submission.json'), item);
+    res.json({ ok: true, submission: item, purgeAfterDays: 30 });
+  } catch {
+    res.status(404).json({ ok: false, error: 'Заявка не найдена.' });
+  }
+});
+
+app.post('/admin/backup', requireAdmin, async (req, res) => {
+  const result = await createVolumeBackup(true);
+  if (!result.ok) return res.status(503).json({ ok: false, error: 'Не удалось создать резервную копию.', details: result.reason || result.error || '' });
+  res.json({ ok: true, key: result.key });
 });
 
 app.use((error, req, res, next) => {
