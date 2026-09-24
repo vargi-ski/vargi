@@ -621,13 +621,14 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
     const title = clean(req.body.title, 120);
     const contact = clean(req.body.contact, 180);
     const message = clean(req.body.message, 8000);
+    const description = clean(req.body.description, 4000);
     const category = clean(req.body.category, 80);
     const categoryKey = clean(req.body.categoryKey, 30);
     const city = clean(req.body.city, 100);
     const price = clean(req.body.price, 100);
     const priceValueRaw = Number(req.body.priceValue);
 
-    if (title.length < 2 || contact.length < 4 || message.length < 20) {
+    if (title.length < 2 || contact.length < 4 || !description) {
       return res.status(400).json({ ok: false, error: 'Не хватает данных для отправки.' });
     }
 
@@ -695,7 +696,7 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
       weight: clean(req.body.weight, 80),
       bindings: clean(req.body.bindings, 120),
       otherSpec: clean(req.body.otherSpec, 220),
-      description: clean(req.body.description, 4000),
+      description,
       message,
       photos: savedPhotos
     };
@@ -835,7 +836,7 @@ app.put('/admin/submissions/:id', requireAdmin, async (req, res) => {
       item.price = new Intl.NumberFormat('ru-RU').format(priceValue) + ' ₽';
     }
 
-    if (item.title.length < 2 || item.city.length < 2 || item.description.length < 20) {
+    if (item.title.length < 2 || item.city.length < 2 || !item.description) {
       return res.status(400).json({ ok: false, error: 'Название, город и описание должны быть заполнены.' });
     }
 
