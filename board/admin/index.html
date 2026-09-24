@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Модерация — Северный маркет ВАРГИ</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#07080a">
+<link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+<style>
+:root{color-scheme:dark;--bg:#07080a;--panel:#10161b;--line:#263d4a;--ink:#edf3f7;--muted:#9fb0bc;--ice:#8fd0ef;--accent:#3e9bd6;--danger:#ff9f98;--ok:#95d5a9}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.55 Inter,Arial,system-ui,sans-serif}.wrap{width:min(1160px,calc(100% - 32px));margin:auto}a{color:var(--ice)}button,input{font:inherit}.header{border-bottom:1px solid var(--line)}.header-row{min-height:68px;display:flex;align-items:center;gap:16px}.brand{font-size:20px;font-weight:800;letter-spacing:.14em;text-decoration:none;color:var(--ink)}.brand b{color:var(--accent)}.header-actions{margin-left:auto;display:flex;gap:10px;align-items:center}.button{border:1px solid var(--ice);background:var(--ice);color:#07131b;border-radius:8px;padding:10px 15px;min-height:42px;font-weight:700;cursor:pointer}.button.secondary{background:transparent;color:var(--ice)}.button.danger{border-color:#854b4b;background:transparent;color:var(--danger)}.button:disabled{opacity:.55;cursor:not-allowed}.panel{margin:28px auto;padding:22px;border:1px solid var(--line);border-radius:14px;background:var(--panel)}.auth{max-width:560px}.eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ice);font-weight:700}h1,h2,h3,p{margin-top:0}h1{font-size:32px;margin-bottom:8px}h2{font-size:21px}.muted{color:var(--muted)}.field{display:grid;gap:6px;margin:14px 0}.field input{width:100%;min-height:44px;border:1px solid var(--line);border-radius:8px;background:#080e13;color:var(--ink);padding:10px 11px}.status{min-height:20px;margin-top:12px;color:var(--ice)}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}.tab{border:1px solid var(--line);background:transparent;color:var(--muted);border-radius:8px;padding:9px 13px;cursor:pointer}.tab.active{background:#172a37;color:var(--ice);border-color:#46738c}.cards{display:grid;gap:16px}.card{border:1px solid var(--line);border-radius:12px;background:#0b1116;overflow:hidden}.card-head{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;padding:16px;border-bottom:1px solid var(--line)}.card-title{font-size:20px;margin:4px 0}.badge{border:1px solid var(--line);border-radius:999px;padding:4px 8px;font-size:11px;color:var(--muted)}.card-body{padding:16px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 20px}.spec{padding:8px 0;border-bottom:1px solid rgba(38,61,74,.65)}.spec span{display:block;font-size:11px;color:var(--muted)}.spec b{display:block;margin-top:2px;overflow-wrap:anywhere}.message{white-space:pre-wrap;overflow-wrap:anywhere;color:#c9d4dc;margin:18px 0}.photos{display:flex;gap:10px;overflow:auto;margin:14px 0}.photos img{width:150px;height:130px;object-fit:cover;border-radius:8px;border:1px solid var(--line);flex:none}.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}.empty{padding:40px;text-align:center;border:1px dashed var(--line);border-radius:12px;color:var(--muted)}.setup-help{padding:12px;border:1px solid var(--line);border-radius:9px;background:#0a141b;color:var(--muted);font-size:12px}.hidden{display:none!important}
+@media(max-width:680px){.wrap{width:calc(100% - 20px)}.header-row{min-height:60px}.header-actions a{display:none}.panel{margin:14px 0;padding:16px}.grid{grid-template-columns:1fr}.card-head{display:block}.badge{display:inline-block;margin-top:8px}.actions{display:grid}.actions .button{width:100%}.photos img{width:125px;height:110px}}
+</style>
+</head>
+<body>
+<header class="header"><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ">В<b>А</b>Р<b>Г</b>И</a><span>Модерация маркета</span><div class="header-actions"><a href="/board/">Открыть маркет ↗</a><button class="button secondary hidden" id="logoutButton" type="button">Выйти</button></div></div></header>
+<main class="wrap">
+<section class="panel auth" id="setupPanel" hidden>
+<div class="eyebrow">Первичная настройка</div><h1>Создать доступ</h1>
+<p class="muted">Этот шаг выполняется один раз. Пароль останется на сервере в виде защищённого хеша.</p>
+<div class="setup-help">Setup-ключ возьмите в Railway: <b>vargi-market-api → market-api → Переменные → ADMIN_SETUP_TOKEN</b>. Скопируйте значение и вставьте ниже. Сам пароль администратора в Railway вводить не нужно.</div>
+<form id="setupForm">
+<label class="field"><span>Setup-ключ</span><input id="setupToken" autocomplete="off" required></label>
+<label class="field"><span>Новый пароль администратора</span><input id="setupPassword" type="password" minlength="10" autocomplete="new-password" required></label>
+<label class="field"><span>Повторите пароль</span><input id="setupPassword2" type="password" minlength="10" autocomplete="new-password" required></label>
+<button class="button" type="submit">Создать доступ</button><p class="status" id="setupStatus"></p>
+</form>
+</section>
+
+<section class="panel auth" id="loginPanel" hidden>
+<div class="eyebrow">Закрытая зона</div><h1>Вход модератора</h1>
+<form id="loginForm">
+<label class="field"><span>Пароль</span><input id="loginPassword" type="password" autocomplete="current-password" required></label>
+<button class="button" type="submit">Войти</button><p class="status" id="loginStatus"></p>
+</form>
+</section>
+
+<section class="panel hidden" id="adminPanel">
+<div class="eyebrow">Северный маркет</div><h1>Заявки на модерацию</h1>
+<div class="tabs"><button class="tab active" data-status="pending">Ожидают</button><button class="tab" data-status="published">Опубликованы</button><button class="tab" data-status="rejected">Отклонены</button></div>
+<p class="status" id="adminStatus"></p>
+<div class="cards" id="cards"></div>
+</section>
+</main>
+<script>
+'use strict';
+const API='https://market-api-production-d9ab.up.railway.app';
+const $=s=>document.querySelector(s);
+const $$=s=>Array.from(document.querySelectorAll(s));
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let token=sessionStorage.getItem('vargiMarketAdmin')||'';
+let activeStatus='pending';
+let blobUrls=[];
+
+function clearBlobs(){blobUrls.forEach(URL.revokeObjectURL);blobUrls=[]}
+async function request(path,options={}){
+ const headers={...(options.headers||{})};
+ if(token)headers.Authorization='Bearer '+token;
+ if(options.body && !(options.body instanceof FormData))headers['Content-Type']='application/json';
+ const response=await fetch(API+path,{...options,headers,mode:'cors',credentials:'omit'});
+ let data={};try{data=await response.json()}catch(_){}
+ if(response.status===401){logout();throw Error('Сессия закончилась. Войдите снова.')}
+ if(!response.ok||data.ok===false)throw Error(data.error||'Ошибка запроса.');
+ return data;
+}
+function show(id){['setupPanel','loginPanel','adminPanel'].forEach(x=>$('#'+x).classList.toggle('hidden',x!==id));$('#'+id).hidden=false}
+function logout(){token='';sessionStorage.removeItem('vargiMarketAdmin');$('#logoutButton').classList.add('hidden');show('loginPanel')}
+async function init(){
+ try{
+  const status=await request('/admin/status');
+  if(!status.initialized){show('setupPanel');return}
+  if(token){$('#logoutButton').classList.remove('hidden');show('adminPanel');await load()}
+  else show('loginPanel');
+ }catch(error){show('loginPanel');$('#loginStatus').textContent=error.message}
+}
+$('#logoutButton').onclick=logout;
+
+$('#setupForm').onsubmit=async e=>{
+ e.preventDefault();const status=$('#setupStatus');status.textContent='';
+ const password=$('#setupPassword').value;
+ if(password!==$('#setupPassword2').value){status.textContent='Пароли не совпадают.';return}
+ try{
+  const data=await request('/admin/setup',{method:'POST',body:JSON.stringify({setupToken:$('#setupToken').value,password})});
+  token=data.token;sessionStorage.setItem('vargiMarketAdmin',token);$('#logoutButton').classList.remove('hidden');show('adminPanel');await load();
+ }catch(error){status.textContent=error.message}
+};
+$('#loginForm').onsubmit=async e=>{
+ e.preventDefault();const status=$('#loginStatus');status.textContent='';
+ try{
+  const data=await request('/admin/login',{method:'POST',body:JSON.stringify({password:$('#loginPassword').value})});
+  token=data.token;sessionStorage.setItem('vargiMarketAdmin',token);$('#logoutButton').classList.remove('hidden');show('adminPanel');await load();
+ }catch(error){status.textContent=error.message}
+};
+
+function specs(a){
+ return [
+  ['Город',a.city],['Цена',a.price],['Контакт',a.contact],['Состояние',a.condition],
+  ['Бренд / модель',[a.brand,a.model].filter(Boolean).join(' ')],['Передача',a.delivery],
+  ['Стиль',a.style],['Длина',a.length?String(a.length)+' см':''],['Структура',a.structureValue||a.structureKind],
+  ['Жёсткость',a.flex],['Вес по подбору',a.weight],['Крепления',a.bindings],['Характеристики',a.otherSpec]
+ ].filter(x=>x[1]);
+}
+function render(items){
+ clearBlobs();const root=$('#cards');
+ if(!items.length){root.innerHTML='<div class="empty">Заявок с этим статусом нет.</div>';return}
+ root.innerHTML=items.map(a=>'<article class="card" data-id="'+esc(a.id)+'"><div class="card-head"><div><div class="eyebrow">'+esc(a.category||'Объявление')+'</div><h2 class="card-title">'+esc(a.title)+'</h2><div class="muted">'+esc(new Date(a.createdAt).toLocaleString('ru-RU'))+'</div></div><span class="badge">'+esc(a.status)+'</span></div><div class="card-body"><div class="grid">'+specs(a).map(x=>'<div class="spec"><span>'+esc(x[0])+'</span><b>'+esc(x[1])+'</b></div>').join('')+'</div><p class="message">'+esc(a.description||a.message||'')+'</p><div class="photos">'+(a.photos||[]).map(p=>'<img data-photo="'+esc(p.filename)+'" alt="Фото объявления">').join('')+'</div><div class="actions">'+(a.status!=='published'?'<button class="button" data-action="publish">Опубликовать</button>':'')+(a.status!=='rejected'?'<button class="button secondary" data-action="reject">Отклонить</button>':'')+'<button class="button danger" data-action="delete">Удалить</button></div></div></article>').join('');
+ root.querySelectorAll('.card').forEach(card=>loadPhotos(card));
+}
+async function loadPhotos(card){
+ const id=card.dataset.id;
+ for(const img of card.querySelectorAll('[data-photo]')){
+  try{
+   const response=await fetch(API+'/admin/submissions/'+encodeURIComponent(id)+'/photos/'+encodeURIComponent(img.dataset.photo),{headers:{Authorization:'Bearer '+token}});
+   if(!response.ok)continue;const url=URL.createObjectURL(await response.blob());blobUrls.push(url);img.src=url;
+  }catch(_){}
+ }
+}
+async function load(){
+ const status=$('#adminStatus');status.textContent='Загрузка…';
+ try{const data=await request('/admin/submissions?status='+activeStatus);render(data.submissions||[]);status.textContent=''}
+ catch(error){status.textContent=error.message}
+}
+$$('[data-status]').forEach(b=>b.onclick=()=>{$$('[data-status]').forEach(x=>x.classList.toggle('active',x===b));activeStatus=b.dataset.status;load()});
+$('#cards').onclick=async e=>{
+ const button=e.target.closest('[data-action]');if(!button)return;
+ const card=button.closest('.card'),id=card.dataset.id,action=button.dataset.action;
+ if(action==='delete'&&!confirm('Удалить заявку и все её фотографии без возможности восстановления?'))return;
+ button.disabled=true;$('#adminStatus').textContent='Сохраняем…';
+ try{
+  if(action==='delete')await request('/admin/submissions/'+encodeURIComponent(id),{method:'DELETE'});
+  else await request('/admin/submissions/'+encodeURIComponent(id)+'/'+action,{method:'POST'});
+  await load();
+ }catch(error){$('#adminStatus').textContent=error.message;button.disabled=false}
+};
+window.addEventListener('pagehide',clearBlobs);
+init();
+</script>
+</body>
+</html>
