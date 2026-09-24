@@ -582,6 +582,17 @@ app.get('/listings', async (req, res) => {
   }
 });
 
+app.get('/listings/:id', async (req, res) => {
+  try {
+    const item = await loadSubmission(req.params.id);
+    if (item.status !== 'published') return res.sendStatus(404);
+    res.set('Cache-Control', 'no-store');
+    res.json({ ok: true, listing: publicListing(item, req, true) });
+  } catch {
+    res.status(404).json({ ok: false, error: 'Объявление не найдено.' });
+  }
+});
+
 app.get('/listings/:id/photos/:filename', async (req, res) => {
   try {
     const item = await loadSubmission(req.params.id);
