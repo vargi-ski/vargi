@@ -2,9 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { rateLimit } from 'express-rate-limit';
-import { mkdir, writeFile, readFile, readdir, rm, rename } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, readdir, rm, rename, access } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
 import { randomUUID, randomBytes, scryptSync, timingSafeEqual, createHmac } from 'node:crypto';
 import path from 'node:path';
+import sharp from 'sharp';
+import heicConvert from 'heic-convert';
+import { S3Client, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
+import * as tar from 'tar';
 
 const app = express();
 app.disable('x-powered-by');
@@ -24,8 +30,16 @@ const DATA_ROOT = process.env.DATA_ROOT || '/data';
 const DATA_DIR = process.env.SUBMISSIONS_DIR || path.join(DATA_ROOT, 'submissions');
 const AUTH_FILE = path.join(DATA_ROOT, 'admin-auth.json');
 const ADMIN_SETUP_TOKEN = process.env.ADMIN_SETUP_TOKEN || '';
+const ADMIN_RECOVERY_TOKEN = process.env.ADMIN_RECOVERY_TOKEN || '';
 const ADMIN_SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || '';
+const BACKUP_S3_ENDPOINT = process.env.BACKUP_S3_ENDPOINT || '';
+const BACKUP_S3_REGION = process.env.BACKUP_S3_REGION || '';
+const BACKUP_S3_BUCKET = process.env.BACKUP_S3_BUCKET || '';
+const BACKUP_S3_ACCESS_KEY_ID = process.env.BACKUP_S3_ACCESS_KEY_ID || '';
+const BACKUP_S3_SECRET_ACCESS_KEY = process.env.BACKUP_S3_SECRET_ACCESS_KEY || '';
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const TRASH_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+const BACKUP_MARKER = path.join(DATA_ROOT, '.last-backup-date');
 
 await mkdir(DATA_DIR, { recursive: true });
 
@@ -34,7 +48,7 @@ app.use(cors({
     if (!origin || origin === SITE_ORIGIN) return cb(null, true);
     return cb(new Error('Origin not allowed'));
   },
-  methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '32kb' }));
@@ -57,17 +71,18 @@ const authLimiter = rateLimit({
 });
 app.use('/admin/login', authLimiter);
 app.use('/admin/setup', authLimiter);
+app.use('/admin/recover', authLimiter);
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     files: 6,
-    fileSize: 2.5 * 1024 * 1024,
+    fileSize: 8 * 1024 * 1024,
     fieldSize: 100 * 1024,
     fields: 50
   },
   fileFilter(req, file, cb) {
-    const allowed = new Set(['image/jpeg', 'image/png', 'image/webp']);
+    const allowed = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
     cb(allowed.has(file.mimetype) ? null : new Error('Недопустимый тип файла'), allowed.has(file.mimetype));
   }
 });
@@ -76,18 +91,31 @@ function clean(value, max = 4000) {
   return String(value ?? '').replace(/\u0000/g, '').trim().slice(0, max);
 }
 
+function isHeicSignature(buffer) {
+  if (!buffer || buffer.length < 12) return false;
+  const brand = buffer.toString('ascii', 8, 12).toLowerCase();
+  return buffer.toString('ascii', 4, 8) === 'ftyp' && ['heic','heix','hevc','hevx','mif1','msf1'].includes(brand);
+}
+
 function isImageSignature(buffer, mime) {
   if (!buffer || buffer.length < 12) return false;
   if (mime === 'image/jpeg') return buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
   if (mime === 'image/png') return buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;
   if (mime === 'image/webp') return buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP';
+  if (mime === 'image/heic' || mime === 'image/heif') return isHeicSignature(buffer);
   return false;
 }
 
-function extensionFor(mime) {
-  if (mime === 'image/png') return '.png';
-  if (mime === 'image/webp') return '.webp';
-  return '.jpg';
+async function normalizeImage(file) {
+  let input = file.buffer;
+  if (file.mimetype === 'image/heic' || file.mimetype === 'image/heif') {
+    input = Buffer.from(await heicConvert({ buffer: file.buffer, format: 'JPEG', quality: 0.82 }));
+  }
+  return sharp(input, { failOn: 'warning' })
+    .rotate()
+    .resize({ width: 1800, height: 1800, fit: 'inside', withoutEnlargement: true })
+    .jpeg({ quality: 82, mozjpeg: true })
+    .toBuffer();
 }
 
 function validId(id) {
