@@ -191,15 +191,26 @@ function publicBase(req) {
 }
 
 function categoryKeyFor(item) {
-  if (item.categoryKey) return item.categoryKey;
   const map = {
+    skis: 'skis',
+    boots: 'boots',
+    poles: 'poles',
+    rollers: 'rollers',
+    clothes: 'clothes',
     'Лыжи': 'skis',
     'Ботинки и крепления': 'boots',
     'Палки': 'poles',
     'Лыжероллеры': 'rollers',
     'Одежда и аксессуары': 'clothes'
   };
-  return map[item.category] || 'clothes';
+  return map[item.categoryKey] || map[item.category] || 'clothes';
+}
+
+function listingDescription(item) {
+  if (item.description) return item.description;
+  const message = String(item.message || '');
+  const match = message.match(/(?:^|\r?\n)Описание:\s*([\s\S]*?)(?:\r?\n\r?\nКонтакт:|$)/i);
+  return match ? match[1].trim() : '';
 }
 
 function publicListing(item, req) {
@@ -229,7 +240,7 @@ function publicListing(item, req) {
     weight: item.weight || '',
     bindings: item.bindings || '',
     otherSpec: item.otherSpec || '',
-    description: item.description || item.message || '',
+    description: listingDescription(item),
     photos: (item.photos || []).map(photo => ({
       filename: photo.filename,
       url: base + '/listings/' + encodeURIComponent(item.id) + '/photos/' + encodeURIComponent(photo.filename)
@@ -328,11 +339,11 @@ app.get('/market', async (req, res) => {
     const body = '<main class="wrap"><section class="hero"><div class="eyebrow">Северный маркет</div><h1>Экипировка для следующего старта.</h1><p>Частные объявления о продаже лыж и экипировки. Публикация только после ручной модерации ВАРГИ.</p></section>' +
       '<form class="filters" method="get" action="/market">' +
       '<input class="wide" name="q" value="' + h(req.query.q || '') + '" placeholder="Лыжи, модель, размер, структура…">' +
-      '<select name="category"><option value="">Все категории</option>' + options + '</select>' +
+      '<select name="category" onchange="this.form.submit()"><option value="">Все категории</option>' + options + '</select>' +
       '<input name="city" value="' + h(req.query.city || '') + '" placeholder="Город">' +
       '<input name="min" type="number" min="0" value="' + h(req.query.min || '') + '" placeholder="Цена от">' +
       '<input name="max" type="number" min="0" value="' + h(req.query.max || '') + '" placeholder="Цена до">' +
-      '<select name="sort"><option value="newest"' + (sort === 'newest' ? ' selected' : '') + '>Сначала новые</option><option value="cheap"' + (sort === 'cheap' ? ' selected' : '') + '>Сначала дешевле</option><option value="expensive"' + (sort === 'expensive' ? ' selected' : '') + '>Сначала дороже</option></select>' +
+      '<select name="sort" onchange="this.form.submit()"><option value="newest"' + (sort === 'newest' ? ' selected' : '') + '>Сначала новые</option><option value="cheap"' + (sort === 'cheap' ? ' selected' : '') + '>Сначала дешевле</option><option value="expensive"' + (sort === 'expensive' ? ' selected' : '') + '>Сначала дороже</option></select>' +
       '<button class="button" type="submit">Найти</button></form>' +
       '<div class="catalog-head"><div class="counter">' + items.length + ' объявлений</div></div>' +
       (cards ? '<section class="cards">' + cards + '</section>' : '<div class="empty"><h2>Пока нет подходящих объявлений</h2><p>Измените фильтры или станьте первым продавцом в этом разделе.</p></div>') +
