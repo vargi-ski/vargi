@@ -237,6 +237,24 @@ function publicListing(item, req) {
   };
 }
 
+function h(value) { return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch])); }
+
+app.get('/market', async (req, res) => {
+  try {
+    const items = (await listSubmissions()).filter(item => item.status === 'published');
+    const cards = items.map(item => {
+      const first = item.photos?.[0];
+      const photo = first ? '<img src="/listings/' + encodeURIComponent(item.id) + '/photos/' + encodeURIComponent(first.filename) + '" alt="" style="width:180px;height:140px;object-fit:cover;border-radius:8px">' : '';
+      return '<article style="border:1px solid #263d4a;border-radius:12px;padding:14px;background:#10161b">' +
+        photo + '<h2>' + h(item.title) + '</h2><p>' + h(item.city) + '</p><p><b>' + h(item.price || '') + '</b></p>' +
+        '<p>' + h(item.description || '') + '</p><p>Контакт: ' + h(item.contact || '') + '</p></article>';
+    }).join('');
+    res.type('html').send('<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Северный маркет ВАРГИ</title></head><body style="margin:0;background:#07080a;color:#edf3f7;font:14px Arial"><main style="max-width:1100px;margin:auto;padding:24px"><p><a style="color:#8fd0ef" href="' + SITE_ORIGIN + '/">← ВАРГИ</a></p><h1>Северный маркет</h1><p><a style="color:#8fd0ef" href="' + SITE_ORIGIN + '/board/submit/">+ Подать объявление</a></p><section style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px">' + (cards || '<p>Объявлений пока нет.</p>') + '</section></main></body></html>');
+  } catch (error) {
+    res.status(500).send('Не удалось загрузить объявления');
+  }
+});
+
 app.get('/health', async (req, res) => {
   const auth = await authState();
   res.json({
