@@ -9,6 +9,14 @@ import path from 'node:path';
 const app = express();
 app.disable('x-powered-by');
 app.set('trust proxy', 1);
+app.use((req,res,next)=>{
+  res.set('X-Content-Type-Options','nosniff');
+  res.set('Referrer-Policy','strict-origin-when-cross-origin');
+  res.set('X-Frame-Options','DENY');
+  res.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
+  if(req.secure || req.get('x-forwarded-proto')==='https') res.set('Strict-Transport-Security','max-age=15552000');
+  next();
+});
 
 const PORT = Number(process.env.PORT || 3000);
 const SITE_ORIGIN = process.env.SITE_ORIGIN || 'https://xn----7sbbfg4a6clj5k.xn--p1ai';
@@ -213,7 +221,7 @@ function listingDescription(item) {
   return match ? match[1].trim() : '';
 }
 
-function publicListing(item, req) {
+function publicListing(item, req, includeContact = true) {
   const base = publicBase(req);
   return {
     id: item.id,
@@ -225,9 +233,11 @@ function publicListing(item, req) {
     title: item.title,
     city: item.city,
     price: Number.isFinite(Number(item.priceValue)) ? Number(item.priceValue) : Number(String(item.price || '').replace(/[^0-9]/g, '')) || null,
-    contact: item.contact,
-    contactName: item.contactName || '',
-    publicContact: item.publicContact || '',
+    ...(includeContact ? {
+      contact: item.contact,
+      contactName: item.contactName || '',
+      publicContact: item.publicContact || ''
+    } : {}),
     condition: item.condition || '',
     brand: item.brand || '',
     model: item.model || '',
@@ -305,7 +315,7 @@ app.get('/market', async (req, res) => {
     items = items.filter(item =>
       (!category || item.category === category) &&
       (!city || String(item.city || '').toLocaleLowerCase('ru').includes(city)) &&
-      (!q || [item.title,item.brand,item.model,item.city,item.description,item.otherSpec,item.style].join(' ').toLocaleLowerCase('ru').includes(q)) &&
+      (!q || [item.title,item.brand,item.model,item.city,item.description,item.otherSpec,item.style,item.length,item.structureValue,item.structureKind,item.flex,item.weight,item.bindings].join(' ').toLocaleLowerCase('ru').includes(q)) &&
       (min === null || (item.price !== null && item.price >= min)) &&
       (max === null || (item.price !== null && item.price <= max))
     );
@@ -412,7 +422,7 @@ app.get('/health', async (req, res) => {
 app.get('/listings', async (req, res) => {
   try {
     const items = (await listSubmissions()).filter(item => item.status === 'published');
-    res.json({ ok: true, listings: items.map(item => publicListing(item, req)) });
+    res.json({ ok: true, listings: items.map(item => publicListing(item, req, false)) });
   } catch (error) {
     console.error('listings_error', error?.message || error);
     res.status(500).json({ ok: false, error: 'Не удалось загрузить объявления.' });

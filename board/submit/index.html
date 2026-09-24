@@ -107,9 +107,13 @@ async function compressPhoto(file){
   if(scale===1&&file.size<=1400*1024)return new File([file],file.name,{type:file.type,lastModified:file.lastModified});
   const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
   const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(img,0,0,canvas.width,canvas.height);
-  let blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.82));
+  let blob=null;
+  for(const quality of [.82,.72,.62,.52]){
+    blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
+    if(blob&&blob.size<=2300*1024)break;
+  }
   if(!blob)throw Error('Не удалось подготовить фотографию.');
-  if(blob.size>2200*1024)blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',.68));
+  if(blob.size>2300*1024)throw Error('Фото не удалось уменьшить до допустимого размера. Выберите другое изображение.');
   const base=(file.name.replace(/\.[^.]+$/,'')||'photo').replace(/[^a-zA-Z0-9а-яА-ЯёЁ_-]+/g,'-').slice(0,60);
   return new File([blob],base+'.jpg',{type:'image/jpeg',lastModified:Date.now()});
  }finally{URL.revokeObjectURL(src)}
