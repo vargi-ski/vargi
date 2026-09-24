@@ -141,6 +141,98 @@ async function loadSubmission(id) {
   return readJson(path.join(submissionPath(id), 'submission.json'));
 }
 
+async function fileExists(file) {
+  try { await access(file); return true; } catch { return false; }
+}
+
+function backupClient() {
+  if (!BACKUP_S3_ENDPOINT || !BACKUP_S3_REGION || !BACKUP_S3_BUCKET || !BACKUP_S3_ACCESS_KEY_ID || !BACKUP_S3_SECRET_ACCESS_KEY) return null;
+  return new S3Client({
+    endpoint: BACKUP_S3_ENDPOINT,
+    region: BACKUP_S3_REGION,
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: BACKUP_S3_ACCESS_KEY_ID,
+      secretAccessKey: BACKUP_S3_SECRET_ACCESS_KEY
+    }
+  });
+}
+
+let backupRunning = false;
+async function createVolumeBackup(force = false) {
+  const client = backupClient();
+  if (!client || backupRunning) return { ok: false, skipped: true, reason: client ? 'busy' : 'not_configured' };
+  const today = new Date().toISOString().slice(0, 10);
+  if (!force) {
+    try {
+      const last = (await readFile(BACKUP_MARKER, 'utf8')).trim();
+      if (last === today) return { ok: true, skipped: true, reason: 'already_today' };
+    } catch {}
+  }
+
+  backupRunning = true;
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const tmp = path.join('/tmp', 'vargi-market-' + stamp + '.tgz');
+  try {
+    const entries = ['submissions'];
+    if (await fileExists(AUTH_FILE)) entries.push('admin-auth.json');
+    await tar.c({ gzip: true, cwd: DATA_ROOT, file: tmp }, entries);
+    const key = 'daily/' + stamp + '.tgz';
+    const uploader = new Upload({
+      client,
+      params: {
+        Bucket: BACKUP_S3_BUCKET,
+        Key: key,
+        Body: createReadStream(tmp),
+        ContentType: 'application/gzip'
+      }
+    });
+    await uploader.done();
+    await writeFile(BACKUP_MARKER, today, 'utf8');
+
+    const listed = await client.send(new ListObjectsV2Command({ Bucket: BACKUP_S3_BUCKET, Prefix: 'daily/' }));
+    const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
+    const old = (listed.Contents || []).filter(obj => obj.Key && obj.LastModified && obj.LastModified.getTime() < cutoff);
+    if (old.length) {
+      await client.send(new DeleteObjectsCommand({
+        Bucket: BACKUP_S3_BUCKET,
+        Delete: { Objects: old.map(obj => ({ Key: obj.Key })), Quiet: true }
+      }));
+    }
+
+    console.log('backup_saved key=' + key);
+    return { ok: true, key };
+  } catch (error) {
+    console.error('backup_error', error?.message || error);
+    return { ok: false, error: 'backup_failed' };
+  } finally {
+    backupRunning = false;
+    try { await rm(tmp, { force: true }); } catch {}
+  }
+}
+
+async function purgeExpiredTrash() {
+  const items = await listSubmissions();
+  const expired = items.filter(item =>
+    item.status === 'trash' &&
+    item.deletedAt &&
+    Date.now() - new Date(item.deletedAt).getTime() >= TRASH_RETENTION_MS
+  );
+  if (!expired.length) return 0;
+  if (backupClient()) await createVolumeBackup(true);
+  for (const item of expired) {
+    try { await rm(submissionPath(item.id), { recursive: true, force: true }); }
+    catch (error) { console.error('trash_purge_error', item.id, error?.message || error); }
+  }
+  if (expired.length) console.log('trash_purged count=' + expired.length);
+  return expired.length;
+}
+
+async function runMaintenance() {
+  try { await createVolumeBackup(false); } catch {}
+  try { await purgeExpiredTrash(); } catch (error) { console.error('maintenance_error', error?.message || error); }
+}
+
 async function listSubmissions() {
   const entries = await readdir(DATA_DIR, { withFileTypes: true });
   const items = [];
