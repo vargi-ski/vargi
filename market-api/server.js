@@ -299,6 +299,12 @@ function marketPage(title, body) {
     '<footer class="footer"><div class="wrap">ВАРГИ / Северный маркет · публикация только после модерации</div></footer></body></html>';
 }
 
+app.get('/', (req,res)=>res.redirect(302,'/market'));
+app.get('/robots.txt', (req,res)=>{
+  res.type('text/plain').send('User-agent: *\nDisallow: /admin\nDisallow: /submit\nAllow: /market\n');
+});
+app.get('/favicon.ico', (req,res)=>res.redirect(302, SITE_ORIGIN + '/assets/favicon.svg'));
+
 app.get('/market', async (req, res) => {
   try {
     let items = (await listSubmissions())
