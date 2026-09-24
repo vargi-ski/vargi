@@ -49,7 +49,7 @@
 <fieldset id="otherFields" hidden disabled><legend><span class="n">02</span>Характеристики экипировки</legend><label class="field"><span id="otherLabel">Размер / параметры</span><input name="otherSpec" maxlength="180" placeholder="Размер, длина или другие важные характеристики"></label></fieldset>
 
 <fieldset><legend><span class="n">03</span>Описание и фотографии</legend>
-<label class="field"><span>Описание *</span><textarea name="description" required minlength="20" maxlength="3000" placeholder="Состояние, ремонты, особенности, что входит в комплект и другая полезная информация для покупателя."></textarea></label>
+<label class="field"><span>Описание *</span><textarea name="description" required maxlength="3000" placeholder="Состояние, ремонты, особенности, что входит в комплект и другая полезная информация для покупателя."></textarea></label>
 <label class="field"><span>Фотографии *: JPEG, PNG, WebP или HEIC</span><input id="photosInput" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" multiple required></label>
 <p class="hint">Минимум 1, максимум 6 фотографий. HEIC с iPhone будет преобразован на сервере; тяжёлые снимки автоматически уменьшаются.</p><div class="photos" id="photos"></div><p class="error" id="photoError" hidden></p>
 </fieldset>
@@ -152,7 +152,7 @@ function showPreview(a){
  $('#sendStatus').textContent='';
  scrollTo({top:0,behavior:'smooth'});
 }
-$('#adForm').onsubmit=e=>{e.preventDefault();if(busy||!e.currentTarget.reportValidity())return;if(!photos.length){photoError('Добавьте хотя бы одну фотографию товара.');$('#photosInput').focus();return}const a=collect(e.currentTarget);if(a.title.length<2||a.city.length<2||a.description.length<20||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
+$('#adForm').onsubmit=e=>{e.preventDefault();if(busy||!e.currentTarget.reportValidity())return;if(!photos.length){photoError('Добавьте хотя бы одну фотографию товара.');$('#photosInput').focus();return}const a=collect(e.currentTarget);if(a.title.length<2||a.city.length<2||!a.description||a.contactName.length<2||a.publicContact.length<4){alert('Проверьте обязательные поля: в них должен быть содержательный текст.');return}showPreview(a)};
 $('#editButton').onclick=()=>{$('#previewPanel').classList.remove('active');$('#formPanel').hidden=false;scrollTo({top:0,behavior:'smooth'})};
 $('#sendButton').onclick=async()=>{
  if(!current||!preparedSubmission)return;
