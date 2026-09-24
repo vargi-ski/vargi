@@ -2,9 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { rateLimit } from 'express-rate-limit';
-import { mkdir, writeFile, readFile, readdir, rm, rename } from 'node:fs/promises';
+import { mkdir, writeFile, readFile, readdir, rm, rename, access } from 'node:fs/promises';
+import { createReadStream } from 'node:fs';
 import { randomUUID, randomBytes, scryptSync, timingSafeEqual, createHmac } from 'node:crypto';
 import path from 'node:path';
+import sharp from 'sharp';
+import heicConvert from 'heic-convert';
+import { S3Client, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/client-s3';
+import { Upload } from '@aws-sdk/lib-storage';
+import * as tar from 'tar';
 
 const app = express();
 app.disable('x-powered-by');
@@ -24,8 +30,16 @@ const DATA_ROOT = process.env.DATA_ROOT || '/data';
 const DATA_DIR = process.env.SUBMISSIONS_DIR || path.join(DATA_ROOT, 'submissions');
 const AUTH_FILE = path.join(DATA_ROOT, 'admin-auth.json');
 const ADMIN_SETUP_TOKEN = process.env.ADMIN_SETUP_TOKEN || '';
+const ADMIN_RECOVERY_TOKEN = process.env.ADMIN_RECOVERY_TOKEN || '';
 const ADMIN_SESSION_SECRET = process.env.ADMIN_SESSION_SECRET || '';
+const BACKUP_S3_ENDPOINT = process.env.BACKUP_S3_ENDPOINT || '';
+const BACKUP_S3_REGION = process.env.BACKUP_S3_REGION || '';
+const BACKUP_S3_BUCKET = process.env.BACKUP_S3_BUCKET || '';
+const BACKUP_S3_ACCESS_KEY_ID = process.env.BACKUP_S3_ACCESS_KEY_ID || '';
+const BACKUP_S3_SECRET_ACCESS_KEY = process.env.BACKUP_S3_SECRET_ACCESS_KEY || '';
 const SESSION_TTL_MS = 12 * 60 * 60 * 1000;
+const TRASH_RETENTION_MS = 30 * 24 * 60 * 60 * 1000;
+const BACKUP_MARKER = path.join(DATA_ROOT, '.last-backup-date');
 
 await mkdir(DATA_DIR, { recursive: true });
 
@@ -34,7 +48,7 @@ app.use(cors({
     if (!origin || origin === SITE_ORIGIN) return cb(null, true);
     return cb(new Error('Origin not allowed'));
   },
-  methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 app.use(express.json({ limit: '32kb' }));
@@ -57,17 +71,18 @@ const authLimiter = rateLimit({
 });
 app.use('/admin/login', authLimiter);
 app.use('/admin/setup', authLimiter);
+app.use('/admin/recover', authLimiter);
 
 const upload = multer({
   storage: multer.memoryStorage(),
   limits: {
     files: 6,
-    fileSize: 2.5 * 1024 * 1024,
+    fileSize: 8 * 1024 * 1024,
     fieldSize: 100 * 1024,
     fields: 50
   },
   fileFilter(req, file, cb) {
-    const allowed = new Set(['image/jpeg', 'image/png', 'image/webp']);
+    const allowed = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
     cb(allowed.has(file.mimetype) ? null : new Error('Недопустимый тип файла'), allowed.has(file.mimetype));
   }
 });
@@ -76,18 +91,31 @@ function clean(value, max = 4000) {
   return String(value ?? '').replace(/\u0000/g, '').trim().slice(0, max);
 }
 
+function isHeicSignature(buffer) {
+  if (!buffer || buffer.length < 12) return false;
+  const brand = buffer.toString('ascii', 8, 12).toLowerCase();
+  return buffer.toString('ascii', 4, 8) === 'ftyp' && ['heic','heix','hevc','hevx','mif1','msf1'].includes(brand);
+}
+
 function isImageSignature(buffer, mime) {
   if (!buffer || buffer.length < 12) return false;
   if (mime === 'image/jpeg') return buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff;
   if (mime === 'image/png') return buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47;
   if (mime === 'image/webp') return buffer.toString('ascii', 0, 4) === 'RIFF' && buffer.toString('ascii', 8, 12) === 'WEBP';
+  if (mime === 'image/heic' || mime === 'image/heif') return isHeicSignature(buffer);
   return false;
 }
 
-function extensionFor(mime) {
-  if (mime === 'image/png') return '.png';
-  if (mime === 'image/webp') return '.webp';
-  return '.jpg';
+async function normalizeImage(file) {
+  let input = file.buffer;
+  if (file.mimetype === 'image/heic' || file.mimetype === 'image/heif') {
+    input = Buffer.from(await heicConvert({ buffer: file.buffer, format: 'JPEG', quality: 0.82 }));
+  }
+  return sharp(input, { failOn: 'warning' })
+    .rotate()
+    .resize({ width: 1800, height: 1800, fit: 'inside', withoutEnlargement: true })
+    .jpeg({ quality: 82, mozjpeg: true })
+    .toBuffer();
 }
 
 function validId(id) {
@@ -111,6 +139,98 @@ async function writeJsonAtomic(file, value) {
 
 async function loadSubmission(id) {
   return readJson(path.join(submissionPath(id), 'submission.json'));
+}
+
+async function fileExists(file) {
+  try { await access(file); return true; } catch { return false; }
+}
+
+function backupClient() {
+  if (!BACKUP_S3_ENDPOINT || !BACKUP_S3_REGION || !BACKUP_S3_BUCKET || !BACKUP_S3_ACCESS_KEY_ID || !BACKUP_S3_SECRET_ACCESS_KEY) return null;
+  return new S3Client({
+    endpoint: BACKUP_S3_ENDPOINT,
+    region: BACKUP_S3_REGION,
+    forcePathStyle: true,
+    credentials: {
+      accessKeyId: BACKUP_S3_ACCESS_KEY_ID,
+      secretAccessKey: BACKUP_S3_SECRET_ACCESS_KEY
+    }
+  });
+}
+
+let backupRunning = false;
+async function createVolumeBackup(force = false) {
+  const client = backupClient();
+  if (!client || backupRunning) return { ok: false, skipped: true, reason: client ? 'busy' : 'not_configured' };
+  const today = new Date().toISOString().slice(0, 10);
+  if (!force) {
+    try {
+      const last = (await readFile(BACKUP_MARKER, 'utf8')).trim();
+      if (last === today) return { ok: true, skipped: true, reason: 'already_today' };
+    } catch {}
+  }
+
+  backupRunning = true;
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const tmp = path.join('/tmp', 'vargi-market-' + stamp + '.tgz');
+  try {
+    const entries = ['submissions'];
+    if (await fileExists(AUTH_FILE)) entries.push('admin-auth.json');
+    await tar.c({ gzip: true, cwd: DATA_ROOT, file: tmp }, entries);
+    const key = 'daily/' + stamp + '.tgz';
+    const uploader = new Upload({
+      client,
+      params: {
+        Bucket: BACKUP_S3_BUCKET,
+        Key: key,
+        Body: createReadStream(tmp),
+        ContentType: 'application/gzip'
+      }
+    });
+    await uploader.done();
+    await writeFile(BACKUP_MARKER, today, 'utf8');
+
+    const listed = await client.send(new ListObjectsV2Command({ Bucket: BACKUP_S3_BUCKET, Prefix: 'daily/' }));
+    const cutoff = Date.now() - 14 * 24 * 60 * 60 * 1000;
+    const old = (listed.Contents || []).filter(obj => obj.Key && obj.LastModified && obj.LastModified.getTime() < cutoff);
+    if (old.length) {
+      await client.send(new DeleteObjectsCommand({
+        Bucket: BACKUP_S3_BUCKET,
+        Delete: { Objects: old.map(obj => ({ Key: obj.Key })), Quiet: true }
+      }));
+    }
+
+    console.log('backup_saved key=' + key);
+    return { ok: true, key };
+  } catch (error) {
+    console.error('backup_error', error?.message || error);
+    return { ok: false, error: 'backup_failed' };
+  } finally {
+    backupRunning = false;
+    try { await rm(tmp, { force: true }); } catch {}
+  }
+}
+
+async function purgeExpiredTrash() {
+  const items = await listSubmissions();
+  const expired = items.filter(item =>
+    item.status === 'trash' &&
+    item.deletedAt &&
+    Date.now() - new Date(item.deletedAt).getTime() >= TRASH_RETENTION_MS
+  );
+  if (!expired.length) return 0;
+  if (backupClient()) await createVolumeBackup(true);
+  for (const item of expired) {
+    try { await rm(submissionPath(item.id), { recursive: true, force: true }); }
+    catch (error) { console.error('trash_purge_error', item.id, error?.message || error); }
+  }
+  if (expired.length) console.log('trash_purged count=' + expired.length);
+  return expired.length;
+}
+
+async function runMaintenance() {
+  try { await createVolumeBackup(false); } catch {}
+  try { await purgeExpiredTrash(); } catch (error) { console.error('maintenance_error', error?.message || error); }
 }
 
 async function listSubmissions() {
@@ -469,13 +589,16 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
     }
 
     const files = Array.isArray(req.files) ? req.files : [];
-    const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
-    if (totalBytes > 9 * 1024 * 1024) {
-      return res.status(413).json({ ok: false, error: 'Суммарный размер фотографий слишком большой.' });
+    if (!files.length) {
+      return res.status(400).json({ ok: false, error: 'Добавьте хотя бы одну фотографию товара.' });
+    }
+    const inputBytes = files.reduce((sum, f) => sum + f.size, 0);
+    if (inputBytes > 24 * 1024 * 1024) {
+      return res.status(413).json({ ok: false, error: 'Исходные фотографии слишком большие: максимум 24 МБ суммарно.' });
     }
     for (const file of files) {
       if (!isImageSignature(file.buffer, file.mimetype)) {
-        return res.status(400).json({ ok: false, error: 'Один из файлов не является корректным изображением.' });
+        return res.status(400).json({ ok: false, error: 'Один из файлов не является корректным JPEG, PNG, WebP или HEIC.' });
       }
     }
 
@@ -484,15 +607,22 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
     await mkdir(submissionDir, { recursive: false });
 
     const savedPhotos = [];
+    let normalizedTotal = 0;
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
-      const filename = `photo-${String(i + 1).padStart(2, '0')}${extensionFor(file.mimetype)}`;
-      await writeFile(path.join(submissionDir, filename), file.buffer, { flag: 'wx' });
+      const normalized = await normalizeImage(file);
+      normalizedTotal += normalized.length;
+      if (normalizedTotal > 9 * 1024 * 1024) {
+        throw Object.assign(new Error('normalized_photos_too_large'), { statusCode: 413 });
+      }
+      const filename = `photo-${String(i + 1).padStart(2, '0')}.jpg`;
+      await writeFile(path.join(submissionDir, filename), normalized, { flag: 'wx' });
       savedPhotos.push({
         filename,
         originalName: clean(file.originalname, 180),
-        mimeType: file.mimetype,
-        size: file.size
+        originalMimeType: file.mimetype,
+        mimeType: 'image/jpeg',
+        size: normalized.length
       });
     }
 
@@ -535,18 +665,23 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
     if (submissionDir) {
       try { await rm(submissionDir, { recursive: true, force: true }); } catch (_) {}
     }
-    res.status(500).json({ ok: false, error: 'Не удалось сохранить заявку. Попробуйте ещё раз.' });
+    const statusCode = Number(error?.statusCode) || 500;
+    res.status(statusCode).json({ ok: false, error: statusCode === 413 ? 'Фотографии после обработки всё ещё слишком большие. Уменьшите количество или размер снимков.' : 'Не удалось сохранить заявку. Попробуйте ещё раз.' });
   }
 });
 
 app.get('/admin/status', async (req, res) => {
-  res.json({ ok: true, initialized: Boolean(await authState()) });
+  res.json({
+    ok: true,
+    initialized: Boolean(await authState()),
+    recoveryAvailable: Boolean(ADMIN_RECOVERY_TOKEN)
+  });
 });
 
 app.post('/admin/setup', async (req, res) => {
   try {
     if (await authState()) return res.status(409).json({ ok: false, error: 'Администратор уже настроен.' });
-    if (!ADMIN_SETUP_TOKEN || !ADMIN_SESSION_SECRET) return res.status(503).json({ ok: false, error: 'Настройка администратора недоступна.' });
+    if (!ADMIN_SETUP_TOKEN || !ADMIN_SESSION_SECRET) return res.status(503).json({ ok: false, error: 'Первичная настройка отключена. Используйте восстановление доступа.' });
     const setupToken = clean(req.body.setupToken, 200);
     const password = String(req.body.password || '');
     if (!safeEqualText(setupToken, ADMIN_SETUP_TOKEN)) return res.status(403).json({ ok: false, error: 'Неверный setup-ключ.' });
@@ -561,6 +696,27 @@ app.post('/admin/setup', async (req, res) => {
   } catch (error) {
     console.error('admin_setup_error', error?.message || error);
     res.status(500).json({ ok: false, error: 'Не удалось создать администратора.' });
+  }
+});
+
+app.post('/admin/recover', async (req, res) => {
+  try {
+    if (!ADMIN_RECOVERY_TOKEN || !ADMIN_SESSION_SECRET) return res.status(503).json({ ok: false, error: 'Восстановление доступа не настроено.' });
+    const recoveryToken = clean(req.body.recoveryToken, 200);
+    const password = String(req.body.password || '');
+    if (!safeEqualText(recoveryToken, ADMIN_RECOVERY_TOKEN)) return res.status(403).json({ ok: false, error: 'Неверный recovery-ключ.' });
+    if (password.length < 10 || password.length > 200) return res.status(400).json({ ok: false, error: 'Пароль должен содержать не менее 10 символов.' });
+    const passwordData = hashPassword(password);
+    await writeJsonAtomic(AUTH_FILE, {
+      version: 1,
+      createdAt: new Date().toISOString(),
+      recoveredAt: new Date().toISOString(),
+      ...passwordData
+    });
+    res.json({ ok: true, token: signSession() });
+  } catch (error) {
+    console.error('admin_recover_error', error?.message || error);
+    res.status(500).json({ ok: false, error: 'Не удалось восстановить доступ.' });
   }
 });
 
@@ -580,10 +736,11 @@ app.post('/admin/login', async (req, res) => {
 app.get('/admin/submissions', requireAdmin, async (req, res) => {
   try {
     const status = clean(req.query.status, 20) || 'pending';
-    const allowed = new Set(['pending', 'published', 'rejected', 'all']);
+    const allowed = new Set(['pending', 'published', 'sold', 'archived', 'rejected', 'trash', 'all']);
     if (!allowed.has(status)) return res.status(400).json({ ok: false, error: 'Неизвестный статус.' });
     let items = await listSubmissions();
     if (status !== 'all') items = items.filter(item => item.status === status);
+    res.set('Cache-Control', 'no-store');
     res.json({ ok: true, submissions: items });
   } catch (error) {
     console.error('admin_list_error', error?.message || error);
@@ -604,13 +761,67 @@ app.get('/admin/submissions/:id/photos/:filename', requireAdmin, async (req, res
   }
 });
 
+app.put('/admin/submissions/:id', requireAdmin, async (req, res) => {
+  try {
+    const item = await loadSubmission(req.params.id);
+    if (item.status === 'trash') return res.status(409).json({ ok: false, error: 'Сначала восстановите объявление из корзины.' });
+
+    const textFields = {
+      title: 120, city: 100, contactName: 80, publicContact: 140, condition: 80,
+      brand: 80, model: 100, delivery: 100, style: 50, length: 30,
+      structureKind: 30, structureValue: 120, flex: 100, weight: 80,
+      bindings: 120, otherSpec: 220, description: 4000
+    };
+    for (const [key, max] of Object.entries(textFields)) {
+      if (Object.prototype.hasOwnProperty.call(req.body, key)) item[key] = clean(req.body[key], max);
+    }
+
+    if (Object.prototype.hasOwnProperty.call(req.body, 'categoryKey')) {
+      const key = clean(req.body.categoryKey, 30);
+      if (!MARKET_CATEGORIES[key]) return res.status(400).json({ ok: false, error: 'Неизвестная категория.' });
+      item.categoryKey = key;
+      item.category = MARKET_CATEGORIES[key];
+    }
+
+    if (Object.prototype.hasOwnProperty.call(req.body, 'priceValue')) {
+      const priceValue = Number(req.body.priceValue);
+      if (!Number.isFinite(priceValue) || priceValue < 0 || priceValue > 10000000) {
+        return res.status(400).json({ ok: false, error: 'Некорректная цена.' });
+      }
+      item.priceValue = priceValue;
+      item.price = new Intl.NumberFormat('ru-RU').format(priceValue) + ' ₽';
+    }
+
+    if (item.title.length < 2 || item.city.length < 2 || item.description.length < 20) {
+      return res.status(400).json({ ok: false, error: 'Название, город и описание должны быть заполнены.' });
+    }
+
+    item.contact = [item.contactName, item.publicContact].filter(Boolean).join(' — ');
+    item.updatedAt = new Date().toISOString();
+    await writeJsonAtomic(path.join(submissionPath(item.id), 'submission.json'), item);
+    res.json({ ok: true, submission: item });
+  } catch (error) {
+    console.error('admin_edit_error', error?.message || error);
+    res.status(404).json({ ok: false, error: 'Заявка не найдена.' });
+  }
+});
+
 async function changeStatus(req, res, status) {
   try {
     const item = await loadSubmission(req.params.id);
+    if (item.status === 'trash') return res.status(409).json({ ok: false, error: 'Сначала восстановите объявление из корзины.' });
+    const now = new Date().toISOString();
     item.status = status;
-    item.updatedAt = new Date().toISOString();
-    if (status === 'published') item.publishedAt = item.updatedAt;
-    if (status === 'rejected') item.rejectedAt = item.updatedAt;
+    item.updatedAt = now;
+    if (status === 'published') {
+      item.publishedAt = now;
+      delete item.soldAt;
+      delete item.archivedAt;
+      delete item.rejectedAt;
+    }
+    if (status === 'sold') item.soldAt = now;
+    if (status === 'archived') item.archivedAt = now;
+    if (status === 'rejected') item.rejectedAt = now;
     await writeJsonAtomic(path.join(submissionPath(item.id), 'submission.json'), item);
     res.json({ ok: true, submission: item });
   } catch (error) {
@@ -621,14 +832,43 @@ async function changeStatus(req, res, status) {
 
 app.post('/admin/submissions/:id/publish', requireAdmin, (req, res) => changeStatus(req, res, 'published'));
 app.post('/admin/submissions/:id/reject', requireAdmin, (req, res) => changeStatus(req, res, 'rejected'));
+app.post('/admin/submissions/:id/sold', requireAdmin, (req, res) => changeStatus(req, res, 'sold'));
+app.post('/admin/submissions/:id/archive', requireAdmin, (req, res) => changeStatus(req, res, 'archived'));
 
-app.delete('/admin/submissions/:id', requireAdmin, async (req, res) => {
+app.post('/admin/submissions/:id/restore', requireAdmin, async (req, res) => {
   try {
-    await rm(submissionPath(req.params.id), { recursive: true, force: false });
-    res.json({ ok: true });
+    const item = await loadSubmission(req.params.id);
+    if (item.status !== 'trash') return res.status(409).json({ ok: false, error: 'Заявка не находится в корзине.' });
+    item.status = ['pending','published','sold','archived','rejected'].includes(item.previousStatus) ? item.previousStatus : 'pending';
+    item.updatedAt = new Date().toISOString();
+    delete item.deletedAt;
+    delete item.previousStatus;
+    await writeJsonAtomic(path.join(submissionPath(item.id), 'submission.json'), item);
+    res.json({ ok: true, submission: item });
   } catch {
     res.status(404).json({ ok: false, error: 'Заявка не найдена.' });
   }
+});
+
+app.delete('/admin/submissions/:id', requireAdmin, async (req, res) => {
+  try {
+    const item = await loadSubmission(req.params.id);
+    if (item.status === 'trash') return res.json({ ok: true, submission: item });
+    item.previousStatus = item.status;
+    item.status = 'trash';
+    item.deletedAt = new Date().toISOString();
+    item.updatedAt = item.deletedAt;
+    await writeJsonAtomic(path.join(submissionPath(item.id), 'submission.json'), item);
+    res.json({ ok: true, submission: item, purgeAfterDays: 30 });
+  } catch {
+    res.status(404).json({ ok: false, error: 'Заявка не найдена.' });
+  }
+});
+
+app.post('/admin/backup', requireAdmin, async (req, res) => {
+  const result = await createVolumeBackup(true);
+  if (!result.ok) return res.status(503).json({ ok: false, error: 'Не удалось создать резервную копию.', details: result.reason || result.error || '' });
+  res.json({ ok: true, key: result.key });
 });
 
 app.use((error, req, res, next) => {
@@ -640,4 +880,8 @@ app.use((error, req, res, next) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`vargi-market-api listening on ${PORT}; storage=${DATA_DIR}`);
+  const firstRun = setTimeout(() => runMaintenance(), 15000);
+  firstRun.unref?.();
+  const maintenanceTimer = setInterval(() => runMaintenance(), 6 * 60 * 60 * 1000);
+  maintenanceTimer.unref?.();
 });
