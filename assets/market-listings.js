@@ -1,0 +1,1 @@
+window.VARGI_LISTINGS = [];
