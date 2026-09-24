@@ -26,6 +26,11 @@ app.use((req,res,next)=>{
 
 const PORT = Number(process.env.PORT || 3000);
 const SITE_ORIGIN = process.env.SITE_ORIGIN || 'https://xn----7sbbfg4a6clj5k.xn--p1ai';
+const SITE_HOST = new URL(SITE_ORIGIN).host;
+const ALLOWED_SITE_ORIGINS = new Set([
+  SITE_ORIGIN,
+  'https://www.' + SITE_HOST
+]);
 const DATA_ROOT = process.env.DATA_ROOT || '/data';
 const DATA_DIR = process.env.SUBMISSIONS_DIR || path.join(DATA_ROOT, 'submissions');
 const AUTH_FILE = path.join(DATA_ROOT, 'admin-auth.json');
@@ -45,7 +50,7 @@ await mkdir(DATA_DIR, { recursive: true });
 
 app.use(cors({
   origin(origin, cb) {
-    if (!origin || origin === SITE_ORIGIN) return cb(null, true);
+    if (!origin || ALLOWED_SITE_ORIGINS.has(origin)) return cb(null, true);
     return cb(new Error('Origin not allowed'));
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
