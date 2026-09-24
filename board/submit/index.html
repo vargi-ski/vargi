@@ -24,8 +24,8 @@
 <div class="notice">До финального нажатия «Отправить на модерацию» фотографии остаются только в этой вкладке. Перед отправкой сайт автоматически уменьшит тяжёлые снимки и отправит их вместе с заявкой.</div>
 <form id="adForm" autocomplete="off">
 <fieldset><legend><span class="n">01</span>Что размещаем</legend><div class="grid">
-<label class="field"><span>Тип объявления *</span><select name="kind" id="kind"><option value="sell">Продаю</option><option value="buy">Куплю</option><option value="exchange">Обмен</option></select></label>
-<label class="field"><span>Категория *</span><select name="category" id="category"><option value="skis">Лыжи</option><option value="boots">Ботинки и крепления</option><option value="poles">Палки</option><option value="rollers">Лыжероллеры</option><option value="clothes">Одежда и аксессуары</option></select></label>
+<input type="hidden" name="kind" id="kind" value="sell">
+<label class="field full"><span>Категория *</span><select name="category" id="category"><option value="skis">Лыжи</option><option value="boots">Ботинки и крепления</option><option value="poles">Палки</option><option value="rollers">Лыжероллеры</option><option value="clothes">Одежда и аксессуары</option></select></label>
 <label class="field full"><span>Название объявления *</span><input name="title" required minlength="2" maxlength="100" placeholder="Например: коньковые лыжи Fischer Speedmax, 191 см"></label>
 <label class="field"><span>Город *</span><input name="city" required minlength="2" maxlength="60" placeholder="Город, без точного адреса"></label>
 <label class="field"><span id="priceLabel">Цена, ₽ *</span><input name="price" id="price" type="number" required min="1" max="10000000" step="1" placeholder="Сумма в рублях"></label>
@@ -49,7 +49,7 @@
 <fieldset id="otherFields" hidden disabled><legend><span class="n">02</span>Характеристики экипировки</legend><label class="field"><span id="otherLabel">Размер / параметры</span><input name="otherSpec" maxlength="180" placeholder="Размер, длина или другие важные характеристики"></label></fieldset>
 
 <fieldset><legend><span class="n">03</span>Описание и фотографии</legend>
-<label class="field"><span>Описание *</span><textarea name="description" required minlength="20" maxlength="3000" placeholder="Состояние, ремонты, особенности. Для покупки — что именно ищете. Для обмена — на что готовы менять."></textarea></label>
+<label class="field"><span>Описание *</span><textarea name="description" required minlength="20" maxlength="3000" placeholder="Состояние, ремонты, особенности, что входит в комплект и другая полезная информация для покупателя."></textarea></label>
 <label class="field"><span>Фотографии: JPEG, PNG или WebP</span><input id="photosInput" type="file" accept="image/jpeg,image/png,image/webp" multiple></label>
 <p class="hint">До 6 фотографий. Тяжёлые снимки автоматически уменьшаются; итоговый объём вложений — до 9 МБ.</p><div class="photos" id="photos"></div><p class="error" id="photoError" hidden></p>
 </fieldset>
@@ -80,12 +80,12 @@ const MARKET_API='https://market-api-production-d9ab.up.railway.app';
 let photos=[],photoBytes=0,busy=false,current=null,preparedSubmission=null;
 const money=n=>new Intl.NumberFormat('ru-RU').format(n)+' ₽';
 function structure(a){return a.structureKind==='factory'?'Заводская, код неизвестен':(['known','custom'].includes(a.structureKind)&&a.structureValue?a.structureValue:'Не указана / не знаю')}
-function priceText(a){if(a.kind==='exchange')return a.price?('Обмен · доплата '+money(a.price)):'Обмен без доплаты';return (a.kind==='buy'?'До ':'')+money(a.price)}
+function priceText(a){return money(a.price)}
 function sync(){
- const buy=$('#kind').value==='buy',exchange=$('#kind').value==='exchange',skis=$('#category').value==='skis';
- $('#priceLabel').textContent=buy?'Бюджет до, ₽ *':exchange?'Доплата, ₽ — необязательно':'Цена, ₽ *';
- $('#price').required=!exchange;$('#price').min=exchange?'0':'1';
- $('#conditionField').hidden=buy;$('#condition').disabled=buy;
+ const skis=$('#category').value==='skis';
+ $('#priceLabel').textContent='Цена, ₽ *';
+ $('#price').required=true;$('#price').min='1';
+ $('#conditionField').hidden=false;$('#condition').disabled=false;
  $('#skiFields').hidden=!skis;$('#skiFields').disabled=!skis;
  $('#otherFields').hidden=skis;$('#otherFields').disabled=skis;
  $('#otherLabel').textContent=({boots:'Размер и система креплений',poles:'Длина и другие параметры',rollers:'Колёса, скорость и состояние',clothes:'Размер и другие параметры'})[$('#category').value]||'Размер / параметры';
