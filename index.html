@@ -477,6 +477,8 @@
   .prod{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card); display:flex; flex-direction:column}
   .prod .img{aspect-ratio:1/1; background:#0B1115; display:grid; place-items:center; color:var(--muted2); font-size:13px; overflow:hidden}
   .prod .img img{width:100%; height:100%; object-fit:contain}
+  .prod.landscape .img,.prod.soon .img{aspect-ratio:3/2}
+  .prod.landscape .img img{object-fit:cover}
   .prod .img.zoomable{cursor:zoom-in}
   .prod .img.zoomable:focus-visible{outline:2px solid var(--ice); outline-offset:-2px}
   .prod .pb{padding:16px; display:flex; flex-direction:column; gap:6px; flex:1}
@@ -1022,7 +1024,7 @@
 
 <!-- Для быстрого отката старые image-data-*.js сохранены в репозитории. -->
 <script src="/assets/image-paths.js"></script>
-<script src="/assets/shop-catalog.js?v=20260922"></script>
+<script src="/assets/shop-catalog.js?v=20260924-layout"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script src="assets/geography/pack-atlas.js?v=20260916"></script>
 <script>
@@ -1670,6 +1672,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   const wrap = $("#shopList");
   SHOP.forEach((p,index)=>{
     const card = el("div","prod"+(p.soon?" soon":"")); card.classList.add("reveal");
+    if(p.imageFormat === "landscape") card.classList.add("landscape");
     const productImage = `<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">`;
     const imgInner = p.img
       ? productImage
