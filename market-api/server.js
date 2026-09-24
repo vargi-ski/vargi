@@ -880,4 +880,8 @@ app.use((error, req, res, next) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`vargi-market-api listening on ${PORT}; storage=${DATA_DIR}`);
+  const firstRun = setTimeout(() => runMaintenance(), 15000);
+  firstRun.unref?.();
+  const maintenanceTimer = setInterval(() => runMaintenance(), 6 * 60 * 60 * 1000);
+  maintenanceTimer.unref?.();
 });
