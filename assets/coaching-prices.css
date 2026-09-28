@@ -1,7 +1,8 @@
-/* Approved VARGI coaching prices: 2026-09-17. */
+/* Approved VARGI coaching prices: 2026-09-28. */
 .coaching-rates{display:grid;gap:9px;margin:0 0 20px;padding:14px 0 0;border-top:1px solid var(--line,#1c2a33);font-size:14px}
 .coaching-rates>div{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 12px}
 .coaching-rates dt{color:var(--muted)}
+.coaching-rates dt small{display:block;margin-top:3px;font-size:12px;color:var(--muted2,var(--muted))}
 .coaching-rates dd{margin:0;font-weight:600;white-space:nowrap}
 .coaching-rates dd span{font-size:12px;font-weight:400;color:var(--muted)}
 .coaching-price-line{display:flex;align-items:baseline;flex-wrap:wrap;gap:6px 12px;margin:0 0 20px;font-size:14px}
@@ -16,6 +17,12 @@
 .coaching-amount span{font:400 14px/1.5 Inter,sans-serif;color:var(--muted)}
 .coaching-option p{margin:0 0 22px;color:var(--muted);font-size:15px;line-height:1.6}
 .coaching-option .btn{width:100%;margin-top:auto}
+.coaching-package{margin:0 0 22px;padding:16px;border:1px solid var(--line2);border-radius:10px;background:rgba(62,155,214,.08)}
+.coaching-package strong{display:block;font:600 28px/1.25 Oswald,sans-serif;color:var(--ice-hi)}
+.coaching-package strong span{font:400 14px/1.5 Inter,sans-serif;white-space:nowrap}
+.coaching-package p{margin:8px 0 0;font-size:13px;line-height:1.5}
+.coaching-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:auto}
+.coaching-actions .btn{padding-inline:10px}
 .coaching-included{margin-top:22px}
 .coaching-included h3{font-size:18px}
 .coaching-included ul{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 30px;margin:14px 0 0;padding:0;list-style:none}
