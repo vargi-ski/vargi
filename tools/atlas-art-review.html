@@ -776,8 +776,8 @@
     <div class="pack-wrap"><div class="pack" id="pack"></div></div>
     <div class="reserve-block">
       <div class="reserve-head">
-        <div><div class="eyebrow">Единая команда</div><h3>Расширенный <span class="ice">состав</span></h3></div>
-        <p>Одна команда, общие старты и ценности. Здесь собраны участники, которые тренируются, общаются и выходят на дистанции вместе с ВАРГИ.</p>
+        <div><div class="eyebrow">Единая стая</div><h3>Расширенный <span class="ice">состав</span></h3></div>
+        <p>Одна стая, общие старты и ценности. Здесь собраны участники, которые тренируются, общаются и выходят на дистанции вместе с ВАРГИ.</p>
       </div>
       <div class="reserve-slider">
         <button class="reserve-arrow prev" id="reservePrev" type="button" aria-label="Предыдущие участники">‹</button>
@@ -1681,14 +1681,14 @@ function openReserveForm(){
       <label>Опыт в лыжах<select name="experience" required><option value="">Выберите</option><option>Готовлюсь к первому марафону</option><option>Финишировал на марафоне</option><option>Регулярно участвую в марафонах</option><option>Выступаю на высоком уровне</option></select></label>
       <label>Почему хотите в ВАРГИ?<textarea name="reason" required maxlength="500" placeholder="Коротко о себе и своей цели"></textarea></label>
       <button class="btn" type="submit">Продолжить в Telegram →</button>
-      <div class="reserve-form-note">Сайт не сохраняет ответы. После нажатия откроется Telegram, где вы сами отправите заявку Артёму.</div>
+      <div class="reserve-form-note">Сайт не сохраняет ответы. После нажатия откроется Telegram, где вы сами отправите заявку Артему.</div>
     </form></div>`);
   const form=$("#reserveForm");
   form?.addEventListener("submit",event=>{
     event.preventDefault();
     const data=new FormData(form);
     const message=[
-      "Здравствуйте, Артём! Хочу вступить в расширенный состав ВАРГИ.",
+      "Здравствуйте, Артем! Хочу вступить в расширенный состав ВАРГИ.",
       "",
       `Имя: ${data.get("name")}`,
       `Город: ${data.get("city")}`,
