@@ -1,0 +1,3 @@
+/* Shared wordmark: keep the letters together inside flex-based headers. */
+.brand .vargi-wordmark{display:inline-block;white-space:nowrap;color:#f2f5f8}
+.brand .vargi-wordmark .vargi-letter-ice{color:#8fd0ef}

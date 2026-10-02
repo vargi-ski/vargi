@@ -18,10 +18,11 @@
     @media(max-width:900px){.kpis{grid-template-columns:repeat(3,1fr)}.two,.three{grid-template-columns:1fr}.top{align-items:flex-start;flex-direction:column}.updated{text-align:left}}
     @media(max-width:520px){.kpis{grid-template-columns:repeat(2,1fr)}.card{padding:15px}.kpi b{font-size:26px}.gate form{flex-direction:column}}
   </style>
+  <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
 </head>
 <body>
   <div class="gate" id="gate"><div class="gate-box"><div class="brand">Лыжная марафонская стая</div><h2>Аналитика ВАРГИ</h2><p>Данные зашифрованы. Введи пароль дашборда.</p><form id="unlock"><input id="password" type="password" autocomplete="current-password" placeholder="Пароль" required><button type="submit">Открыть</button></form><div class="error" id="error"></div></div></div>
-  <div id="app" class="hidden"><header class="wrap top"><div><div class="brand">ВАРГИ · единый дашборд</div><h1>Центр управления</h1></div><div class="updated"><span class="status" id="overall-status"><i class="dot"></i> <span id="overall-text">Проверяю источники</span></span><br><span id="updated"></span></div></header><main class="wrap">
+  <div id="app" class="hidden"><header class="wrap top"><div><div class="brand"><span class="vargi-wordmark">В<span class="vargi-letter-ice">А</span>Р<span class="vargi-letter-ice">Г</span>И</span> · единый дашборд</div><h1>Центр управления</h1></div><div class="updated"><span class="status" id="overall-status"><i class="dot"></i> <span id="overall-text">Проверяю источники</span></span><br><span id="updated"></span></div></header><main class="wrap">
     <section class="grid kpis" id="kpis"></section>
     <section class="grid two"><article class="card"><h2>Трафик по дням</h2><div class="rows" id="timeline"></div></article><article class="card"><h2>Источники</h2><div class="rows" id="sources"></div></article></section>
     <section class="grid two"><article class="card"><h2>GA4 · трафик по дням</h2><div class="rows" id="ga4-timeline"></div></article><article class="card"><h2>GA4 · источники</h2><div class="rows" id="ga4-sources"></div></article></section>

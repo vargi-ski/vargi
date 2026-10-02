@@ -13,9 +13,10 @@
 dialog{border:1px solid var(--line);background:#0d141a;color:var(--ink);padding:0;border-radius:14px;width:min(900px,calc(100% - 24px));max-height:92dvh;max-width:100%;overflow:auto}dialog::backdrop{background:rgba(0,0,0,.8)}.dialog-head{position:sticky;top:0;background:#0d141a;border-bottom:1px solid var(--line);padding:14px 18px;display:flex;align-items:center;justify-content:space-between;z-index:2}.dialog-body{padding:18px}.close{border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:8px;width:40px;height:40px;font-size:24px}.edit-grid{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}.full{grid-column:1/-1}.dialog-actions{display:flex;justify-content:flex-end;gap:10px;border-top:1px solid var(--line);padding-top:16px;margin-top:14px}
 @media(max-width:680px){.wrap{width:calc(100% - 20px)}.header-row{min-height:60px}.header-actions a{display:none}.panel{margin:14px 0;padding:16px}.grid,.edit-grid{grid-template-columns:1fr}.full{grid-column:auto}.card-head{display:block}.badge{display:inline-block;margin-top:8px}.actions,.dialog-actions{display:grid}.actions .button,.dialog-actions .button{width:100%}.photos img{width:125px;height:110px}.admin-tools{display:grid}.admin-tools .button{width:100%}}
 </style>
+  <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
 </head>
 <body>
-<header class="header"><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ">В<b>А</b>Р<b>Г</b>И</a><span>Модерация маркета</span><div class="header-actions"><a href="/board/">Открыть маркет ↗</a><button class="button secondary hidden" id="logoutButton" type="button">Выйти</button></div></div></header>
+<header class="header"><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ"><span class="vargi-wordmark">В<span class="vargi-letter-ice">А</span>Р<span class="vargi-letter-ice">Г</span>И</span></a><span>Модерация маркета</span><div class="header-actions"><a href="/board/">Открыть маркет ↗</a><button class="button secondary hidden" id="logoutButton" type="button">Выйти</button></div></div></header>
 <main class="wrap">
 
 <section class="panel auth hidden" id="loginPanel">
