@@ -14,7 +14,8 @@ window.VARGI_SHOP = [
       "S": 6,
       "M": 9,
       "L": 4
-    }
+    },
+    "category": "cotton"
   },
   {
     "name": "Футболка «Белая классика»",
@@ -30,7 +31,8 @@ window.VARGI_SHOP = [
       "S": 3,
       "M": 5,
       "L": 3
-    }
+    },
+    "category": "cotton"
   },
   {
     "name": "Футболка «Стая держит темп»",
@@ -46,7 +48,8 @@ window.VARGI_SHOP = [
       "S": 6,
       "M": 8,
       "L": 4
-    }
+    },
+    "category": "cotton"
   },
   {
     "bg": "#FFFFFF",
@@ -63,7 +66,8 @@ window.VARGI_SHOP = [
     "stock": {
       "XS": 3,
       "S": 10
-    }
+    },
+    "category": "training"
   },
   {
     "bg": "#111111",
@@ -80,7 +84,8 @@ window.VARGI_SHOP = [
     "stock": {
       "S": 5,
       "M": 5
-    }
+    },
+    "category": "training"
   },
   {
     "bg": "#111111",
@@ -94,7 +99,8 @@ window.VARGI_SHOP = [
     "basePrice": 2500,
     "sizeKind": "cap",
     "preorder": true,
-    "preorderLeadTime": "1 месяц"
+    "preorderLeadTime": "1 месяц",
+    "category": "caps"
   },
   {
     "bg": "#111111",
@@ -108,7 +114,8 @@ window.VARGI_SHOP = [
     "basePrice": 2500,
     "sizeKind": "cap",
     "preorder": true,
-    "preorderLeadTime": "1 месяц"
+    "preorderLeadTime": "1 месяц",
+    "category": "caps"
   },
   {
     "name": "Лыжный гоночный костюм",
@@ -120,7 +127,8 @@ window.VARGI_SHOP = [
     "basePrice": 13900,
     "sizeKind": "clothing",
     "preorder": true,
-    "preorderRelease": "конец ноября 2026"
+    "preorderRelease": "конец ноября 2026",
+    "category": "racing"
   },
   {
     "name": "Пуховик",
@@ -128,7 +136,8 @@ window.VARGI_SHOP = [
     "price": "Скоро",
     "img": "",
     "soon": true,
-    "id": "down-jacket"
+    "id": "down-jacket",
+    "category": "upcoming"
   },
   {
     "name": "Разминка",
@@ -136,7 +145,8 @@ window.VARGI_SHOP = [
     "price": "Скоро",
     "img": "",
     "soon": true,
-    "id": "warmup-suit"
+    "id": "warmup-suit",
+    "category": "upcoming"
   },
   {
     "name": "Шапка / бафф",
@@ -144,6 +154,30 @@ window.VARGI_SHOP = [
     "price": "Скоро",
     "img": "",
     "soon": true,
-    "id": "hat-buff"
+    "id": "hat-buff",
+    "category": "upcoming"
+  }
+];
+
+window.VARGI_SHOP_CATEGORIES = [
+  {
+    "id": "cotton",
+    "title": "Хлопковые футболки",
+    "preview": "shirt-classic"
+  },
+  {
+    "id": "training",
+    "title": "Тренировочные футболки",
+    "preview": "shirt-sport-sever"
+  },
+  {
+    "id": "caps",
+    "title": "Кепки",
+    "preview": "cap-straight"
+  },
+  {
+    "id": "racing",
+    "title": "Гоночные костюмы",
+    "preview": "race-suit"
   }
 ];

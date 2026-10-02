@@ -472,45 +472,22 @@
   .gallery-toggle{margin-top:18px}
   .consent-note{color:var(--muted2); font-size:13px; margin-top:14px}
 
-  /* ---------- SHOP ---------- */
-  .shop-groups{display:grid; gap:38px; margin-top:28px}
-  .shop-group-head{margin-bottom:18px; max-width:840px}
-  .shop-group-head h3{font-family:'Oswald'; font-size:24px; font-weight:500; text-transform:uppercase; letter-spacing:.04em; margin:0 0 8px}
-  .shop-group-head p{margin:0; color:var(--muted); font-size:15px; line-height:1.6}
-  .shop-group-head strong{color:var(--ice-hi)}
-  .shop-group-head .material{display:block; margin-top:8px; color:var(--muted2); font-size:13px}
-  .shop{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px}
-  .shop-pair{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .shop.shop-single{grid-template-columns:1fr}
-  .shop-single .prod{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
-  .shop-single .prod .pb{padding:clamp(20px,3vw,42px); justify-content:center; gap:12px}
-  .shop-single .prod .pn{font-size:clamp(22px,2.5vw,32px)}
-  .shop-single .prod .pd{flex:0}
-  .shop-single .prod .pf{margin-top:18px}
-  .shop-single .prod .price{font-size:24px; color:var(--ice-hi)}
-  @media(max-width:640px){.shop-single .prod{grid-template-columns:1fr}}
-  .prod{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card); display:flex; flex-direction:column}
-  .prod .img{aspect-ratio:1/1; background:#0B1115; display:grid; place-items:center; color:var(--muted2); font-size:13px; overflow:hidden}
-  .prod .img img{width:100%; height:100%; object-fit:contain}
-  .prod.landscape .img,.prod.soon .img{aspect-ratio:3/2}
-  .prod.landscape .img img{object-fit:cover}
-  .prod .img.zoomable{cursor:zoom-in}
-  .prod .img.zoomable:focus-visible{outline:2px solid var(--ice); outline-offset:-2px}
-  .prod .pb{padding:16px; display:flex; flex-direction:column; gap:6px; flex:1}
-  .prod .pn{font-family:'Oswald'; text-transform:uppercase; letter-spacing:.05em; font-size:17px}
-  .prod .pd{color:var(--muted); font-size:14px; flex:1}
-  .prod .stock{margin-top:6px; font-size:14px; line-height:1.5; color:var(--muted)}
-  .prod .stock-label{display:block; color:var(--ice-hi); margin-bottom:5px}
-  .prod .stock-sizes{display:flex; flex-wrap:wrap; gap:6px}
-  .prod .stock-size{padding:3px 7px; border:1px solid var(--line2); border-radius:5px; white-space:nowrap; color:inherit; text-decoration:none; transition:.18s; cursor:pointer}
-  .prod .stock-size:hover,.prod .stock-size:focus-visible{border-color:var(--ice); background:rgba(62,155,214,.11); color:var(--ice-hi); outline:none}
-  .prod .pf{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-top:auto; padding-top:10px}
-  .prod .pf .btn{padding:9px 14px; font-size:13px}
-  .prod .price{font-family:'Oswald'; font-weight:600; font-size:15px; text-transform:uppercase; letter-spacing:.06em; color:var(--muted)}
-  .prod.soon{opacity:.72}
-  .prod.soon .img{background:repeating-linear-gradient(135deg,#0c1116,#0c1116 14px,#0a0f13 14px,#0a0f13 28px); color:var(--muted2); font-family:'Oswald'; letter-spacing:.14em; font-size:12px}
-  .prod.soon .order[disabled]{opacity:.55; cursor:not-allowed}
-  .shop-note{color:var(--muted2); font-size:13px; margin-top:16px}
+  /* ---------- COMPACT SHOP ---------- */
+  .shop-preview-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:22px}
+  .shop-preview-head .lead{margin-bottom:0;max-width:650px}
+  .shop-preview-head>.btn{flex-shrink:0}
+  .shop-preview-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px}
+  .shop-preview-card{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:11px;overflow:hidden;background:var(--card);text-decoration:none;color:inherit;transition:border-color .18s,transform .18s}
+  .shop-preview-card:hover{border-color:var(--ice);transform:translateY(-3px)}
+  .shop-preview-card:focus-visible{outline:2px solid var(--ice);outline-offset:4px}
+  .shop-preview-photo{height:145px;display:flex;justify-content:center;align-items:center;overflow:hidden;background:#0b1015}
+  .shop-preview-photo img{width:100%;height:100%;object-fit:contain}
+  .shop-preview-info{padding:13px 14px;display:flex;flex-direction:column;gap:6px;flex:1}
+  .shop-preview-info h3{font:500 17px/1.3 'Oswald',sans-serif;margin:0;flex:1}
+  .shop-preview-info p{font-size:12px;color:var(--muted);margin:0;display:flex;justify-content:space-between;gap:8px}
+  .shop-preview-info p span:last-child{color:var(--ice-hi)}
+  .shop-note{color:var(--muted2);font-size:12px;margin:15px 0 0}
+  @media(max-width:700px){.shop-preview-head{align-items:flex-start;flex-direction:column;gap:16px}.shop-preview-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.shop-preview-photo{height:115px}.shop-preview-info{padding:11px}.shop-preview-info h3{font-size:16px}}
 
   /* ---------- TRAINING CTA ---------- */
   .training-section{padding-top:0}
@@ -739,7 +716,7 @@
       <a href="#roster">Стая</a>
       <a href="#training">Подготовка</a>
       <a href="#calendar">Старты</a>
-      <a href="#shop">Магазин</a>
+      <a href="/shop/">Магазин</a>
       <a class="nav-board-link" href="/board/" data-goal="classifieds_nav_click">Объявления</a>
       <a href="#contacts">Контакты</a>
     </nav>
@@ -987,11 +964,14 @@
 <!-- ===== SHOP ===== -->
 <section class="section" id="shop">
   <div class="wrap">
-    <div class="eyebrow">Первый дроп</div>
-    <h2>Экипировка <span class="ice">стаи</span></h2>
-    <p class="lead">Футболки ВАРГИ в наличии. Гоночный костюм и кепки доступны по предзаказу — сроки указаны в карточках. Доставку и оплату согласуем по почте.</p>
-    <div class="shop-groups" id="shopList"></div>
-    <p class="shop-note">Остатки на 22 сентября 2026. Наличие подтверждаем при обработке заявки. Доставка оплачивается отдельно.<br>Вся продукция изготовлена в России.</p>
+    <div class="shop-preview-head"><div>
+      <div class="eyebrow">Магазин ВАРГИ</div>
+      <h2>Экипировка <span class="ice">стаи</span></h2>
+      <p class="lead">Для тренировок, стартов и жизни вне гонки. Выберите свой раздел.</p>
+    </div><a class="btn ghost" href="/shop/" data-goal="shop_catalog_click">Весь каталог ↗</a></div>
+    <div class="shop-preview-grid" id="shopList"></div>
+    <noscript><p><a href="/shop/">Перейти в магазин ВАРГИ →</a></p></noscript>
+    <p class="shop-note">Фото, размеры и условия заказа — в каталоге.</p>
   </div>
 </section>
 
@@ -1043,7 +1023,7 @@
 
 <!-- Для быстрого отката старые image-data-*.js сохранены в репозитории. -->
 <script src="/assets/image-paths.js"></script>
-<script src="/assets/shop-catalog.js?v=20261002-preorder"></script>
+<script src="/assets/shop-catalog.js?v=20261002-compact"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script src="assets/geography/pack-atlas.js?v=20260916"></script>
 <script>
@@ -1693,73 +1673,20 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   }
 })();
 
-// Shop
+// Compact shop preview
 (function(){
   const wrap = $("#shopList");
-  const groups = [
-    {id:"cotton", title:"Хлопковые футболки", ids:["shirt-classic","shirt-white-classic","shirt-pack-tempo"], sharedDescription:true},
-    {id:"training", title:"Тренировочные футболки", ids:["shirt-sport-sever","shirt-training-minimal"], sharedDescription:true, showMaterial:true},
-    {id:"caps", title:"Кепки", ids:["cap-straight","cap-classic"]},
-    {id:"racing", title:"Гоночная экипировка", ids:["race-suit"]},
-    {id:"upcoming", title:"Скоро в коллекции", ids:SHOP.filter(p=>p.soon).map(p=>p.id)}
-  ];
-  const groupedIds = new Set(groups.flatMap(group=>group.ids));
-  const otherIds = SHOP.filter(p=>!groupedIds.has(p.id)).map(p=>p.id);
-  if(otherIds.length) groups.push({id:"other", title:"Другая экипировка", ids:otherIds});
-  const makeCard = (p, sharedDescription)=>{
-    const card = el("div","prod"+(p.soon?" soon":"")); card.classList.add("reveal");
-    if(p.imageFormat === "landscape") card.classList.add("landscape");
-    const productImage = `<img src="${p.img}" alt="${p.name}" loading="lazy" decoding="async">`;
-    const imgInner = p.img
-      ? productImage
-      : (p.soon?"В РАЗРАБОТКЕ":"ФОТО ТОВАРА");
-    const btn = p.soon
-      ? `<button class="btn ghost order" disabled>Скоро</button>`
-      : p.available || p.preorder
-        ? `<a class="btn ghost order" href="/shop/order/?product=${encodeURIComponent(p.id)}" data-goal="shop_order_click">${p.preorder ? "Предзаказ" : "Заказать"}</a>`
-        : `<button class="btn ghost order">Узнать о выходе</button>`;
-    const description = !sharedDescription && p.desc ? `<div class="pd">${p.desc}</div>` : "";
-    const stock = p.preorder
-      ? p.preorderRelease
-        ? `<div class="stock"><span class="stock-label">Доступен предзаказ</span>Плановая дата выпуска — ${p.preorderRelease}.</div>`
-        : `<div class="stock"><span class="stock-label">Товар закончился</span>Возможен предзаказ. Срок — ${p.preorderLeadTime}.</div>`
-      : p.stock ? `<div class="stock"><span class="stock-label">В наличии</span><div class="stock-sizes">${Object.entries(p.stock).filter(([,quantity])=>quantity>0).map(([size,quantity])=>`<a class="stock-size" href="/shop/order/?product=${encodeURIComponent(p.id)}&size=${encodeURIComponent(size)}" data-goal="shop_size_click" aria-label="Заказать ${p.name}, размер ${size}">${size} — ${quantity} шт.</a>`).join("")}</div></div>` : "";
-    card.innerHTML = `<div class="img">${imgInner}</div>
-      <div class="pb"><div class="pn">${p.name}</div>${description}${stock}
-      <div class="pf"><div class="price">${p.price}</div>${btn}</div></div>`;
-    if(p.img){
-      const imageBox = card.querySelector(".img");
-      imageBox.classList.add("zoomable");
-      imageBox.tabIndex = 0;
-      imageBox.setAttribute("role","button");
-      imageBox.setAttribute("aria-label","Увеличить фотографию товара «"+p.name+"»");
-      imageBox.onclick=()=>openLightbox(p.img,p.name);
-      imageBox.onkeydown=e=>{
-        if(e.key==="Enter" || e.key===" "){
-          e.preventDefault();
-          openLightbox(p.img,p.name);
-        }
-      };
-    }
-    if(!p.soon && !p.available && !p.preorder) card.querySelector(".order").onclick=()=>openOrder(p.name);
-    return card;
-  };
-  groups.forEach(group=>{
-    const products = group.ids.map(id=>SHOP.find(p=>p.id===id)).filter(Boolean);
-    if(!products.length) return;
-    const section = el("section","shop-group");
-    section.setAttribute("aria-labelledby",`shop-${group.id}-title`);
-    const head = el("div","shop-group-head");
-    head.innerHTML = `<h3 id="shop-${group.id}-title">${group.title}</h3>`;
-    if(group.sharedDescription){
-      const material = group.showMaterial && products[0].material
-        ? `<span class="material">Состав: ${products[0].material}</span>` : "";
-      head.innerHTML += `<p>${products[0].desc}</p>${material}`;
-    }
-    const grid = el("div","shop"+(products.length===1?" shop-single":products.length===2?" shop-pair":""));
-    products.forEach(p=>grid.appendChild(makeCard(p,group.sharedDescription)));
-    section.append(head,grid);
-    wrap.appendChild(section);
+  (window.VARGI_SHOP_CATEGORIES || []).forEach(category=>{
+    const products = SHOP.filter(p=>p.category===category.id && !p.soon);
+    const preview = products.find(p=>p.id===category.preview) || products[0];
+    if(!preview) return;
+    const price = Math.min(...products.map(p=>p.basePrice));
+    const card = el("a","shop-preview-card");
+    card.id = `shop-${category.id}-title`;
+    card.href = "/shop/?category="+encodeURIComponent(category.id);
+    card.dataset.goal = "shop_category_click";
+    card.innerHTML = `<div class="shop-preview-photo"><img src="${preview.img}" alt="${category.title}" loading="lazy" decoding="async"></div><div class="shop-preview-info"><h3>${category.title}</h3><p><span>${products.length>1?"от ":""}${new Intl.NumberFormat("ru-RU").format(price)} ₽</span><span aria-hidden="true">↗</span></p></div>`;
+    wrap.appendChild(card);
   });
 })();
 
