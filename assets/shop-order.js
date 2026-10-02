@@ -14,7 +14,9 @@
   function rub(value) { return money.format(value) + ' ₽'; }
   function productFor(row) { return catalog.find(function (p) { return p.id === row.querySelector('.product').value; }); }
   function rows() { return Array.from(items.querySelectorAll('.order-item')); }
-  function sizeInputFor(row) { return row.querySelector(productFor(row).sizeKind === 'cap' ? '.cap-size' : '.size'); }
+  function usesCustomSize(product) { return product.sizeKind === 'cap' || (product.preorder && !product.stock); }
+  function sizeInputFor(row) { return row.querySelector(usesCustomSize(productFor(row)) ? '.custom-size' : '.size'); }
+  function preorderTiming(product) { return product.preorderRelease ? 'плановая дата выпуска — ' + product.preorderRelease : 'срок — ' + product.preorderLeadTime; }
   function stockTotal(product) { return Object.values(product.stock || {}).reduce(function (sum, value) { return sum + value; }, 0); }
   function quantityFor(row) {
     var value = row.querySelector('.quantity').valueAsNumber;
@@ -68,12 +70,13 @@
     photo.style.backgroundColor = product.bg || '#0b1015';
     row.querySelector('.product-material').textContent = product.material || product.desc;
     row.querySelector('.stock-note').textContent = product.preorder
-      ? 'Товар закончился. Возможен предзаказ. Срок — ' + product.preorderLeadTime + '.'
+      ? (product.preorderRelease ? 'Доступен предзаказ. Плановая дата выпуска — ' + product.preorderRelease + '.' : 'Товар закончился. Возможен предзаказ. Срок — ' + product.preorderLeadTime + '.')
       : 'В наличии: ' + Object.entries(product.stock || {}).filter(function (entry) { return entry[1] > 0; }).map(function (entry) { return entry[0] + ' — ' + entry[1] + ' шт.'; }).join(' · ');
     var isCap = product.sizeKind === 'cap';
-    row.querySelector('.size-label span').textContent = isCap ? 'Обхват головы, см' : 'Размер в наличии';
+    var customSize = usesCustomSize(product);
+    row.querySelector('.size-label span').textContent = isCap ? 'Обхват головы, см' : customSize ? 'Ваш размер (уточним при согласовании)' : 'Размер в наличии';
     var sizeSelect = row.querySelector('.size');
-    var capSize = row.querySelector('.cap-size');
+    var customSizeInput = row.querySelector('.custom-size');
     sizeSelect.replaceChildren();
     var placeholder = document.createElement('option');
     placeholder.value = ''; placeholder.textContent = 'Выберите размер';
@@ -84,11 +87,11 @@
       option.value = entry[0]; option.textContent = entry[0] + ' — ' + entry[1] + ' шт. в наличии';
       sizeSelect.appendChild(option);
     });
-    sizeSelect.hidden = isCap; sizeSelect.disabled = isCap; sizeSelect.required = !isCap;
-    capSize.hidden = !isCap; capSize.disabled = !isCap; capSize.required = isCap;
-    capSize.placeholder = 'Например, 58'; capSize.value = '';
-    row.querySelector('.size-label').htmlFor = (isCap ? capSize : sizeSelect).id;
-    sizeSelect.setCustomValidity(''); capSize.setCustomValidity('');
+    sizeSelect.hidden = customSize; sizeSelect.disabled = customSize; sizeSelect.required = !customSize;
+    customSizeInput.hidden = !customSize; customSizeInput.disabled = !customSize; customSizeInput.required = customSize;
+    customSizeInput.placeholder = isCap ? 'Например, 58' : 'Например, M'; customSizeInput.value = '';
+    row.querySelector('.size-label').htmlFor = (customSize ? customSizeInput : sizeSelect).id;
+    sizeSelect.setCustomValidity(''); customSizeInput.setCustomValidity('');
     row.querySelector('.help-size').checked = false;
     refresh();
   }
@@ -97,12 +100,12 @@
     var row = template.content.firstElementChild.cloneNode(true);
     nextItemId += 1;
     row.querySelector('.size').id = 'size-' + nextItemId;
-    row.querySelector('.cap-size').id = 'cap-size-' + nextItemId;
+    row.querySelector('.custom-size').id = 'custom-size-' + nextItemId;
     var select = row.querySelector('.product');
     catalog.forEach(function (p) {
       var option = document.createElement('option');
       option.value = p.id;
-      option.textContent = p.name + ' · ' + p.price + (p.preorder ? ' · предзаказ, ' + p.preorderLeadTime : '');
+      option.textContent = p.name + ' · ' + p.price + (p.preorder ? ' · предзаказ, ' + preorderTiming(p) : '');
       select.appendChild(option);
     });
     if (catalog.some(function (p) { return p.id === productId; })) select.value = productId;
@@ -110,7 +113,7 @@
     select.addEventListener('change', function () { setProduct(row); });
     row.querySelector('.quantity').addEventListener('input', refresh);
     row.querySelector('.size').addEventListener('change', function () { this.setCustomValidity(''); refresh(); });
-    row.querySelector('.cap-size').addEventListener('input', function () { this.setCustomValidity(''); });
+    row.querySelector('.custom-size').addEventListener('input', function () { this.setCustomValidity(''); });
     row.querySelector('.help-size').addEventListener('change', function () {
       var size = sizeInputFor(row);
       size.disabled = this.checked;
@@ -147,7 +150,7 @@
     var total = order.reduce(function (sum, line) { return sum + line.product.basePrice * line.quantity; }, 0);
     var lines = order.map(function (line, index) {
       var sizeLabel = line.product.sizeKind === 'cap' ? 'обхват головы' : 'размер';
-      return (index + 1) + '. ' + line.product.name + ' — ' + sizeLabel + ': ' + line.size + '; ' + line.quantity + ' шт. × ' + rub(line.product.basePrice) + ' = ' + rub(line.product.basePrice * line.quantity) + (line.product.preorder ? '; ПРЕДЗАКАЗ, срок — ' + line.product.preorderLeadTime : '; наличие подтвердим при обработке заявки');
+      return (index + 1) + '. ' + line.product.name + ' — ' + sizeLabel + ': ' + line.size + '; ' + line.quantity + ' шт. × ' + rub(line.product.basePrice) + ' = ' + rub(line.product.basePrice * line.quantity) + (line.product.preorder ? '; ПРЕДЗАКАЗ, ' + preorderTiming(line.product) : '; наличие подтвердим при обработке заявки');
     });
     var message = ['ЗАКАЗ ЭКИПИРОВКИ ВАРГИ', '', lines.join('\n'), '', 'Стоимость товаров: ' + rub(total) + '.', 'Цены фиксированные. Доставка не включена и рассчитывается отдельно. Наличие, доставка и оплата — после согласования.', '', 'Комментарий к заказу (если нужен):'].join('\n');
     if (message.length > 6000) { error.textContent = 'Сократите описание размеров и повторите оформление.'; error.hidden = false; return; }

@@ -481,6 +481,14 @@
   .shop-group-head .material{display:block; margin-top:8px; color:var(--muted2); font-size:13px}
   .shop{display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px}
   .shop-pair{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .shop.shop-single{grid-template-columns:1fr}
+  .shop-single .prod{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .shop-single .prod .pb{padding:clamp(20px,3vw,42px); justify-content:center; gap:12px}
+  .shop-single .prod .pn{font-size:clamp(22px,2.5vw,32px)}
+  .shop-single .prod .pd{flex:0}
+  .shop-single .prod .pf{margin-top:18px}
+  .shop-single .prod .price{font-size:24px; color:var(--ice-hi)}
+  @media(max-width:640px){.shop-single .prod{grid-template-columns:1fr}}
   .prod{border:1px solid var(--line); border-radius:12px; overflow:hidden; background:var(--card); display:flex; flex-direction:column}
   .prod .img{aspect-ratio:1/1; background:#0B1115; display:grid; place-items:center; color:var(--muted2); font-size:13px; overflow:hidden}
   .prod .img img{width:100%; height:100%; object-fit:contain}
@@ -981,7 +989,7 @@
   <div class="wrap">
     <div class="eyebrow">Первый дроп</div>
     <h2>Экипировка <span class="ice">стаи</span></h2>
-    <p class="lead">Футболки ВАРГИ в наличии — выберите модель, размер и количество. Кепки доступны по предзаказу, срок — 1 месяц. Доставку и оплату согласуем по почте.</p>
+    <p class="lead">Футболки ВАРГИ в наличии. Гоночный костюм и кепки доступны по предзаказу — сроки указаны в карточках. Доставку и оплату согласуем по почте.</p>
     <div class="shop-groups" id="shopList"></div>
     <p class="shop-note">Остатки на 22 сентября 2026. Наличие подтверждаем при обработке заявки. Доставка оплачивается отдельно.<br>Вся продукция изготовлена в России.</p>
   </div>
@@ -1035,7 +1043,7 @@
 
 <!-- Для быстрого отката старые image-data-*.js сохранены в репозитории. -->
 <script src="/assets/image-paths.js"></script>
-<script src="/assets/shop-catalog.js?v=20260928-prices"></script>
+<script src="/assets/shop-catalog.js?v=20261002-preorder"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script src="assets/geography/pack-atlas.js?v=20260916"></script>
 <script>
@@ -1692,6 +1700,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     {id:"cotton", title:"Хлопковые футболки", ids:["shirt-classic","shirt-white-classic","shirt-pack-tempo"], sharedDescription:true},
     {id:"training", title:"Тренировочные футболки", ids:["shirt-sport-sever","shirt-training-minimal"], sharedDescription:true, showMaterial:true},
     {id:"caps", title:"Кепки", ids:["cap-straight","cap-classic"]},
+    {id:"racing", title:"Гоночная экипировка", ids:["race-suit"]},
     {id:"upcoming", title:"Скоро в коллекции", ids:SHOP.filter(p=>p.soon).map(p=>p.id)}
   ];
   const groupedIds = new Set(groups.flatMap(group=>group.ids));
@@ -1711,7 +1720,9 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
         : `<button class="btn ghost order">Узнать о выходе</button>`;
     const description = !sharedDescription && p.desc ? `<div class="pd">${p.desc}</div>` : "";
     const stock = p.preorder
-      ? `<div class="stock"><span class="stock-label">Товар закончился</span>Возможен предзаказ. Срок — ${p.preorderLeadTime}.</div>`
+      ? p.preorderRelease
+        ? `<div class="stock"><span class="stock-label">Доступен предзаказ</span>Плановая дата выпуска — ${p.preorderRelease}.</div>`
+        : `<div class="stock"><span class="stock-label">Товар закончился</span>Возможен предзаказ. Срок — ${p.preorderLeadTime}.</div>`
       : p.stock ? `<div class="stock"><span class="stock-label">В наличии</span><div class="stock-sizes">${Object.entries(p.stock).filter(([,quantity])=>quantity>0).map(([size,quantity])=>`<a class="stock-size" href="/shop/order/?product=${encodeURIComponent(p.id)}&size=${encodeURIComponent(size)}" data-goal="shop_size_click" aria-label="Заказать ${p.name}, размер ${size}">${size} — ${quantity} шт.</a>`).join("")}</div></div>` : "";
     card.innerHTML = `<div class="img">${imgInner}</div>
       <div class="pb"><div class="pn">${p.name}</div>${description}${stock}
@@ -1745,7 +1756,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
         ? `<span class="material">Состав: ${products[0].material}</span>` : "";
       head.innerHTML += `<p>${products[0].desc}</p>${material}`;
     }
-    const grid = el("div","shop"+(products.length===2?" shop-pair":""));
+    const grid = el("div","shop"+(products.length===1?" shop-single":products.length===2?" shop-pair":""));
     products.forEach(p=>grid.appendChild(makeCard(p,group.sharedDescription)));
     section.append(head,grid);
     wrap.appendChild(section);

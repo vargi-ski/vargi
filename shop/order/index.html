@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Заказ экипировки — ВАРГИ</title>
-  <meta name="description" content="Закажите футболки и кепки ВАРГИ на сайте. Наличие, доставку и оплату согласуем по почте.">
+  <meta name="description" content="Закажите футболки, кепки и лыжный гоночный костюм ВАРГИ на сайте. Наличие, доставку и оплату согласуем по почте.">
   <meta name="robots" content="noindex,follow">
   <meta name="theme-color" content="#070b0f">
   <link rel="canonical" href="https://xn----7sbbfg4a6clj5k.xn--p1ai/shop/order/">
@@ -21,7 +21,7 @@
     <noscript><p class="notice">Для выбора товаров включите JavaScript или <a href="/contact/">напишите нам</a>.</p></noscript>
     <form id="orderBuilder" hidden>
       <h2>1. Выберите экипировку</h2>
-      <p class="hint">Выберите размер из наличия или помощь с подбором. Кепки — по предзаказу, срок 1 месяц. Остатки на 22 сентября 2026; наличие подтвердим при обработке заявки.</p>
+      <p class="hint">Выберите товар и укажите размер или помощь с подбором. Условия предзаказа указаны под выбранной моделью. Остатки на 22 сентября 2026; наличие подтвердим при обработке заявки.</p>
       <div id="orderItems"></div>
       <button class="button secondary add-item" type="button" id="addItem">+ Добавить ещё товар</button>
       <div class="total-panel"><div><span>Стоимость товаров</span><strong id="orderTotal" aria-live="polite"></strong></div><p>Цены фиксированные. Доставка рассчитывается отдельно и согласуется до оплаты.</p></div>
@@ -48,15 +48,15 @@
           <label>Товар<select class="product" required></select></label>
           <p class="product-material"></p>
           <p class="stock-note"></p>
-          <div class="item-options"><label class="size-label"><span>Размер</span><select class="size" required></select><input class="cap-size" type="text" maxlength="40" autocomplete="off" hidden disabled></label><label>Количество<input class="quantity" type="number" min="1" max="99" step="1" value="1" inputmode="numeric" required></label></div>
+          <div class="item-options"><label class="size-label"><span>Размер</span><select class="size" required></select><input class="custom-size" type="text" maxlength="40" autocomplete="off" hidden disabled></label><label>Количество<input class="quantity" type="number" min="1" max="99" step="1" value="1" inputmode="numeric" required></label></div>
           <label class="size-help"><input class="help-size" type="checkbox">Нужна помощь с размером</label>
           <div class="item-bottom"><span class="item-price"></span><button class="text-button remove" type="button">Убрать товар</button></div>
         </div>
       </div>
     </fieldset>
   </template>
-  <script src="/assets/shop-catalog.js?v=20260928-prices"></script>
-  <script src="/assets/shop-order.js?v=20260922-2"></script>
+  <script src="/assets/shop-catalog.js?v=20261002-preorder"></script>
+  <script src="/assets/shop-order.js?v=20261002-preorder"></script>
   <script src="https://forms.yandex.ru/_static/embed.js" defer></script>
 </body>
 </html>

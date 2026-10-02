@@ -112,11 +112,15 @@ window.VARGI_SHOP = [
   },
   {
     "name": "Лыжный гоночный костюм",
-    "desc": "Гоночная разделка стаи. В разработке.",
-    "price": "Скоро",
-    "img": "",
-    "soon": true,
-    "id": "race-suit"
+    "desc": "Раздельный лыжный гоночный костюм стаи.",
+    "price": "13 900 ₽",
+    "img": "/assets/shop-race-suit-front-back-2026.webp",
+    "available": false,
+    "id": "race-suit",
+    "basePrice": 13900,
+    "sizeKind": "clothing",
+    "preorder": true,
+    "preorderRelease": "конец ноября 2026"
   },
   {
     "name": "Пуховик",
