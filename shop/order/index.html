@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/assets/shop-order.css?v=20260922">
+  <link rel="stylesheet" href="/assets/shop-order.css?v=20261003-measurements">
   <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
 </head>
 <body>
@@ -22,7 +22,7 @@
     <noscript><p class="notice">Для выбора товаров включите JavaScript или <a href="/contact/">напишите нам</a>.</p></noscript>
     <form id="orderBuilder" hidden>
       <h2>1. Выберите экипировку</h2>
-      <p class="hint">Выберите товар и укажите размер или помощь с подбором. Условия предзаказа указаны под выбранной моделью. Остатки на 22 сентября 2026; наличие подтвердим при обработке заявки.</p>
+      <p class="hint">Выберите товар и укажите размер или помощь с подбором. Для предзаказа костюма можно сразу заполнить мерки. Если нужны разные размеры, добавьте каждый отдельным товаром. Остатки на 22 сентября 2026; наличие подтвердим при обработке заявки.</p>
       <div id="orderItems"></div>
       <button class="button secondary add-item" type="button" id="addItem">+ Добавить ещё товар</button>
       <div class="total-panel"><div><span>Стоимость товаров</span><strong id="orderTotal" aria-live="polite"></strong></div><p>Цены фиксированные. Доставка рассчитывается отдельно и согласуется до оплаты.</p></div>
@@ -51,13 +51,24 @@
           <p class="stock-note"></p>
           <div class="item-options"><label class="size-label"><span>Размер</span><select class="size" required></select><input class="custom-size" type="text" maxlength="40" autocomplete="off" hidden disabled></label><label>Количество<input class="quantity" type="number" min="1" max="99" step="1" value="1" inputmode="numeric" required></label></div>
           <label class="size-help"><input class="help-size" type="checkbox">Нужна помощь с размером</label>
+          <fieldset class="preorder-measurements" hidden disabled>
+            <legend>Мерки для предзаказа</legend>
+            <p class="measurements-hint">Укажите параметры в сантиметрах — они помогут согласовать размер. Поля необязательные: если мерок пока нет, уточним их лично.</p>
+            <div class="measurements-grid">
+              <label>Рост, см<input type="number" class="measurement" data-measurement="рост" min="1" max="300" step="0.1" inputmode="decimal" placeholder="Например, 178" autocomplete="off"></label>
+              <label>Обхват груди, см<input type="number" class="measurement" data-measurement="обхват груди" min="1" max="300" step="0.1" inputmode="decimal" placeholder="Например, 100" autocomplete="off"></label>
+              <label>Обхват талии, см<input type="number" class="measurement" data-measurement="обхват талии" min="1" max="300" step="0.1" inputmode="decimal" placeholder="Например, 84" autocomplete="off"></label>
+              <label>Обхват бёдер, см<input type="number" class="measurement" data-measurement="обхват бёдер" min="1" max="300" step="0.1" inputmode="decimal" placeholder="Например, 102" autocomplete="off"></label>
+            </div>
+            <p class="measurements-hint measurements-guide">Измеряйте по телу, без припуска: грудь и бёдра — по наиболее выступающим точкам, талию — по естественной линии. Итоговый размер подтвердим перед оформлением предзаказа.</p>
+          </fieldset>
           <div class="item-bottom"><span class="item-price"></span><button class="text-button remove" type="button">Убрать товар</button></div>
         </div>
       </div>
     </fieldset>
   </template>
   <script src="/assets/shop-catalog.js?v=20261002-compact"></script>
-  <script src="/assets/shop-order.js?v=20261002-preorder"></script>
+  <script src="/assets/shop-order.js?v=20261003-measurements"></script>
   <script src="https://forms.yandex.ru/_static/embed.js" defer></script>
 </body>
 </html>
