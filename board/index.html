@@ -6,8 +6,8 @@
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://market-api-production-d9ab.up.railway.app; connect-src https://market-api-production-d9ab.up.railway.app; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'">
-<title>Северный маркет — ВАРГИ</title>
-<meta name="description" content="Северный маркет ВАРГИ: частные объявления о продаже лыж и экипировки с ручной модерацией.">
+<title>Лыжная барахолка — лыжи и экипировка | ВАРГИ</title>
+<meta name="description" content="Барахолка стаи ВАРГИ: купить, продать или обменять лыжи и экипировку. Частные объявления спортсменов, фото и контакты продавцов. Публикация после модерации.">
 <link rel="canonical" href="https://xn----7sbbfg4a6clj5k.xn--p1ai/board/">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <style>
@@ -19,12 +19,13 @@ dialog{border:1px solid var(--line);background:#0d141a;color:var(--ink);padding:
 @media(max-width:520px){.cards{grid-template-columns:1fr}.picture{height:230px}.filters-grid{grid-template-columns:1fr}.footer .wrap{display:block}.footer span{display:block;margin-top:5px}.detail-title{font-size:25px}}
 </style>
   <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
+  <link rel="stylesheet" href="/assets/site-shortcuts.css?v=20261003">
 </head>
-<body>
-<header class="site-header"><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ"><span class="vargi-wordmark">В<span class="vargi-letter-ice">А</span>Р<span class="vargi-letter-ice">Г</span>И</span></a><span class="header-title">Северный маркет</span><div class="header-actions"><a class="button secondary" href="/">На основной сайт</a><a class="button" href="/board/submit/">+ Подать объявление</a></div></div></header>
+<body class="site-shortcuts-page">
+<header class="site-header"><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ"><span class="vargi-wordmark">В<span class="vargi-letter-ice">А</span>Р<span class="vargi-letter-ice">Г</span>И</span></a><span class="header-title">Барахолка стаи</span><div class="header-actions"><a class="button secondary" href="/">На основной сайт</a><a class="button" href="/board/submit/">+ Подать объявление</a></div></div></header>
 
 <main class="wrap">
-<section class="hero"><div class="eyebrow">Северный маркет</div><h1>Экипировка для следующего старта.</h1><p>Частные объявления спортсменов. Публикация только после ручной модерации ВАРГИ.</p><div class="trust"><span>Без оплаты через сайт</span><span>Контакт продавца внутри объявления</span><span>Фото обязательно</span></div></section>
+<section class="hero"><div class="eyebrow">Частные объявления спортсменов</div><h1>Барахолка стаи</h1><p>Купить, продать или обменять лыжи и экипировку. Публикация только после ручной модерации ВАРГИ.</p><div class="trust"><span>Без оплаты через сайт</span><span>Контакт продавца внутри объявления</span><span>Фото обязательно</span></div></section>
 
 <div class="workspace">
 <aside class="filters" aria-label="Фильтры"><h2>Найти экипировку</h2><div class="filters-grid">
@@ -44,7 +45,13 @@ dialog{border:1px solid var(--line);background:#0d141a;color:var(--ink);padding:
 <section class="safety"><h2>Покупайте осмотрительно.</h2><p>Проверяйте актуальность объявления, состояние экипировки и личность продавца. ВАРГИ модерирует содержание, но не выступает стороной сделки и не принимает оплату за частные объявления.</p></section>
 </main>
 
-<footer class="footer"><div class="wrap"><span>ВАРГИ / Северный маркет</span><span>Частные объявления · публикация после модерации</span></div></footer>
+<footer class="footer"><div class="wrap"><span>ВАРГИ / Барахолка стаи</span><span>Частные объявления · публикация после модерации</span></div></footer>
+<nav class="site-shortcuts" aria-label="Быстрые переходы">
+  <a class="site-shortcuts-link site-shortcuts-link--shop" href="/shop/" data-goal="shop_dock_click" aria-label="Магазин стаи — фирменная экипировка"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Магазин</span></a>
+  <a class="site-shortcuts-link" href="/board/" aria-current="page" data-goal="classifieds_dock_tab" aria-label="Барахолка стаи — частные объявления"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Барахолка</span></a>
+  <a class="site-shortcuts-link site-shortcuts-link--training" href="/training-plan/" data-goal="mobile_training_cta_click" aria-label="Обсудить подготовку с Артемом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 20 8-16 10 16H3Z"/><path d="m8 10 3 3 3-4"/></svg><span>Подготовка</span></a>
+</nav>
+<script src="/assets/site-shortcuts.js?v=20261003" defer></script>
 
 <dialog id="detail"><div class="dialog-head"><div class="eyebrow" id="detailKind">Объявление</div><button class="close" id="closeDetail" type="button" aria-label="Закрыть">×</button></div><div class="dialog-body" id="detailBody"><div class="loading">Загрузка…</div></div></dialog>
 

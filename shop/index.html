@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <script src="/assets/analytics-ga4.js"></script>
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Магазин экипировки — ВАРГИ</title>
-  <meta name="description" content="Экипировка стаи ВАРГИ: хлопковые и тренировочные футболки, кепки, лыжный гоночный костюм. Фото, размеры, цены и предзаказ.">
+  <title>Магазин ВАРГИ — футболки, лыжные костюмы и аксессуары</title>
+  <meta name="description" content="Магазин стаи ВАРГИ: фирменные хлопковые и тренировочные футболки, кепки, лыжный гоночный костюм. Фото, состав, размеры, наличие, цены и предзаказы.">
   <meta name="theme-color" content="#07080a">
   <link rel="canonical" href="https://xn----7sbbfg4a6clj5k.xn--p1ai/shop/">
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -14,17 +14,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/assets/shop-storefront.css?v=20261002-3">
   <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
+  <link rel="stylesheet" href="/assets/site-shortcuts.css?v=20261003">
 </head>
-<body>
+<body class="site-shortcuts-page">
   <header class="site-header"><div class="wrap header-row">
     <a class="brand" href="/" aria-label="ВАРГИ — главная"><img src="/assets/vargi-rune.svg" width="32" height="32" alt=""><span class="vargi-wordmark">В<span class="vargi-letter-ice">А</span>Р<span class="vargi-letter-ice">Г</span>И</span></a>
     <nav aria-label="Навигация магазина"><a href="/#shop">На главную</a><a href="/shop/order/">Оформить заказ ↗</a></nav>
   </div></header>
   <main class="wrap">
     <section class="intro" aria-labelledby="shopTitle">
-      <p class="eyebrow">Магазин ВАРГИ</p>
-      <h1 id="shopTitle">Экипировка <span>стаи</span></h1>
-      <p class="lead">Для тренировок, стартов и жизни вне гонки. Описание, состав, размеры и наличие — сразу под фото. Нажмите на товар, чтобы рассмотреть его крупно и оформить заказ.</p>
+      <p class="eyebrow">Фирменная экипировка ВАРГИ</p>
+      <h1 id="shopTitle">Магазин <span>стаи</span></h1>
+      <p class="lead">Фирменная одежда, аксессуары и предзаказы. Для тренировок, стартов и жизни вне гонки. Описание, состав, размеры и наличие — сразу под фото.</p>
     </section>
     <nav class="filters" id="shopFilters" aria-label="Категории товаров"></nav>
     <div class="catalog-heading"><h2 id="catalogTitle">Вся экипировка</h2><span id="productCount" aria-live="polite"></span></div>
@@ -34,6 +35,12 @@
     <noscript><p class="shop-note">Для просмотра каталога включите JavaScript или <a href="/contact/">свяжитесь со стаей</a>.</p></noscript>
   </main>
   <footer><div class="wrap"><span>© 2026 ВАРГИ</span><a href="/contact/">Связаться со стаей</a><a href="/privacy.html">Политика конфиденциальности</a></div></footer>
+  <nav class="site-shortcuts" aria-label="Быстрые переходы">
+    <a class="site-shortcuts-link site-shortcuts-link--shop" href="/shop/" aria-current="page" data-goal="shop_dock_click" aria-label="Магазин стаи — фирменная экипировка"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Магазин</span></a>
+    <a class="site-shortcuts-link" href="/board/" data-goal="classifieds_dock_tab" aria-label="Барахолка стаи — частные объявления"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Барахолка</span></a>
+    <a class="site-shortcuts-link site-shortcuts-link--training" href="/training-plan/" data-goal="mobile_training_cta_click" aria-label="Обсудить подготовку с Артемом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 20 8-16 10 16H3Z"/><path d="m8 10 3 3 3-4"/></svg><span>Подготовка</span></a>
+  </nav>
+  <script src="/assets/site-shortcuts.js?v=20261003" defer></script>
   <dialog id="productDialog" aria-labelledby="detailTitle">
     <div class="dialog-bar"><span class="eyebrow" id="detailCategory">Экипировка стаи</span><button id="closeProduct" class="close-button" type="button" aria-label="Закрыть карточку товара" autofocus>×</button></div>
     <div class="detail-layout">

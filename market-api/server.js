@@ -462,7 +462,7 @@ function marketPage(title, body, req, canonicalPath = '/market') {
   const robots = requestHost === MARKET_CUSTOM_HOST ? 'index,follow,max-image-preview:large' : 'noindex,follow';
   const canonical = MARKET_CUSTOM_ORIGIN + canonicalPath;
   return '<!doctype html><html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
-    '<title>' + h(title) + ' — Северный маркет ВАРГИ</title>' +
+    '<title>' + h(title) + (canonicalPath === '/market' ? ' | ВАРГИ' : ' — Барахолка стаи ВАРГИ') + '</title>' +
     '<meta name="robots" content="' + robots + '"><link rel="canonical" href="' + h(canonical) + '"><meta name="theme-color" content="#07080a">' +
     '<style>' +
     ':root{color-scheme:dark;--bg:#07080a;--panel:#10161b;--panel2:#0b1116;--line:#263d4a;--ink:#edf3f7;--muted:#9fb0bc;--ice:#8fd0ef;--accent:#3e9bd6}' +
@@ -481,9 +481,9 @@ function marketPage(title, body, req, canonicalPath = '/market') {
     '@media(max-width:980px){.filters{grid-template-columns:repeat(3,1fr)}.filters .wide{grid-column:1/-1}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-top{grid-template-columns:1fr}}' +
     '@media(max-width:620px){.wrap{width:calc(100% - 20px)}.header-row{min-height:60px}.header-title,.header-actions .secondary{display:none}.button{padding:9px 11px}.hero{padding-top:24px}.filters{grid-template-columns:1fr}.filters .wide{grid-column:auto}.cards{grid-template-columns:1fr}.photo{height:240px}.detail-copy,.detail-body{padding:18px}.detail-copy h1{font-size:28px}.specs{grid-template-columns:1fr}.detail-hero{min-height:280px}}' +
     '</style></head><body>' +
-    '<header class="header"><div class="wrap header-row"><a class="brand" href="' + h(SITE_ORIGIN) + '/" aria-label="ВАРГИ">В<b>А</b>Р<b>Г</b>И</a><span class="header-title">Северный маркет</span><div class="header-actions"><a class="button secondary" href="' + h(SITE_ORIGIN) + '/">На основной сайт</a><a class="button" href="' + h(SITE_ORIGIN) + '/board/submit/">+ Подать объявление</a></div></div></header>' +
+    '<header class="header"><div class="wrap header-row"><a class="brand" href="' + h(SITE_ORIGIN) + '/" aria-label="ВАРГИ">В<b>А</b>Р<b>Г</b>И</a><span class="header-title">Барахолка стаи</span><div class="header-actions"><a class="button secondary" href="' + h(SITE_ORIGIN) + '/">На основной сайт</a><a class="button" href="' + h(SITE_ORIGIN) + '/board/submit/">+ Подать объявление</a></div></div></header>' +
     body +
-    '<footer class="footer"><div class="wrap">ВАРГИ / Северный маркет · публикация только после модерации</div></footer></body></html>';
+    '<footer class="footer"><div class="wrap">ВАРГИ / Барахолка стаи · публикация только после модерации</div></footer></body></html>';
 }
 
 app.get('/', (req,res)=>res.redirect(302,'/market'));
@@ -561,7 +561,7 @@ app.get('/market', async (req, res) => {
         '<div class="price">' + h(marketMoney(item.price)) + '</div><div class="more">Подробнее →</div></div></a>';
     }).join('');
 
-    const body = '<main class="wrap"><section class="hero"><div class="eyebrow">Северный маркет</div><h1>Экипировка для следующего старта.</h1><p>Частные объявления о продаже лыж и экипировки. Публикация только после ручной модерации ВАРГИ.</p></section>' +
+    const body = '<main class="wrap"><section class="hero"><div class="eyebrow">Частные объявления спортсменов</div><h1>Барахолка стаи</h1><p>Купить, продать или обменять лыжи и экипировку. Публикация только после ручной модерации ВАРГИ.</p></section>' +
       '<form class="filters" method="get" action="/market">' +
       '<input class="wide" name="q" value="' + h(req.query.q || '') + '" placeholder="Лыжи, модель, размер, структура…">' +
       '<select name="category" onchange="this.form.submit()"><option value="">Все категории</option>' + options + '</select>' +
@@ -574,7 +574,7 @@ app.get('/market', async (req, res) => {
       (cards ? '<section class="cards">' + cards + '</section>' : '<div class="empty"><h2>Пока нет подходящих объявлений</h2><p>Измените фильтры или станьте первым продавцом в этом разделе.</p></div>') +
       '</main>';
 
-    res.type('html').send(marketPage('Северный маркет', body, req, '/market'));
+    res.type('html').send(marketPage('Лыжная барахолка — лыжи и экипировка', body, req, '/market'));
   } catch (error) {
     console.error('market_page_error', error?.message || error);
     res.status(500).type('html').send(marketPage('Ошибка', '<main class="wrap"><div class="empty">Не удалось загрузить объявления.</div></main>', req, '/market'));
@@ -1023,7 +1023,7 @@ app.post('/admin/telegram/connect', requireAdmin, async (req, res) => {
     await writeJsonAtomic(TELEGRAM_CONFIG_FILE, cfg);
     await telegramApi('sendMessage', {
       chat_id: cfg.chatId,
-      text: 'Уведомления Северного маркета ВАРГИ подключены. Новые заявки на модерацию будут приходить сюда.'
+      text: 'Уведомления барахолки стаи ВАРГИ подключены. Новые заявки на модерацию будут приходить сюда.'
     });
     res.json({ ok: true, connected: true, chatLabel: cfg.chatLabel });
   } catch (error) {

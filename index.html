@@ -167,35 +167,6 @@
   .value b{display:block; font-family:'Oswald'; text-transform:uppercase; letter-spacing:.07em; font-size:15px; line-height:1.25}
   .value p{margin:5px 0 0; color:var(--muted); font-size:14px; line-height:1.5}
 
-  /* ---------- NORTHERN MARKET DOCK ---------- */
-  .market-dock{position:fixed; right:0; top:50%; transform:translateY(-50%); z-index:44}
-  .market-dock-tab{position:relative; z-index:2; display:flex; align-items:center; justify-content:center; gap:10px;
-    width:52px; min-height:230px; padding:14px 10px; border:1px solid rgba(143,208,239,.58); border-right:0;
-    border-radius:14px 0 0 14px; background:linear-gradient(180deg,#152630,#091016); color:var(--ice-hi);
-    font:600 13px 'Oswald',sans-serif; letter-spacing:.14em; text-transform:uppercase; text-decoration:none;
-    writing-mode:vertical-rl; transform:rotate(180deg); box-shadow:0 14px 38px rgba(0,0,0,.28)}
-  .market-dock-tab:before{content:""; width:21px; height:21px; flex:0 0 21px;
-    background:url('assets/vargi-rune.svg') center/contain no-repeat; opacity:.9}
-  .market-dock-panel{position:absolute; right:52px; top:50%; width:270px; padding:18px; border:1px solid rgba(143,208,239,.48);
-    border-radius:14px 0 0 14px; background:rgba(8,14,18,.97); backdrop-filter:blur(12px);
-    transform:translate(14px,-50%); opacity:0; visibility:hidden; pointer-events:none;
-    transition:opacity .2s,transform .2s,visibility .2s; box-shadow:0 20px 50px rgba(0,0,0,.34)}
-  .market-dock:hover .market-dock-panel,.market-dock:focus-within .market-dock-panel{
-    transform:translate(0,-50%); opacity:1; visibility:visible; pointer-events:auto}
-  .market-dock-panel .eyebrow{font-size:10px}
-  .market-dock-panel h2{margin:6px 0 8px; font-size:24px; text-transform:uppercase}
-  .market-dock-panel p{margin:0 0 14px; color:var(--muted); font-size:12px; line-height:1.5}
-  .market-dock-actions{display:grid; gap:8px}
-  .market-dock-actions .btn{width:100%; justify-content:center; text-align:center; padding:10px 12px; font-size:12px}
-  @media(max-width:760px){
-    .market-dock{position:fixed; right:0; top:48%; transform:translateY(-50%); width:auto; margin:0; display:block; z-index:47}
-    .market-dock-tab{width:44px; min-height:166px; padding:10px 8px; border:1px solid rgba(143,208,239,.62); border-right:0;
-      border-radius:12px 0 0 12px; writing-mode:vertical-rl; transform:rotate(180deg); flex-direction:column;
-      font-size:11px; letter-spacing:.11em; box-shadow:0 12px 30px rgba(0,0,0,.36)}
-    .market-dock-tab:before{width:18px; height:18px; flex:0 0 18px}
-    .market-dock-panel{display:none}
-  }
-
   /* ---------- ROSTER (pack formation) ---------- */
   .pack{display:flex; justify-content:center; align-items:flex-end; gap:18px; margin-top:24px;
     touch-action:pan-y; overscroll-behavior-x:contain}
@@ -599,24 +570,10 @@
   .overlay .x{position:fixed; top:18px; right:20px; background:none; border:0; color:#fff; font-size:30px; cursor:pointer; line-height:1}
   .lb-img{max-width:90vw; max-height:84vh; border-radius:10px}
 
-  /* ---------- MOBILE CTA ---------- */
-  .mobile-training-cta{
-    position:fixed; left:12px; right:12px; bottom:calc(12px + env(safe-area-inset-bottom));
-    z-index:48; display:none; align-items:center; justify-content:center; min-height:50px;
-    padding:12px 18px; border:1px solid rgba(143,208,239,.72); border-radius:12px;
-    background:linear-gradient(135deg,#8FD0EF 0%,#3E9BD6 58%,#2B79A8 100%);
-    color:#05080B; box-shadow:0 10px 30px rgba(0,0,0,.42),0 0 24px rgba(62,155,214,.16);
-    font-family:'Oswald',sans-serif; font-weight:600; font-size:15px; letter-spacing:.09em;
-    text-transform:uppercase; text-align:center; opacity:0; transform:translateY(14px);
-    pointer-events:none; transition:opacity .22s ease,transform .22s ease,box-shadow .22s ease;
-  }
-  .mobile-training-cta:active{transform:translateY(1px)}
-  .mobile-training-cta:focus-visible{outline:3px solid #fff; outline-offset:2px}
-
   /* reveal */
   .reveal{opacity:0; transform:translateY(22px); transition:opacity .6s ease,transform .6s ease}
   .reveal.in{opacity:1; transform:none}
-  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} .wolf-eye{animation:none;opacity:.45} .mobile-training-cta{transition:none}}
+  @media (prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none} html{scroll-behavior:auto} .wolf-eye{animation:none;opacity:.45}}
 
   /* ---------- RESPONSIVE ---------- */
   @media(max-width:960px){
@@ -668,9 +625,6 @@
     .hero .cta{flex-direction:column; align-items:center; padding:0 8px}
     .hero .cta .btn{width:min(100%,360px); white-space:normal}
     .hero-arsenal{max-width:360px; border-radius:14px; line-height:1.55}
-    .mobile-training-cta{display:flex}
-    .mobile-training-cta.visible{opacity:1; transform:translateY(0); pointer-events:auto}
-    footer{padding-bottom:calc(70px + env(safe-area-inset-bottom))}
     .res{grid-template-columns:60px 1fr}
     .result-places{grid-column:2; grid-template-columns:repeat(2,minmax(0,1fr))}
     .pack{display:block; margin-top:20px}
@@ -703,8 +657,9 @@
 }
 </script>
   <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
+  <link rel="stylesheet" href="/assets/site-shortcuts.css?v=20261003">
 </head>
-<body>
+<body class="site-shortcuts-page">
 
 <!-- ===== HEADER ===== -->
 <header id="hdr">
@@ -718,7 +673,7 @@
       <a href="#training">Подготовка</a>
       <a href="#calendar">Старты</a>
       <a href="/shop/">Магазин</a>
-      <a class="nav-board-link" href="/board/" data-goal="classifieds_nav_click">Объявления</a>
+      <a class="nav-board-link" href="/board/" data-goal="classifieds_nav_click">Барахолка</a>
       <a href="#contacts">Контакты</a>
     </nav>
   </div>
@@ -750,18 +705,11 @@
   </div>
 </section>
 
-<aside class="market-dock" aria-label="Северный маркет ВАРГИ">
-  <div class="market-dock-panel">
-    <div class="eyebrow">Объявления ВАРГИ</div>
-    <h2>Северный <span class="ice">маркет</span></h2>
-    <p>Купить, продать или обменять лыжи и экипировку. Публикация после модерации.</p>
-    <div class="market-dock-actions">
-      <a class="btn" href="/board/" data-goal="classifieds_dock_view">Смотреть объявления</a>
-      <a class="btn ghost" href="/board/submit/" data-goal="classifieds_dock_submit">Подать объявление</a>
-    </div>
-  </div>
-  <a class="market-dock-tab" href="/board/" data-goal="classifieds_dock_tab">Северный маркет</a>
-</aside>
+<nav class="site-shortcuts" aria-label="Быстрые переходы">
+  <a class="site-shortcuts-link site-shortcuts-link--shop" href="/shop/" data-goal="shop_dock_click" aria-label="Магазин стаи — фирменная экипировка"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Магазин</span></a>
+  <a class="site-shortcuts-link" href="/board/" data-goal="classifieds_dock_tab" aria-label="Барахолка стаи — частные объявления"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Барахолка</span></a>
+  <a class="site-shortcuts-link site-shortcuts-link--training" href="/training-plan/" data-goal="mobile_training_cta_click" aria-label="Обсудить подготовку с Артемом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 20 8-16 10 16H3Z"/><path d="m8 10 3 3 3-4"/></svg><span>Подготовка</span></a>
+</nav>
 
 <hr class="track">
 
@@ -966,9 +914,9 @@
 <section class="section" id="shop">
   <div class="wrap">
     <div class="shop-preview-head"><div>
-      <div class="eyebrow">Магазин ВАРГИ</div>
-      <h2>Экипировка <span class="ice">стаи</span></h2>
-      <p class="lead">Для тренировок, стартов и жизни вне гонки. Выберите свой раздел.</p>
+      <div class="eyebrow">Фирменная экипировка ВАРГИ</div>
+      <h2>Магазин <span class="ice">стаи</span></h2>
+      <p class="lead">Фирменная одежда, аксессуары и предзаказы. Для тренировок, стартов и жизни вне гонки.</p>
     </div><a class="btn ghost" href="/shop/" data-goal="shop_catalog_click">Весь каталог ↗</a></div>
     <div class="shop-preview-grid" id="shopList"></div>
     <noscript><p><a href="/shop/">Перейти в магазин ВАРГИ →</a></p></noscript>
@@ -1007,14 +955,14 @@
     <div class="socials">
       <a href="#" data-link="telegram" data-goal="telegram_social_click">Telegram</a>
       <a href="/contact/" data-link="email" data-goal="email_contact_open">Написать на почту</a>
-      <a href="/board/" data-goal="classifieds_footer_click">Объявления</a>
+      <a href="/board/" data-goal="classifieds_footer_click">Барахолка</a>
     </div>
     <a href="privacy.html">Политика конфиденциальности</a>
     <small>© 2026 ВАРГИ · Лыжная марафонская стая</small>
   </div>
 </footer>
 
-<a class="mobile-training-cta" id="mobileTrainingCta" href="/training-plan/" data-goal="mobile_training_cta_click" aria-label="Обсудить ежемесячное ведение подготовки с Артемом">Обсудить подготовку →</a>
+<script src="/assets/site-shortcuts.js?v=20261003" defer></script>
 
 <!-- ===== OVERLAY (lightbox + modal) ===== -->
 <div class="overlay" id="overlay">
@@ -1041,18 +989,6 @@ if (aiDemoCta) {
   const aiDemoText = encodeURIComponent("Здравствуйте, Артем! Хочу получить демонстрационный разбор одной тренировки с ИИ-агентом ВАРГИ.");
   aiDemoCta.href = "/contact/#message=" + aiDemoText;
   aiDemoCta.removeAttribute("target");
-}
-const mobileTrainingCta = document.getElementById("mobileTrainingCta");
-if (mobileTrainingCta) {
-  const footer = document.querySelector("footer");
-  const updateMobileTrainingCta = () => {
-    const pastHero = scrollY > innerHeight * 0.62;
-    const footerIsNear = footer ? footer.getBoundingClientRect().top < innerHeight - 70 : false;
-    mobileTrainingCta.classList.toggle("visible", pastHero && !footerIsNear);
-  };
-  addEventListener("scroll", updateMobileTrainingCta, {passive:true});
-  addEventListener("resize", updateMobileTrainingCta);
-  updateMobileTrainingCta();
 }
 
 // Состав. alpha:true — вожак (белая карточка по центру). photo: '' → плейсхолдер.
