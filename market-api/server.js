@@ -4,7 +4,7 @@ import multer from 'multer';
 import { rateLimit } from 'express-rate-limit';
 import { mkdir, writeFile, readFile, readdir, rm, rename, access } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
-import { randomUUID, randomBytes, scryptSync, timingSafeEqual, createHmac } from 'node:crypto';
+import { randomUUID, randomBytes, scryptSync, timingSafeEqual, createHmac, createHash } from 'node:crypto';
 import path from 'node:path';
 import sharp from 'sharp';
 import heicConvert from 'heic-convert';
@@ -56,7 +56,8 @@ app.use(cors({
     return cb(new Error('Origin not allowed'));
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  exposedHeaders: ['Retry-After']
 }));
 app.use(express.json({ limit: '32kb' }));
 
@@ -65,7 +66,10 @@ const limiter = rateLimit({
   limit: 6,
   standardHeaders: true,
   legacyHeaders: false,
-  message: { ok: false, error: 'Слишком много заявок. Попробуйте позже.' }
+  handler(req, res) {
+    const retryAfter = Math.max(1, Math.ceil(((req.rateLimit?.resetTime?.getTime() || Date.now() + 900000) - Date.now()) / 1000));
+    res.status(429).json({ ok: false, retryAfter, error: `Слишком много попыток. Повторите через ${Math.ceil(retryAfter / 60)} мин. Данные и фото остались в вашей вкладке.` });
+  }
 });
 app.use('/submit', limiter);
 
@@ -89,8 +93,10 @@ const upload = multer({
     fields: 50
   },
   fileFilter(req, file, cb) {
-    const allowed = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']);
-    cb(allowed.has(file.mimetype) ? null : new Error('Недопустимый тип файла'), allowed.has(file.mimetype));
+    const aliases = { 'image/jpg': 'image/jpeg', 'image/pjpeg': 'image/jpeg', 'image/x-png': 'image/png', 'image/heif': 'image/heic' };
+    file.mimetype = aliases[file.mimetype] || file.mimetype;
+    const allowed = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'application/octet-stream']);
+    cb(allowed.has(file.mimetype) ? null : Object.assign(new Error('unsupported_image_type'), { code: 'UNSUPPORTED_IMAGE_TYPE' }), allowed.has(file.mimetype));
   }
 });
 
@@ -118,7 +124,7 @@ async function normalizeImage(file) {
   if (file.mimetype === 'image/heic' || file.mimetype === 'image/heif') {
     input = Buffer.from(await heicConvert({ buffer: file.buffer, format: 'JPEG', quality: 0.82 }));
   }
-  return sharp(input, { failOn: 'warning' })
+  return sharp(input, { failOn: 'warning', limitInputPixels: 64000000 })
     .rotate()
     .resize({ width: 1800, height: 1800, fit: 'inside', withoutEnlargement: true })
     .jpeg({ quality: 82, mozjpeg: true })
@@ -669,25 +675,42 @@ app.get('/listings/:id/photos/:filename', async (req, res) => {
   }
 });
 
+const submissionInFlight = new Map();
+const submissionCategories = { skis: 'Лыжи', boots: 'Ботинки и крепления', poles: 'Палки', rollers: 'Лыжероллеры', clothes: 'Одежда и аксессуары' };
+
 app.post('/submit', upload.array('photos', 6), async (req, res) => {
   let submissionDir = null;
+  let releaseRequest = null;
+  let requestId = '';
   try {
     const honeypot = clean(req.body.website, 200);
     if (honeypot) return res.status(200).json({ ok: true });
 
     const title = clean(req.body.title, 120);
-    const contact = clean(req.body.contact, 180);
+    const contactName = clean(req.body.contactName, 80);
+    const publicContact = clean(req.body.publicContact, 140);
+    const contact = `${contactName} — ${publicContact}`;
     const message = clean(req.body.message, 8000);
     const description = clean(req.body.description, 4000);
-    const category = clean(req.body.category, 80);
     const categoryKey = clean(req.body.categoryKey, 30);
+    const category = Object.hasOwn(submissionCategories, categoryKey) ? submissionCategories[categoryKey] : '';
     const city = clean(req.body.city, 100);
-    const price = clean(req.body.price, 100);
     const priceValueRaw = Number(req.body.priceValue);
+    const condition = clean(req.body.condition, 80);
+    const style = clean(req.body.style, 50);
+    const length = Number(req.body.length);
 
-    if (title.length < 2 || contact.length < 4 || !description) {
-      return res.status(400).json({ ok: false, error: 'Не хватает данных для отправки.' });
+    if (title.length < 2 || city.length < 2 || contactName.length < 2 || publicContact.length < 4 || !description) {
+      return res.status(400).json({ ok: false, error: 'Заполните название, город, описание, имя и контакт для объявления.' });
     }
+    if (!category) return res.status(400).json({ ok: false, error: 'Выберите категорию товара.' });
+    if (!Number.isInteger(priceValueRaw) || priceValueRaw < 1 || priceValueRaw > 10000000) return res.status(400).json({ ok: false, error: 'Укажите цену целым числом от 1 до 10 000 000 ₽.' });
+    if (!['Б/у', 'Новый товар', 'Требует ремонта'].includes(condition)) return res.status(400).json({ ok: false, error: 'Выберите состояние товара.' });
+    if (categoryKey === 'skis' && (!['Коньковые', 'Классические'].includes(style) || !Number.isInteger(length) || length < 60 || length > 230)) return res.status(400).json({ ok: false, error: 'Укажите стиль и длину лыж от 60 до 230 см.' });
+    if (req.body.consent !== 'true' || req.body.consentVersion !== 'board-submit-2026-10-05') return res.status(400).json({ ok: false, error: 'Не получено подтверждение согласия. Если форма открыта давно, обновите страницу и заполните её заново.' });
+    requestId = clean(req.body.requestId, 80);
+    if (!/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/i.test(requestId)) return res.status(400).json({ ok: false, error: 'Форма устарела. Обновите страницу перед отправкой объявления.' });
+    const price = new Intl.NumberFormat('ru-RU').format(priceValueRaw) + ' ₽';
 
     const files = Array.isArray(req.files) ? req.files : [];
     if (!files.length) {
@@ -698,9 +721,25 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
       return res.status(413).json({ ok: false, error: 'Исходные фотографии слишком большие: максимум 24 МБ суммарно.' });
     }
     for (const file of files) {
+      if (file.mimetype === 'application/octet-stream') file.mimetype = ['image/jpeg', 'image/png', 'image/webp', 'image/heic'].find(mime => isImageSignature(file.buffer, mime)) || '';
       if (!isImageSignature(file.buffer, file.mimetype)) {
         return res.status(400).json({ ok: false, error: 'Один из файлов не является корректным JPEG, PNG, WebP или HEIC.' });
       }
+    }
+
+    // The key and content hash are persisted with the submission, so retries also
+    // survive restarts. The per-key lock covers concurrent requests on this service's
+    // single replica; no public endpoint reveals the request key or private payload.
+    const hash = createHash('sha256');
+    hash.update(JSON.stringify(Object.keys(req.body).filter(key => !['website', 'requestId'].includes(key)).sort().map(key => [key, req.body[key]])));
+    for (const file of files) hash.update(file.mimetype).update(String(file.size)).update(file.buffer);
+    const requestHash = hash.digest('hex');
+    while (submissionInFlight.has(requestId)) await submissionInFlight.get(requestId);
+    submissionInFlight.set(requestId, new Promise(resolve => { releaseRequest = resolve; }));
+    const previous = (await listSubmissions()).find(item => item.requestId === requestId);
+    if (previous) {
+      if (previous.requestHash !== requestHash) return res.status(409).json({ ok: false, error: 'Состав объявления изменился. Вернитесь к редактированию и снова проверьте предпросмотр.' });
+      return res.json({ ok: true, id: previous.id, duplicate: true });
     }
 
     const id = `${new Date().toISOString().replace(/[:.]/g, '-')}_${randomUUID().slice(0, 8)}`;
@@ -711,7 +750,12 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
     let normalizedTotal = 0;
     for (let i = 0; i < files.length; i += 1) {
       const file = files[i];
-      const normalized = await normalizeImage(file);
+      let normalized;
+      try { normalized = await normalizeImage(file); }
+      catch (error) {
+        console.error('photo_decode_error', error?.message || error);
+        throw Object.assign(new Error('invalid_photo'), { statusCode: 400, publicMessage: `Не удалось обработать фото №${i + 1}. Проверьте, что файл не повреждён и не превышает 64 мегапикселя. Можно сохранить снимок как JPEG и выбрать его заново.` });
+      }
       normalizedTotal += normalized.length;
       if (normalizedTotal > 9 * 1024 * 1024) {
         throw Object.assign(new Error('normalized_photos_too_large'), { statusCode: 413 });
@@ -731,6 +775,9 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
       id,
       status: 'pending',
       createdAt: new Date().toISOString(),
+      requestId,
+      requestHash,
+      consent: { accepted: true, version: 'board-submit-2026-10-05', acceptedAt: new Date().toISOString(), policyUrl: SITE_ORIGIN + '/privacy.html' },
       kind: 'Продаю',
       category,
       categoryKey,
@@ -739,14 +786,14 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
       price,
       priceValue: Number.isFinite(priceValueRaw) ? priceValueRaw : null,
       contact,
-      contactName: clean(req.body.contactName, 80),
-      publicContact: clean(req.body.publicContact, 140),
-      condition: clean(req.body.condition, 80),
+      contactName,
+      publicContact,
+      condition,
       brand: clean(req.body.brand, 80),
       model: clean(req.body.model, 100),
       delivery: clean(req.body.delivery, 100),
-      style: clean(req.body.style, 50),
-      length: clean(req.body.length, 30),
+      style: categoryKey === 'skis' ? style : '',
+      length: categoryKey === 'skis' ? String(length) : '',
       structureKind: clean(req.body.structureKind, 30) || 'unknown',
       structureValue: clean(req.body.structureValue, 120),
       flex: clean(req.body.flex, 100),
@@ -760,7 +807,9 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
 
     await writeJsonAtomic(path.join(submissionDir, 'submission.json'), metadata);
     console.log(`submission_saved id=${id} photos=${savedPhotos.length}`);
-    void notifyNewSubmission(metadata).catch(error => console.error('telegram_notify_error', error?.message || error));
+    void notifyNewSubmission(metadata)
+      .then(sent => console.log(`${sent ? 'telegram_notify_sent' : 'telegram_notify_not_configured'} id=${id}`))
+      .catch(error => console.error(`telegram_notify_error id=${id}`, error?.message || error));
     res.status(201).json({ ok: true, id });
   } catch (error) {
     console.error('submit_error', error?.message || error);
@@ -768,7 +817,9 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
       try { await rm(submissionDir, { recursive: true, force: true }); } catch (_) {}
     }
     const statusCode = Number(error?.statusCode) || 500;
-    res.status(statusCode).json({ ok: false, error: statusCode === 413 ? 'Фотографии после обработки всё ещё слишком большие. Уменьшите количество или размер снимков.' : 'Не удалось сохранить заявку. Попробуйте ещё раз.' });
+    res.status(statusCode).json({ ok: false, error: error?.publicMessage || (statusCode === 413 ? 'Фотографии после обработки всё ещё слишком большие. Уменьшите количество или размер снимков.' : 'Не удалось сохранить заявку. Данные и фото остались в вашей вкладке — повторите отправку.') });
+  } finally {
+    if (releaseRequest) { submissionInFlight.delete(requestId); releaseRequest(); }
   }
 });
 
@@ -1066,6 +1117,8 @@ app.use((error, req, res, next) => {
   console.error('request_error', error?.message || error);
   if (error?.code === 'LIMIT_FILE_SIZE') return res.status(413).json({ ok: false, error: 'Одна из фотографий слишком большая.' });
   if (error?.code === 'LIMIT_FILE_COUNT') return res.status(413).json({ ok: false, error: 'Можно отправить не более 6 фотографий.' });
+  if (error?.code === 'UNSUPPORTED_IMAGE_TYPE') return res.status(400).json({ ok: false, error: 'Неподдерживаемый тип фото. Добавьте JPEG, PNG, WebP или HEIC/HEIF.' });
+  if (error?.code === 'LIMIT_UNEXPECTED_FILE') return res.status(400).json({ ok: false, error: 'Не удалось принять фотографии. Выберите не более 6 фото и повторите отправку.' });
   res.status(400).json({ ok: false, error: 'Не удалось обработать запрос.' });
 });
 
