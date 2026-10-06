@@ -51,6 +51,6 @@
     fetch(`./analytics.enc.json?v=${Date.now()}`,{cache:'no-store'}).then(r=>{if(!r.ok)throw new Error('Данные ещё не собраны');return r.json()}).then(async x=>{bundle=x;const saved=sessionStorage.getItem(passwordKey);if(saved){try{await unlock(saved)}catch{sessionStorage.removeItem(passwordKey)}}}).catch(e=>$('#error').textContent=e.message);
     $('#unlock').addEventListener('submit',async e=>{e.preventDefault();if(!bundle)return;$('#error').textContent='Проверяю…';try{await unlock($('#password').value);$('#error').textContent=''}catch{sessionStorage.removeItem(passwordKey);$('#error').textContent='Неверный пароль или повреждены данные'}});
   </script>
-<footer style="padding:20px 16px;text-align:center;font-size:14px"><a href="https://vk.ru/id1054752399" target="_blank" rel="noopener noreferrer" style="color:#8fd0ef">Артем в ВК</a></footer>
+<footer style="padding:20px 16px;text-align:center;font-size:14px"><a href="https://vk.ru/id1054752399" target="_blank" rel="noopener noreferrer" style="color:#8fd0ef">ВК-страница</a></footer>
 </body>
 </html>
