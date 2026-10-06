@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="index,follow,max-image-preview:large">
 <meta name="referrer" content="strict-origin-when-cross-origin">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://market.xn----7sbbfg4a6clj5k.xn--p1ai https://market-api-production-d9ab.up.railway.app; connect-src https://market.xn----7sbbfg4a6clj5k.xn--p1ai; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://market.xn----7sbbfg4a6clj5k.xn--p1ai https://market-api-production-d9ab.up.railway.app; connect-src https://market.xn----7sbbfg4a6clj5k.xn--p1ai https://market-api-production-d9ab.up.railway.app; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'">
 <title>Лыжная барахолка — лыжи и экипировка | ВАРГИ</title>
 <meta name="description" content="Барахолка стаи ВАРГИ: купить, продать или обменять лыжи и экипировку. Частные объявления спортсменов, фото и контакты продавцов. Публикация после модерации.">
 <link rel="canonical" href="https://xn----7sbbfg4a6clj5k.xn--p1ai/board/">
@@ -55,10 +55,9 @@ dialog{border:1px solid var(--line);background:#0d141a;color:var(--ink);padding:
 
 <dialog id="detail"><div class="dialog-head"><div class="eyebrow" id="detailKind">Объявление</div><button class="close" id="closeDetail" type="button" aria-label="Закрыть">×</button></div><div class="dialog-body" id="detailBody"><div class="loading">Загрузка…</div></div></dialog>
 
-<script src="/assets/board-connection.js?v=20261006-2"></script>
+<script src="/assets/board-connection.js?v=20261006-3"></script>
 <script>
 'use strict';
-const API=VargiConnection.base;
 const $=s=>document.querySelector(s);
 const cats={skis:'Лыжи',boots:'Ботинки и крепления',poles:'Палки',rollers:'Лыжероллеры',clothes:'Одежда и аксессуары'};
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -84,7 +83,7 @@ function render(){
 async function loadListings(){
  $('#status').textContent='Обновляем каталог…';
  try{
-  const response=await fetch(API+'/listings',{mode:'cors',credentials:'omit',cache:'no-store'});
+  const response=await VargiConnection.request('/listings',{mode:'cors',credentials:'omit',cache:'no-store'},{timeoutMs:7000});
   const data=await response.json();
   if(!response.ok||!data.ok)throw Error(data.error||'Не удалось загрузить каталог.');
   listings=data.listings||[];$('#status').textContent='';render();
@@ -93,7 +92,7 @@ async function loadListings(){
 async function openDetail(id){
  const dialog=$('#detail');$('#detailBody').innerHTML='<div class="loading">Загрузка…</div>';dialog.showModal();
  try{
-  const response=await fetch(API+'/listings/'+encodeURIComponent(id),{mode:'cors',credentials:'omit',cache:'no-store'});
+  const response=await VargiConnection.request('/listings/'+encodeURIComponent(id),{mode:'cors',credentials:'omit',cache:'no-store'},{timeoutMs:7000});
   const data=await response.json();
   if(!response.ok||!data.ok)throw Error(data.error||'Объявление недоступно.');
   const a=data.listing;$('#detailKind').textContent=cats[a.category]||a.category;

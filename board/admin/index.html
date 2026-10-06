@@ -99,10 +99,9 @@ dialog{border:1px solid var(--line);background:#0d141a;color:var(--ink);padding:
 </div>
 </dialog>
 
-<script src="/assets/board-connection.js?v=20261006-2"></script>
+<script src="/assets/board-connection.js?v=20261006-3"></script>
 <script>
 'use strict';
-const API=VargiConnection.base;
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -117,7 +116,7 @@ async function request(path,options={}){
  const headers={...(options.headers||{})};
  if(token)headers.Authorization='Bearer '+token;
  if(options.body && !(options.body instanceof FormData))headers['Content-Type']='application/json';
- const response=await fetch(API+path,{...options,headers,mode:'cors',credentials:'omit',cache:'no-store'});
+ const response=await VargiConnection.request(path,{...options,headers,mode:'cors',credentials:'omit',cache:'no-store'},{timeoutMs:10000});
  let data={};try{data=await response.json()}catch(_){}
  if(response.status===401&&path!=='/admin/login'){logout();throw Error('Сессия закончилась. Войдите снова.')}
  if(!response.ok||data.ok===false)throw Error(data.error||'Ошибка запроса.');
@@ -182,7 +181,7 @@ async function loadPhotos(card){
  const id=card.dataset.id;
  for(const img of card.querySelectorAll('[data-photo]')){
   try{
-   const response=await fetch(API+'/admin/submissions/'+encodeURIComponent(id)+'/photos/'+encodeURIComponent(img.dataset.photo),{headers:{Authorization:'Bearer '+token},cache:'no-store'});
+   const response=await VargiConnection.request('/admin/submissions/'+encodeURIComponent(id)+'/photos/'+encodeURIComponent(img.dataset.photo),{headers:{Authorization:'Bearer '+token},cache:'no-store'},{timeoutMs:10000});
    if(!response.ok)continue;const url=URL.createObjectURL(await response.blob());blobUrls.push(url);img.src=url;
   }catch(_){}
  }
