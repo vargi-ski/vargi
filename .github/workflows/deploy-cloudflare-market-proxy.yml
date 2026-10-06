@@ -2,10 +2,6 @@ name: Deploy Cloudflare market proxy
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'cloudflare/**'
-      - '.github/workflows/deploy-cloudflare-market-proxy.yml'
 
 permissions:
   contents: read
@@ -13,9 +9,6 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: cloudflare
     steps:
       - uses: actions/checkout@v4
       - name: Deploy Worker
