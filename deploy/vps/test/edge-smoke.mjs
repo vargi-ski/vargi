@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import path from 'node:path';
+import { createEdgeRequest } from './edge-request.mjs';
 
 const image = process.argv[2];
 if (!image) throw new Error('Usage: node deploy/vps/test/edge-smoke.mjs IMAGE');
@@ -28,19 +28,26 @@ try {
   docker('run', '-d', '--name', edge, '--network', network, '-e', 'SITE_HOST=http://localhost:8080',
     '-p', '127.0.0.1::8080', image);
   const port = docker('port', edge, '8080/tcp').split(':').at(-1);
-  const origin = `http://127.0.0.1:${port}`;
-  const request = (pathname, options = {}) => fetch(origin + pathname, {
-    ...options, headers: { Host: 'localhost:8080', ...options.headers }, signal: AbortSignal.timeout(15000)
-  });
+  const request = createEdgeRequest(port);
   let ready = false;
   for (let attempt = 0; attempt < 40; attempt++) {
-    try { if ((await request('/')).ok) { ready = true; break; } } catch {}
+    try {
+      const response = await request('/');
+      if (response.status === 200 && response.headers.get('content-type')?.startsWith('text/html') &&
+          response.headers.get('x-content-type-options') === 'nosniff' && (await response.text()).length > 100) {
+        ready = true;
+        break;
+      }
+    } catch {}
     await new Promise(resolve => setTimeout(resolve, 250));
   }
   assert.ok(ready, 'edge must serve the website');
   const runtime = await request('/assets/board-runtime.js');
-  assert.equal(runtime.headers.get('cache-control'), 'no-store');
-  assert.match(await runtime.text(), /same-origin/);
+  const runtimeBody = await runtime.text();
+  const runtimeContext = `/assets/board-runtime.js status=${runtime.status} body=${runtimeBody.slice(0, 160)}`;
+  assert.equal(runtime.status, 200, runtimeContext);
+  assert.match(runtimeBody, /same-origin/, runtimeContext);
+  assert.equal(runtime.headers.get('cache-control'), 'no-store', runtimeContext);
   assert.equal((await request('/board/')).headers.get('cache-control'), 'no-store');
   const proxied = await request('/api/market/listings?test=1', {
     headers: { 'X-Forwarded-For': '203.0.113.1', Forwarded: 'for=203.0.113.1' }
