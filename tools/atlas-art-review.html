@@ -376,6 +376,12 @@
   .calendar-poster-toggle-title{font-family:'Oswald'; font-size:clamp(21px,3vw,30px); font-weight:700; text-transform:uppercase}
   .calendar-poster-toggle-arrow{color:var(--ice); font-size:28px; line-height:1}
 
+  .race-program{margin:12px 0 0; padding-left:18px; color:var(--muted); font-size:14px; line-height:1.6}
+  .race-program li+li{margin-top:8px}
+  .race-program a{color:var(--ice); text-underline-offset:3px; overflow-wrap:anywhere}
+  .race-program a:focus-visible{outline:2px solid var(--ice); outline-offset:3px}
+  .race-note{margin:10px 0 0; color:var(--muted); font-size:13px; line-height:1.5}
+
   /* ---------- GALLERY ---------- */
   .gal{display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-top:38px}
   .gal .cell{aspect-ratio:1; border-radius:10px; overflow:hidden; cursor:pointer; border:1px solid var(--line);
@@ -884,7 +890,7 @@
   <div class="wrap">
     <div class="eyebrow">Календарь</div>
     <h2>Ближайшие <span class="ice">старты</span></h2>
-    <p class="lead">Марафоны предварительного календаря RussiaLoppet 2027, на которых планирует выступать стая: только Центральный и Северо-Западный федеральные округа.</p>
+    <p class="lead">Календарь RussiaLoppet 2027 · ЦФО и СЗФО. Сверено 6 октября 2026. Даты и программа могут уточняться.</p>
     <div class="cal" id="calList"></div>
     <button class="calendar-toggle" id="calendarToggle" type="button" aria-expanded="false">
       <span class="calendar-toggle-label">Показать все старты</span>
@@ -981,6 +987,7 @@
 
 <!-- Для быстрого отката старые image-data-*.js сохранены в репозитории. -->
 <script src="/assets/image-paths.js"></script>
+<script src="/assets/race-calendar.js?v=20261006"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script src="assets/geography/pack-atlas.js?v=20260916"></script>
 <script>
@@ -1116,28 +1123,7 @@ const RESULTS = [
   { year:"—", athlete:"Климентий Агалаков", event:"Марафонный дебют впереди", time:"—", absPlace:null, group:"—", groupPlace:null }
 ];
 
-const CALENDAR = [
-  { group:"Январь", d:"23–24", m:"янв", year:"2027", name:"Вологда-Марафон Кирики-Улита", city:"СЗФО · Вологодская область, д. Болтино", status:"soon" },
-  { group:"Январь", d:"23", m:"янв", year:"2027", name:"Экопарк-Алмаз-Ski", city:"ЦФО · Рязанская область, Рязань", status:"soon" },
-
-  { group:"Февраль", d:"07", m:"фев", year:"2027", name:"Московский лыжный марафон", city:"ЦФО · Москва", status:"soon" },
-  { group:"Февраль", d:"13–14", m:"фев", year:"2027", name:"Галичское Заозерье", city:"ЦФО · Костромская область, Галич", status:"soon" },
-  { group:"Февраль", d:"20", m:"фев", year:"2027", name:"Красногорский марафон", city:"ЦФО · Московская область, Красногорск", status:"soon" },
-  { group:"Февраль", d:"20", m:"фев", year:"2027", name:"Котовский марафон «Трасса Мужества»", city:"ЦФО · Тамбовская область, Котовск", status:"soon" },
-  { group:"Февраль", d:"20–21", m:"фев", year:"2027", name:"Веденинский марафон", city:"ЦФО · Тульская область, Тула", status:"soon" },
-  { group:"Февраль", d:"21", m:"фев", year:"2027", name:"Марафон МВТУ", city:"ЦФО · Москва", status:"soon" },
-  { group:"Февраль", d:"27", m:"фев", year:"2027", name:"KareliaSkiFest Ладога", city:"СЗФО · Республика Карелия, Питкяранта", status:"soon" },
-  { group:"Февраль", d:"27–28", m:"фев", year:"2027", name:"Токсово Марафон", city:"СЗФО · Ленинградская область, Охта Парк", status:"soon" },
-
-  { group:"Март", d:"05–07", m:"мар", year:"2027", name:"Дёминский марафон", city:"ЦФО · Ярославская область, Рыбинск", status:"soon" },
-  { group:"Март", d:"07", m:"мар", year:"2027", name:"Владимирский Проку", city:"ЦФО · Владимирская область, Владимир", status:"soon" },
-  { group:"Март", d:"13", m:"мар", year:"2027", name:"Марафон МГУ", city:"ЦФО · Московская область, Красногорск", status:"soon" },
-  { group:"Март", d:"13–14", m:"мар", year:"2027", name:"Праздник Севера", city:"СЗФО · Мурманская область, Мурманск", status:"soon" },
-  { group:"Март", d:"20", m:"мар", year:"2027", name:"Апатитский марафон", city:"СЗФО · Мурманская область, Апатиты", status:"soon" },
-  { group:"Март", d:"20", m:"мар", year:"2027", name:"Кубок Устьи", city:"СЗФО · Архангельская область, Малиновка", status:"soon" },
-  { group:"Март", d:"27–28", m:"мар", year:"2027", name:"Поморский марафон", city:"СЗФО · Архангельская область, Архангельск", status:"soon" },
-  { group:"Март", d:"28", m:"мар", year:"2027", name:"Сияние Севера", city:"СЗФО · Республика Коми, Ухта", status:"soon" }
-];
+const CALENDAR = window.VARGI_RACE_CALENDAR.races;
 
 const PACK_IN_FRAME_PERM = window.VARGI_IMAGES.i18;
 const GALLERY = [
@@ -1528,6 +1514,23 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
     c.innerHTML = `<div class="date"><span>${r.d}</span> ${r.m} ${r.year}</div>
       <div class="nm">${r.name}</div><div class="city">${r.city}</div>
       <span class="badge ${r.status}">${map[r.status]}</span>`;
+    const program = el("ul","race-program");
+    r.program.forEach(item=>{
+      const line = el("li");
+      const link = el("a");
+      link.textContent=item.label+" ↗";
+      link.href=item.href;
+      link.target="_blank";
+      link.rel="noopener noreferrer";
+      line.appendChild(link);
+      program.appendChild(line);
+    });
+    c.appendChild(program);
+    if(r.note){
+      const note=el("p","race-note");
+      note.textContent=r.note;
+      c.appendChild(note);
+    }
     wrap.appendChild(c);
   });
   toggle.onclick=()=>{
