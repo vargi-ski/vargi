@@ -9,7 +9,7 @@
   const primaryEndpoint = 'https://market.xn----7sbbfg4a6clj5k.xn--p1ai';
   const fallbackEndpoint = 'https://market-api-production-d9ab.up.railway.app';
   const endpoints = [proxyEndpoint, primaryEndpoint, fallbackEndpoint];
-  const version = '2026-10-06.4';
+  const version = '2026-10-06.6';
   let activeEndpoint = proxyEndpoint;
 
   function orderedEndpoints() {
@@ -25,6 +25,12 @@
     if (response.status >= 500) return true;
     if (base === proxyEndpoint && [404, 405, 410, 501].includes(response.status)) return true;
     return false;
+  }
+
+  function isUnavailableProxyRoute(base, response) {
+    const contentType = (response.headers.get('Content-Type') || '').split(';')[0].trim().toLowerCase();
+    return base === proxyEndpoint &&
+      [404, 405, 410, 501].includes(response.status) && contentType === 'text/html';
   }
 
   async function fetchOnce(base, path, options, timeoutMs) {
@@ -54,6 +60,9 @@
       const base = bases[i];
       try {
         const response = await fetchOnce(base, path, options, timeoutMs);
+        // GitHub Pages returns an HTML error while the optional proxy is absent.
+        // Skip it even when it is last: it must not conceal the real API failure.
+        if (safeRetry && isUnavailableProxyRoute(base, response)) continue;
         if (shouldFailOver(base, response, safeRetry) && i < bases.length - 1) {
           lastResponse = response;
           continue;
