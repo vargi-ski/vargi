@@ -22,7 +22,10 @@
 <div class="steps" aria-label="Этапы подачи"><div class="step"><b>01 / Заполнить</b>Характеристики, город, цена и контакт.</div><div class="step"><b>02 / Проверить</b>Увидите карточку так, как её поймёт модератор.</div><div class="step"><b>03 / Отправить</b>Одна кнопка — заявка и фото уходят модератору.</div></div>
 
 <section class="panel" id="formPanel">
-<div class="notice">До финального нажатия «Отправить на модерацию» фотографии остаются только в этой вкладке. Перед отправкой сайт автоматически уменьшит тяжёлые снимки и отправит их вместе с заявкой.</div>
+<div class="notice">Текст и подготовленные фото сохраняются в черновике на этом устройстве на 7 дней, если браузер разрешает локальное хранение. Модератор получит их только после нажатия «Отправить на модерацию».</div>
+<p id="connectionStatus" class="hint" role="status">Проверяем соединение с сервером объявлений…</p>
+<div id="draftOffer" class="notice" hidden>На этом устройстве есть незавершённое объявление. <button type="button" id="restoreDraft">Восстановить черновик</button> <button type="button" id="discardDraft">Удалить черновик</button></div>
+<p id="draftStatus" class="hint" role="status"></p>
 <form id="adForm" autocomplete="off" novalidate>
 <fieldset><legend><span class="n">01</span>Что размещаем</legend><div class="grid">
 <input type="hidden" name="kind" id="kind" value="sell">
@@ -72,12 +75,13 @@
 
 </main>
 <footer class="footer"><div class="wrap">ВАРГИ / Барахолка стаи · публикация только после модерации</div></footer>
+<script src="/assets/board-connection.js?v=20261006"></script>
+<script src="/assets/board-draft.js?v=20261006"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s);
 const categories={skis:'Лыжи',boots:'Ботинки и крепления',poles:'Палки',rollers:'Лыжероллеры',clothes:'Одежда и аксессуары'};
 const kinds={sell:'Продаю',buy:'Куплю',exchange:'Обмен'};
-const MARKET_API='https://market-api-production-d9ab.up.railway.app';
 let photos=[],photoBytes=0,photoRevision=0,busy=false,current=null,preparedSubmission=null;
 const money=n=>new Intl.NumberFormat('ru-RU').format(n)+' ₽';
 function structure(a){return a.structureKind==='factory'?'Заводская, код неизвестен':(['known','custom'].includes(a.structureKind)&&a.structureValue?a.structureValue:'Не указана / не знаю')}
@@ -95,7 +99,7 @@ function sync(){
 $('#kind').onchange=$('#category').onchange=$('#structureKind').onchange=sync;
 function photoError(message){$('#photoError').textContent=message;$('#photoError').hidden=!message}
 function drawPhotos(){$('#photos').innerHTML=photos.map((p,i)=>'<div class="thumb">'+(p.url?'<img src="'+p.url+'" alt="Фото '+(i+1)+'">':'<div style="width:100%;height:100%;display:grid;place-items:center;border:1px solid #304b5c;border-radius:7px;background:#0a141b;color:#8fd0ef;font-size:12px">HEIC</div>')+'<button type="button" data-remove="'+i+'" aria-label="Удалить фото '+(i+1)+'">×</button></div>').join('')}
-$('#photos').onclick=e=>{const b=e.target.closest('[data-remove]');if(!b||busy)return;const i=Number(b.dataset.remove);photoBytes-=photos[i].size;if(photos[i].url)URL.revokeObjectURL(photos[i].url);photos.splice(i,1);photoRevision++;drawPhotos()};
+$('#photos').onclick=e=>{const b=e.target.closest('[data-remove]');if(!b||busy)return;const i=Number(b.dataset.remove);photoBytes-=photos[i].size;if(photos[i].url)URL.revokeObjectURL(photos[i].url);photos.splice(i,1);photoRevision++;drawPhotos();saveDraft()};
 async function signature(file){const b=new Uint8Array(await file.slice(0,12).arrayBuffer());const brand=String.fromCharCode(...b.slice(8,12)).toLowerCase();return b[0]===255&&b[1]===216&&b[2]===255?'image/jpeg':b[0]===137&&b[1]===80&&b[2]===78&&b[3]===71?'image/png':String.fromCharCode(...b.slice(0,4))==='RIFF'&&String.fromCharCode(...b.slice(8,12))==='WEBP'?'image/webp':String.fromCharCode(...b.slice(4,8))==='ftyp'&&['heic','heix','hevc','hevx','mif1','msf1'].includes(brand)?'image/heic':''}
 async function compressPhoto(file){
  const mime=await signature(file);if(!mime)throw Error('Нужен настоящий JPEG, PNG, WebP или HEIC.');
@@ -135,7 +139,7 @@ async function addPhoto(file){
 $('#photosInput').onchange=async function(){
  busy=true;$('#previewButton').disabled=true;this.disabled=true;photoError('');const errors=[],files=Array.from(this.files||[]);
  try{for(let i=0;i<files.length;i++){$('#photoProgress').textContent='Готовим фото '+(i+1)+' из '+files.length+'…';try{await addPhoto(files[i])}catch(e){errors.push(files[i].name+': '+(e.message||'Не удалось подготовить фотографию.'));}}}
- finally{this.value='';this.disabled=false;busy=false;$('#previewButton').disabled=false;$('#photoProgress').textContent='Добавлено фото: '+photos.length+' из 6.';drawPhotos();photoError([...new Set(errors)].join(' '));}
+ finally{this.value='';this.disabled=false;busy=false;$('#previewButton').disabled=false;$('#photoProgress').textContent='Добавлено фото: '+photos.length+' из 6.';drawPhotos();photoError([...new Set(errors)].join(' '));await saveDraft();}
 };
 function newRequestId(){
  if(crypto.randomUUID)return crypto.randomUUID();
@@ -163,6 +167,7 @@ function showPreview(a){
  const fingerprint=JSON.stringify([a,photoRevision]);
  const requestId=preparedSubmission?.fingerprint===fingerprint?preparedSubmission.requestId:newRequestId();
  preparedSubmission={subject:'Объявление ВАРГИ — '+a.title,message,fingerprint,requestId};
+ saveDraft();
  $('#sendStatus').textContent='';
  scrollTo({top:0,behavior:'smooth'});
 }
@@ -227,20 +232,57 @@ $('#sendButton').onclick=async()=>{
  data.append('website','');
  photos.forEach((p,i)=>data.append('photos',p.file,p.file.name||('photo-'+(i+1)+'.jpg')));
  button.disabled=true;$('#editButton').disabled=true;button.textContent='Отправляем…';status.textContent='Загружаем заявку и фотографии. Не закрывайте вкладку.';
- const controller=new AbortController(),timeout=setTimeout(()=>controller.abort(),120000);
  try{
-  const response=await fetch(MARKET_API+'/submit',{method:'POST',body:data,mode:'cors',credentials:'omit',signal:controller.signal});
-  let result={};try{result=await response.json()}catch(_){}
-  if(response.status===429){const seconds=Number(result.retryAfter||response.headers.get('Retry-After'))||900;throw Error('Слишком много попыток. Повторите через '+Math.ceil(seconds/60)+' мин. Данные и фото сохранены в этой вкладке.');}
-  if(!response.ok||!result.ok)throw Error(result.error||'Сервер временно недоступен. Данные и фото остались в этой вкладке — повторите отправку.');
+  await saveDraft();
+  await VargiConnection.send(data);
+  draftEnabled=false;clearTimeout(draftTimer);
+  try{await VargiDraft.clear()}catch(_){}
   location.href='/board/submit/success/';
  }catch(error){
   button.disabled=false;button.textContent='Отправить на модерацию →';
-  status.textContent=error?.name==='AbortError'?'Не дождались ответа сервера. Данные и фото остались в этой вкладке. Нажмите отправку ещё раз — повтор не создаст второе объявление.':error instanceof TypeError?'Нет связи с сервером. Проверьте интернет и повторите отправку — данные и фото остались в этой вкладке.':error?.message||'Не удалось отправить заявку. Повторите попытку или используйте Telegram.';
- }finally{clearTimeout(timeout);$('#editButton').disabled=false;}
+  const diagnostic=[VargiConnection.version,error.code||'UNKNOWN',error.status||'',error.trace||'',new Date().toISOString()].filter(Boolean).join(' / ');
+  status.textContent=(error?.message||'Не удалось отправить заявку.')+' Данные и фото остались в этой вкладке. Код для проверки: '+diagnostic;
+  checkConnection();
+ }finally{$('#editButton').disabled=false;}
 };
-window.addEventListener('pagehide',()=>photos.forEach(p=>{if(p.url)URL.revokeObjectURL(p.url)}));
+let draftTimer,draftEnabled=false,savedDraft=null;
+async function saveDraft(){
+ if(!draftEnabled)return;
+ clearTimeout(draftTimer);
+ const fields=Array.from($('#adForm').elements).filter(el=>el.name&&el.type!=='file').map(el=>[el.name,el.type==='checkbox'?el.checked:el.value]);
+ try{await VargiDraft.save({fields,photos:photos.map(p=>p.file),photoRevision,preparedSubmission});$('#draftStatus').textContent='Черновик и фото сохранены на этом устройстве.'}
+ catch(_){$('#draftStatus').textContent='Браузер не разрешил сохранить черновик. До успешной отправки не закрывайте эту вкладку.'}
+}
+$('#adForm').addEventListener('input',()=>{clearTimeout(draftTimer);draftTimer=setTimeout(saveDraft,250)});
+$('#adForm').addEventListener('change',()=>saveDraft());
+$('#restoreDraft').onclick=()=>{
+ if(!savedDraft)return;
+ for(const [name,value] of savedDraft.fields){const el=$('#adForm').elements.namedItem(name);if(!el||el.type==='file')continue;if(el.type==='checkbox')el.checked=Boolean(value);else el.value=value;}
+ photos.forEach(p=>{if(p.url)URL.revokeObjectURL(p.url)});
+ photos=savedDraft.photos.map(file=>({file,size:file.size,url:file.type==='image/heic'?null:URL.createObjectURL(file)}));
+ photoBytes=photos.reduce((n,p)=>n+p.size,0);photoRevision=savedDraft.photoRevision;preparedSubmission=savedDraft.preparedSubmission;
+ draftEnabled=true;$('#draftOffer').hidden=true;$('#adForm').inert=false;sync();drawPhotos();$('#draftStatus').textContent='Черновик восстановлен. Проверьте данные и отправьте объявление.';
+};
+$('#discardDraft').onclick=async()=>{
+ try{await VargiDraft.clear();savedDraft=null;draftEnabled=true;$('#draftOffer').hidden=true;$('#adForm').inert=false;$('#draftStatus').textContent='Сохранённый черновик удалён.';}
+ catch(_){$('#draftStatus').textContent='Не удалось удалить черновик. Попробуйте ещё раз.'}
+};
+let checkingConnection=false;
+async function checkConnection(){
+ if(checkingConnection)return;
+ checkingConnection=true;
+ const online=navigator.onLine!==false;
+ const reachable=online&&await VargiConnection.health();
+ $('#connectionStatus').textContent=reachable?'Соединение с сервером установлено.':online?'Сервер объявлений сейчас недоступен из этого браузера. Можно заполнить черновик и отправить позже или воспользоваться Telegram в предпросмотре.':'Нет подключения к интернету. Можно заполнить черновик и отправить после подключения.';
+ checkingConnection=false;
+}
+window.addEventListener('online',checkConnection);window.addEventListener('offline',checkConnection);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')saveDraft()});
+// Keep object URLs alive when the browser restores this page from its back/forward cache.
+window.addEventListener('pagehide',event=>{if(!event.persisted)photos.forEach(p=>{if(p.url)URL.revokeObjectURL(p.url)})});
 sync();
+VargiDraft.load().then(draft=>{savedDraft=draft;if(draft){$('#draftOffer').hidden=false;$('#adForm').inert=true}else draftEnabled=true}).catch(()=>{draftEnabled=true;$('#draftStatus').textContent='Локальное сохранение недоступно. Не закрывайте вкладку до отправки.'});
+checkConnection();
 </script>
 </body>
 </html>

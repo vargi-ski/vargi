@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { spawn } from 'node:child_process';
 import { once } from 'node:events';
-import { mkdtemp, readFile, readdir, rm } from 'node:fs/promises';
+import { mkdtemp, readFile, readdir, rm, rename, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -53,7 +53,7 @@ test('client: verified MIME is retained, 48 MP resizes, >64 MP is rejected',asyn
   width=8000;height=6000;scope.file=new File([jpeg],'48mp.jpg',{type:'image/jpeg'});
   const resized=await vm.runInContext('compressPhoto(file)',scope);assert.equal(resized.type,'image/jpeg');assert.equal(canvas.width,1800);assert.equal(canvas.height,1350);
   width=10000;height=7000;await assert.rejects(()=>vm.runInContext('compressPhoto(file)',scope),/64 мегапикселей/);
-  assert.match(source,/signal:controller.signal/);assert.match(source,/data.append\('requestId'/);assert.match(source,/data.append\('consent','true'\)/);
+  assert.match(source,/VargiConnection.send\(data\)/);assert.match(source,/data.append\('requestId'/);assert.match(source,/data.append\('consent','true'\)/);
 });
 
 test('JPEG, PNG and WebP save pending; metadata records consent and private fields stay private',async t=>{
@@ -109,4 +109,20 @@ test('real 48 MP JPEG is safely resized by server and CORS remains restricted',a
   const metadata=await sharp(join(f.dataDir,'submissions',r.body.id,'photo-01.jpg')).metadata();assert.equal(metadata.width,1800);assert.equal(metadata.height,1350);
   const allowed=await fetch(f.app.url+'/submit',{method:'OPTIONS',headers:{Origin:origin,'Access-Control-Request-Method':'POST'}});assert.equal(allowed.status,204);assert.equal(allowed.headers.get('access-control-allow-origin'),origin);
   const denied=await fetch(f.app.url+'/submit',{method:'OPTIONS',headers:{Origin:'https://example.invalid','Access-Control-Request-Method':'POST'}});assert.equal(denied.status,400);assert.equal(denied.headers.get('access-control-allow-origin'),null);
+});
+
+test('health checks actual storage and failed writes cannot report a healthy service',async t=>{
+  const f=await fixture(t);
+  let response=await fetch(f.app.url+'/health');assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'no-store');
+  assert.equal((await response.json()).version,'2026-10-06');
+  const data=join(f.dataDir,'submissions');await rename(data,data+'-saved');await writeFile(data,'not a directory');
+  response=await fetch(f.app.url+'/health');assert.equal(response.status,503);assert.equal((await response.json()).ok,false);
+});
+
+test('submission response trace is exposed and logged without private fields',async t=>{
+  const f=await fixture(t),values={...fields(),publicContact:'private-contact-should-not-appear'};
+  const response=await post(f.app,values);const trace=response.headers.get('x-request-id');
+  assert.match(trace,/^[a-f0-9-]{36}$/);assert(response.headers.get('access-control-expose-headers').includes('X-Request-Id'));
+  const until=Date.now()+1000;while(!f.app.logs().includes('status=201')&&Date.now()<until)await new Promise(resolve=>setTimeout(resolve,10));
+  assert(f.app.logs().includes('submission_request trace='+trace));assert(f.app.logs().includes('status=201'));assert(!f.app.logs().includes(values.publicContact));
 });

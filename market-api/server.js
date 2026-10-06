@@ -25,7 +25,7 @@ app.use((req,res,next)=>{
 });
 
 const PORT = Number(process.env.PORT || 3000);
-const SITE_ORIGIN = process.env.SITE_ORIGIN || 'https://xn----7sbbfg4a6clj5k.xn--p1ai';
+const SITE_ORIGIN = new URL(process.env.SITE_ORIGIN || 'https://xn----7sbbfg4a6clj5k.xn--p1ai').origin;
 const SITE_HOST = new URL(SITE_ORIGIN).host;
 const ALLOWED_SITE_ORIGINS = new Set([
   SITE_ORIGIN,
@@ -50,6 +50,18 @@ const BACKUP_MARKER = path.join(DATA_ROOT, '.last-backup-date');
 
 await mkdir(DATA_DIR, { recursive: true });
 
+// Record arrival, response and interrupted uploads without logging form/contact data.
+app.use((req, res, next) => {
+  if (req.path !== '/submit') return next();
+  const trace = randomUUID();
+  const started = Date.now();
+  res.set('X-Request-Id', trace);
+  console.log(`submission_request trace=${trace} method=${req.method}`);
+  res.once('finish', () => console.log(`submission_response trace=${trace} status=${res.statusCode} ms=${Date.now() - started}`));
+  res.once('close', () => { if (!res.writableFinished) console.warn(`submission_disconnected trace=${trace} ms=${Date.now() - started}`); });
+  next();
+});
+
 app.use(cors({
   origin(origin, cb) {
     if (!origin || ALLOWED_SITE_ORIGINS.has(origin)) return cb(null, true);
@@ -57,7 +69,7 @@ app.use(cors({
   },
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Retry-After']
+  exposedHeaders: ['Retry-After', 'X-Request-Id']
 }));
 app.use(express.json({ limit: '32kb' }));
 
@@ -631,13 +643,18 @@ app.get('/market/:id', async (req, res) => {
 });
 
 app.get('/health', async (req, res) => {
-  const auth = await authState();
-  res.json({
-    ok: true,
-    service: 'vargi-market-api',
-    storage: 'persistent-volume',
-    adminInitialized: Boolean(auth)
-  });
+  res.set('Cache-Control', 'no-store');
+  const probe = path.join(DATA_DIR, '.health-' + randomUUID());
+  try {
+    await writeFile(probe, 'ok', { flag: 'wx' });
+    if (await readFile(probe, 'utf8') !== 'ok') throw new Error('storage_probe_failed');
+    await rm(probe);
+    res.json({ ok: true, service: 'vargi-market-api', version: '2026-10-06', storage: 'persistent-volume', adminInitialized: Boolean(await authState()) });
+  } catch (error) {
+    try { await rm(probe, { force: true }); } catch (_) {}
+    console.error('health_storage_error', error?.code || 'unknown');
+    res.status(503).json({ ok: false, service: 'vargi-market-api', error: 'Хранилище заявок временно недоступно.' });
+  }
 });
 
 app.get('/listings', async (req, res) => {

@@ -1,0 +1,25 @@
+name: Forms regression checks
+on:
+  push:
+    paths: ['market-api/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
+  pull_request:
+    paths: ['market-api/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
+permissions:
+  contents: read
+jobs:
+  submissions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: market-api/package-lock.json
+      - run: npm ci
+        working-directory: market-api
+      - run: npm test
+        working-directory: market-api
+      - run: npm audit --omit=dev
+        working-directory: market-api
