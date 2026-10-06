@@ -1,7 +1,7 @@
 (function () {
   'use strict';
-  const endpoint = 'https://market-api-production-d9ab.up.railway.app';
-  const version = '2026-10-06';
+  const endpoint = 'https://market.xn----7sbbfg4a6clj5k.xn--p1ai';
+  const version = '2026-10-06.2';
   async function health(timeoutMs = 8000) {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), timeoutMs);
@@ -35,5 +35,5 @@
       throw error;
     } finally { clearTimeout(timer); }
   }
-  window.VargiConnection = { health, send, version };
+  window.VargiConnection = { health, send, version, base: endpoint };
 })();

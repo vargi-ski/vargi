@@ -99,9 +99,10 @@ dialog{border:1px solid var(--line);background:#0d141a;color:var(--ink);padding:
 </div>
 </dialog>
 
+<script src="/assets/board-connection.js?v=20261006-2"></script>
 <script>
 'use strict';
-const API='https://market-api-production-d9ab.up.railway.app';
+const API=VargiConnection.base;
 const $=s=>document.querySelector(s);
 const $$=s=>Array.from(document.querySelectorAll(s));
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
