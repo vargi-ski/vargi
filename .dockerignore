@@ -1,0 +1,14 @@
+.git
+**/node_modules
+**/.env
+**/.env.*
+**/*.env
+**/*.pem
+**/*.key
+**/admin-auth.json
+**/telegram-notify.json
+**/backups
+**/submissions
+**/*.tar
+**/*.tar.gz
+**/*.tgz

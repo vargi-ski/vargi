@@ -1,0 +1,6 @@
+# Optional production alias; do not enable on the staging hostname.
+import Caddyfile
+
+{$WWW_HOST} {
+	redir https://{$SITE_HOST}{uri} 308
+}

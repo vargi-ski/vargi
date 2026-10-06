@@ -1,0 +1,64 @@
+name: VPS migration checks
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'deploy/vps/**'
+      - 'market-api/**'
+      - 'board/**'
+      - 'assets/board-*.js'
+      - '.dockerignore'
+      - '.github/workflows/vps-check.yml'
+  pull_request:
+    paths:
+      - 'deploy/vps/**'
+      - 'market-api/**'
+      - 'board/**'
+      - 'assets/board-*.js'
+      - '.dockerignore'
+      - '.github/workflows/vps-check.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      SITE_HOST: stage.example.net
+      SITE_ORIGIN: https://stage.example.net
+      WWW_HOST: www.stage.example.net
+      RELEASE_TAG: ci
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Public build and private configuration regression tests
+        run: node --test deploy/vps/test/*.test.mjs
+      - name: Verify offline export, restore and archive safety
+        run: python3 -m unittest discover -s deploy/vps/test -p '*_test.py' -v
+      - name: Prepare isolated CI configuration
+        run: |
+          mkdir -m 700 "$RUNNER_TEMP/vargi-data"
+          mkdir -m 700 "$RUNNER_TEMP/vargi-tmp"
+          sudo chown 1000:1000 "$RUNNER_TEMP/vargi-data" "$RUNNER_TEMP/vargi-tmp"
+          node -e 'require("node:fs").writeFileSync(process.env.RUNNER_TEMP+"/vargi-api.env","ADMIN_SESSION_SECRET="+require("node:crypto").randomBytes(32).toString("hex")+"\n",{mode:0o600})'
+          echo "DATA_PATH=$RUNNER_TEMP/vargi-data" >> "$GITHUB_ENV"
+          echo "PRIVATE_TMP_PATH=$RUNNER_TEMP/vargi-tmp" >> "$GITHUB_ENV"
+          echo "PRIVATE_ENV_FILE=$RUNNER_TEMP/vargi-api.env" >> "$GITHUB_ENV"
+      - name: Check host, permissions and Compose configuration without printing secrets
+        run: |
+          node deploy/vps/preflight.mjs
+          docker compose -f deploy/vps/compose.yml config --quiet
+          docker compose -f deploy/vps/compose.yml -f deploy/vps/compose.www.yml config --quiet
+      - name: Build static edge and API containers
+        run: docker compose -f deploy/vps/compose.yml build
+      - name: Validate HTTPS Caddy configurations without certificate issuance
+        run: |
+          docker run --rm -e SITE_HOST -e WWW_HOST vargi-site:ci caddy validate --config /etc/caddy/Caddyfile --adapter caddyfile
+          docker run --rm -e SITE_HOST -e WWW_HOST vargi-site:ci caddy validate --config /etc/caddy/Caddyfile.www --adapter caddyfile
+      - name: Exercise real edge routes with an isolated mock API
+        run: node deploy/vps/test/edge-smoke.mjs vargi-site:ci

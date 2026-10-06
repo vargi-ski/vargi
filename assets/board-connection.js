@@ -8,8 +8,13 @@
   const proxyEndpoint = siteOrigin + '/api/market';
   const primaryEndpoint = 'https://market.xn----7sbbfg4a6clj5k.xn--p1ai';
   const fallbackEndpoint = 'https://market-api-production-d9ab.up.railway.app';
-  const endpoints = [proxyEndpoint, primaryEndpoint, fallbackEndpoint];
-  const version = '2026-10-06.4';
+  // Fail closed if the deployment config did not load or contains an unknown mode.
+  // Only the explicit GitHub Pages config may enable the old Railway routes.
+  const sameOriginOnly = window.VARGI_MARKET_CONFIG?.mode !== 'legacy';
+  const assetEndpoints = [proxyEndpoint, primaryEndpoint, fallbackEndpoint];
+  // Separate deployments have separate data stores: the VPS must never fail over to Railway.
+  const endpoints = sameOriginOnly ? [proxyEndpoint] : [...assetEndpoints];
+  const version = '2026-10-06.5';
   let activeEndpoint = proxyEndpoint;
 
   function orderedEndpoints() {
@@ -73,26 +78,39 @@
     throw Object.assign(
       new Error(timedOut
         ? 'Сервер объявлений не ответил вовремя.'
-        : 'Не удалось соединиться с сервером объявлений по доступным каналам.'),
+        : (sameOriginOnly
+          ? 'Не удалось соединиться с сервером объявлений.'
+          : 'Не удалось соединиться с сервером объявлений по доступным каналам.')),
       { code: timedOut ? 'TIMEOUT' : 'NETWORK', cause: lastError }
     );
   }
 
+  function endpointSuffix(value, endpoint) {
+    if (value === endpoint) return '';
+    if (value.startsWith(endpoint) && ['/', '?', '#'].includes(value[endpoint.length])) {
+      return value.slice(endpoint.length);
+    }
+    return null;
+  }
+
   function assetUrl(url) {
     const value = String(url || '');
-    for (const endpoint of endpoints) {
-      if (value.startsWith(endpoint)) return activeEndpoint + value.slice(endpoint.length);
+    for (const endpoint of assetEndpoints) {
+      const suffix = endpointSuffix(value, endpoint);
+      if (suffix !== null) return activeEndpoint + suffix;
     }
     return value;
   }
 
   function alternateUrl(url) {
+    if (sameOriginOnly) return '';
     const value = String(url || '');
     for (let i = 0; i < endpoints.length; i += 1) {
       const endpoint = endpoints[i];
-      if (value.startsWith(endpoint)) {
+      const suffix = endpointSuffix(value, endpoint);
+      if (suffix !== null) {
         const next = endpoints[(i + 1) % endpoints.length];
-        return next + value.slice(endpoint.length);
+        return next + suffix;
       }
     }
     return '';
@@ -161,7 +179,9 @@
       if (error.code === 'OFFLINE') throw error;
       if (error.code === 'TIMEOUT') {
         throw Object.assign(
-          new Error('Сервер не успел ответить. Запрос проверен через основной и резервные каналы. Повторите отправку — повторная заявка не создастся.'),
+          new Error(sameOriginOnly
+            ? 'Сервер не успел ответить. Повторите отправку — повторная заявка не создастся.'
+            : 'Сервер не успел ответить. Запрос проверен через основной и резервные каналы. Повторите отправку — повторная заявка не создастся.'),
           { code: 'TIMEOUT' }
         );
       }
@@ -189,6 +209,7 @@
     assetUrl,
     alternateUrl,
     version,
+    mode: sameOriginOnly ? 'same-origin' : 'legacy',
     endpoints: [...endpoints],
     get base() { return activeEndpoint; },
     get active() { return activeEndpoint; }

@@ -1,0 +1,8 @@
+FROM node:22-alpine AS website
+WORKDIR /source
+COPY . .
+RUN node deploy/vps/build-static.mjs /source /website
+
+FROM caddy:2.11.7-alpine
+COPY --from=website /website /srv
+COPY deploy/vps/Caddyfile deploy/vps/Caddyfile.www /etc/caddy/
