@@ -26,6 +26,11 @@ app.use((req,res,next)=>{
 
 const PORT = Number(process.env.PORT || 3000);
 const SITE_ORIGIN = new URL(process.env.SITE_ORIGIN || 'https://xn----7sbbfg4a6clj5k.xn--p1ai').origin;
+const PUBLIC_API_PREFIX = process.env.PUBLIC_API_PREFIX || '';
+if (PUBLIC_API_PREFIX && !/^\/[A-Za-z0-9/_-]+$/.test(PUBLIC_API_PREFIX)) throw new Error('invalid_public_api_prefix');
+if (PUBLIC_API_PREFIX.endsWith('/')) throw new Error('public_api_prefix_must_not_end_with_slash');
+const MIGRATION_READ_ONLY = process.env.MIGRATION_READ_ONLY === '1';
+const AUTO_MAINTENANCE_DISABLED = MIGRATION_READ_ONLY || process.env.AUTO_MAINTENANCE_DISABLED === '1';
 const SITE_HOST = new URL(SITE_ORIGIN).host;
 const ALLOWED_SITE_ORIGINS = new Set([
   SITE_ORIGIN,
@@ -71,6 +76,15 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
   exposedHeaders: ['Retry-After', 'X-Request-Id']
 }));
+
+// A copied volume must not accept submissions or moderation writes during migration.
+// Login only creates a short-lived token in memory; all data mutations remain blocked.
+app.use((req, res, next) => {
+  if (!MIGRATION_READ_ONLY || ['GET', 'HEAD', 'OPTIONS'].includes(req.method) || (req.method === 'POST' && req.path === '/admin/login')) return next();
+  res.set('Retry-After', '120');
+  res.set('Cache-Control', 'no-store');
+  return res.status(503).json({ ok: false, code: 'MIGRATION_READ_ONLY', error: 'Перенос сервера: отправка и изменение объявлений временно приостановлены. Данные формы сохраните и повторите позже.' });
+});
 app.use(express.json({ limit: '32kb' }));
 
 const limiter = rateLimit({
@@ -201,6 +215,7 @@ async function createVolumeBackup(force = false) {
   try {
     const entries = ['submissions'];
     if (await fileExists(AUTH_FILE)) entries.push('admin-auth.json');
+    if (await fileExists(TELEGRAM_CONFIG_FILE)) entries.push('telegram-notify.json');
     await tar.c({ gzip: true, cwd: DATA_ROOT, file: tmp }, entries);
     const key = 'daily/' + stamp + '.tgz';
     const uploader = new Upload({
@@ -244,7 +259,13 @@ async function purgeExpiredTrash() {
     Date.now() - new Date(item.deletedAt).getTime() >= TRASH_RETENTION_MS
   );
   if (!expired.length) return 0;
-  if (backupClient()) await createVolumeBackup(true);
+  if (backupClient()) {
+    const backup = await createVolumeBackup(true);
+    if (!backup.ok) {
+      console.warn('trash_purge_skipped backup_not_confirmed');
+      return 0;
+    }
+  }
   for (const item of expired) {
     try { await rm(submissionPath(item.id), { recursive: true, force: true }); }
     catch (error) { console.error('trash_purge_error', item.id, error?.message || error); }
@@ -395,6 +416,7 @@ function requireAdmin(req, res, next) {
 }
 
 function publicBase(req) {
+  if (PUBLIC_API_PREFIX) return SITE_ORIGIN + PUBLIC_API_PREFIX;
   return req.protocol + '://' + req.get('host');
 }
 
@@ -646,10 +668,14 @@ app.get('/health', async (req, res) => {
   res.set('Cache-Control', 'no-store');
   const probe = path.join(DATA_DIR, '.health-' + randomUUID());
   try {
+    if (MIGRATION_READ_ONLY) {
+      await readdir(DATA_DIR);
+      return res.json({ ok: true, service: 'vargi-market-api', version: '2026-10-06', storage: 'persistent-volume', storageCheck: 'read-only', mode: 'read-only', adminInitialized: Boolean(await authState()) });
+    }
     await writeFile(probe, 'ok', { flag: 'wx' });
     if (await readFile(probe, 'utf8') !== 'ok') throw new Error('storage_probe_failed');
     await rm(probe);
-    res.json({ ok: true, service: 'vargi-market-api', version: '2026-10-06', storage: 'persistent-volume', adminInitialized: Boolean(await authState()) });
+    res.json({ ok: true, service: 'vargi-market-api', version: '2026-10-06', storage: 'persistent-volume', storageCheck: 'read-write', mode: 'read-write', adminInitialized: Boolean(await authState()) });
   } catch (error) {
     try { await rm(probe, { force: true }); } catch (_) {}
     console.error('health_storage_error', error?.code || 'unknown');
@@ -684,7 +710,7 @@ app.get('/listings/:id/photos/:filename', async (req, res) => {
     if (item.status !== 'published') return res.sendStatus(404);
     const photo = (item.photos || []).find(p => p.filename === req.params.filename);
     if (!photo) return res.sendStatus(404);
-    res.set('Cache-Control', 'public, max-age=3600');
+    res.set('Cache-Control', 'no-store');
     res.type(photo.mimeType || 'image/jpeg');
     res.sendFile(path.join(submissionPath(item.id), photo.filename));
   } catch {
@@ -1141,6 +1167,7 @@ app.use((error, req, res, next) => {
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`vargi-market-api listening on ${PORT}; storage=${DATA_DIR}`);
+  if (AUTO_MAINTENANCE_DISABLED) return;
   const firstRun = setTimeout(() => runMaintenance(), 15000);
   firstRun.unref?.();
   const maintenanceTimer = setInterval(() => runMaintenance(), 6 * 60 * 60 * 1000);

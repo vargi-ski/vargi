@@ -1,0 +1,5 @@
+services:
+  edge:
+    command: ["caddy", "run", "--config", "/etc/caddy/Caddyfile.www", "--adapter", "caddyfile"]
+    environment:
+      WWW_HOST: ${WWW_HOST:?Set WWW_HOST only after the alias DNS points to this server}

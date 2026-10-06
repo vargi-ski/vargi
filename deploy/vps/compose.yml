@@ -1,0 +1,80 @@
+name: vargi
+
+services:
+  edge:
+    image: vargi-site:${RELEASE_TAG:-local}
+    build:
+      context: ../..
+      dockerfile: deploy/vps/Dockerfile.edge
+    environment:
+      SITE_HOST: ${SITE_HOST:?Set SITE_HOST to the staging or production hostname}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  market-api:
+    image: vargi-market-api:${RELEASE_TAG:-local}
+    build:
+      context: ../../market-api
+    # This file contains ADMIN_SESSION_SECRET and optional notification/backup
+    # credentials. It must be private and OUTSIDE the checkout; run preflight.
+    env_file:
+      - path: ${PRIVATE_ENV_FILE:?Set PRIVATE_ENV_FILE to an external private env file}
+        required: true
+        format: raw
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      DATA_ROOT: /data
+      SUBMISSIONS_DIR: /data/submissions
+      SITE_ORIGIN: ${SITE_ORIGIN:?Set SITE_ORIGIN to https://SITE_HOST}
+      PUBLIC_API_PREFIX: /api/market
+      MIGRATION_READ_ONLY: ${MIGRATION_READ_ONLY:-1}
+      AUTO_MAINTENANCE_DISABLED: ${AUTO_MAINTENANCE_DISABLED:-1}
+    user: "1000:1000"
+    read_only: true
+    volumes:
+      - type: bind
+        source: ${DATA_PATH:?Set DATA_PATH to a private directory owned by UID 1000}
+        target: /data
+        bind:
+          create_host_path: false
+      # Backups are assembled in /tmp before S3 upload. Keep sufficient private
+      # disk space instead of imposing a small RAM-only archive limit.
+      - type: bind
+        source: ${PRIVATE_TMP_PATH:?Set PRIVATE_TMP_PATH to a separate private directory owned by UID 1000}
+        target: /tmp
+        bind:
+          create_host_path: false
+    # No ports: backend traffic is reachable only within the Compose network.
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health',{signal:AbortSignal.timeout(5000)}).then(r=>{if(!r.ok)process.exit(1);return r.json()}).then(j=>{if(!j.ok)process.exit(1)}).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 7s
+      retries: 3
+      start_period: 15s
+    restart: unless-stopped
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  caddy_data:
+  caddy_config:

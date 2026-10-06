@@ -1,0 +1,59 @@
+{
+	admin off
+}
+
+{$SITE_HOST} {
+	root * /srv
+	encode zstd gzip
+	request_body {
+		max_size 32MB
+	}
+	header {
+		-Server
+		X-Content-Type-Options nosniff
+		Referrer-Policy strict-origin-when-cross-origin
+		X-Frame-Options DENY
+	}
+	@api path /api /api/*
+	header @api >Cache-Control "no-store"
+	header @api >CDN-Cache-Control "no-store"
+	@marketUI path /board /board/* /assets/board-runtime.js /assets/board-connection.js
+	header @marketUI >Cache-Control "no-store"
+
+	route {
+		# The image has only public files; this second boundary also rejects probes.
+		@dot path_regexp dot (^|/)\.[^/]*(/|$)
+		respond @dot 404
+		@private {
+			not path /api/market/*
+			path_regexp private (?i)(^|/)(market-api|node_modules|scripts|tests|cloudflare|deploy|backups?|submissions?|admin-auth\.json|telegram-notify\.json)(/|$)
+		}
+		respond @private 404
+		handle_path /api/market/* {
+			reverse_proxy market-api:3000 {
+				header_up Host {$SITE_HOST}
+				header_up -Forwarded
+				header_down Cache-Control "no-store"
+				header_down CDN-Cache-Control "no-store"
+				transport http {
+					dial_timeout 3s
+					response_header_timeout 60s
+				}
+			}
+		}
+		# Unknown API routes return 404, never the home page or another backend.
+		handle @api {
+			respond 404
+		}
+		handle {
+			header Cache-Control "no-cache"
+			file_server
+		}
+	}
+	# Includes connection errors when the API process is down and body limit errors.
+	handle_errors {
+		header Cache-Control "no-store"
+		header CDN-Cache-Control "no-store"
+		respond "{err.status_code} {err.status_text}" {err.status_code}
+	}
+}
