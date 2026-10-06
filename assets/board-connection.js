@@ -66,6 +66,21 @@
     );
   }
 
+  function assetUrl(url) {
+    const value = String(url || '');
+    for (const endpoint of endpoints) {
+      if (value.startsWith(endpoint)) return activeEndpoint + value.slice(endpoint.length);
+    }
+    return value;
+  }
+
+  function alternateUrl(url) {
+    const value = String(url || '');
+    if (value.startsWith(primaryEndpoint)) return fallbackEndpoint + value.slice(primaryEndpoint.length);
+    if (value.startsWith(fallbackEndpoint)) return primaryEndpoint + value.slice(fallbackEndpoint.length);
+    return '';
+  }
+
   async function health(timeoutMs = 8000) {
     try {
       const response = await request(
@@ -160,6 +175,8 @@
     health,
     send,
     request,
+    assetUrl,
+    alternateUrl,
     version,
     endpoints: [...endpoints],
     get base() { return activeEndpoint; },

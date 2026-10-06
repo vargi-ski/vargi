@@ -63,6 +63,18 @@ const cats={skis:'Лыжи',boots:'Ботинки и крепления',poles:'
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm=s=>String(s||'').toLocaleLowerCase('ru').replaceAll('ё','е').trim();
 const money=n=>n==null?'Цена по запросу':new Intl.NumberFormat('ru-RU').format(n)+' ₽';
+const apiPhoto=url=>VargiConnection.assetUrl(url);
+function enablePhotoFailover(root){
+ root.querySelectorAll('img[data-api-photo]').forEach(img=>{
+  img.onerror=()=>{
+   if(img.dataset.fallbackTried==='1')return;
+   const alternate=VargiConnection.alternateUrl(img.src);
+   if(!alternate)return;
+   img.dataset.fallbackTried='1';
+   img.src=alternate;
+  };
+ });
+}
 let listings=[];
 
 function searchable(a){return norm([a.title,a.brand,a.model,a.city,a.description,a.otherSpec,a.style,a.length,a.structureValue,a.structureKind,a.flex,a.weight,a.bindings].join(' '))}
@@ -77,7 +89,8 @@ function filtered(){
 function render(){
  const result=filtered();
  $('#count').textContent=result.length+' объявлений';
- $('#cards').innerHTML=result.map(a=>'<article class="card"><div class="picture">'+(a.photos?.[0]?.url?'<img src="'+esc(a.photos[0].url)+'" alt="Фото объявления">':'<span class="photo-note">Фото не добавлено</span>')+'</div><div class="card-body"><div class="kind">'+esc(cats[a.category]||a.category)+'</div><h3>'+esc(a.title)+'</h3><div class="meta">'+esc(a.city)+(a.condition?' · '+esc(a.condition):'')+'</div>'+(a.description?'<div class="desc">'+esc(a.description)+'</div>':'')+'<div class="price">'+esc(money(a.price))+'</div><div class="card-foot"><button type="button" data-id="'+esc(a.id)+'">Подробнее →</button></div></div></article>').join('');
+ $('#cards').innerHTML=result.map(a=>'<article class="card"><div class="picture">'+(a.photos?.[0]?.url?'<img data-api-photo src="'+esc(apiPhoto(a.photos[0].url))+'" alt="Фото объявления">':'<span class="photo-note">Фото не добавлено</span>')+'</div><div class="card-body"><div class="kind">'+esc(cats[a.category]||a.category)+'</div><h3>'+esc(a.title)+'</h3><div class="meta">'+esc(a.city)+(a.condition?' · '+esc(a.condition):'')+'</div>'+(a.description?'<div class="desc">'+esc(a.description)+'</div>':'')+'<div class="price">'+esc(money(a.price))+'</div><div class="card-foot"><button type="button" data-id="'+esc(a.id)+'">Подробнее →</button></div></div></article>').join('');
+ enablePhotoFailover($('#cards'));
  $('#empty').hidden=result.length>0;
 }
 async function loadListings(){
@@ -98,10 +111,11 @@ async function openDetail(id){
   const a=data.listing;$('#detailKind').textContent=cats[a.category]||a.category;
   const photos=a.photos||[];
   const specs=[['Категория',cats[a.category]||a.category],['Город',a.city],['Состояние',a.condition],['Бренд / модель',[a.brand,a.model].filter(Boolean).join(' ')],['Передача',a.delivery],['Стиль',a.style],['Длина',a.length?String(a.length)+' см':''],['Структура',a.structureValue||a.structureKind],['Жёсткость / маркировка',a.flex],['Вес по подбору',a.weight],['Крепления',a.bindings],['Характеристики',a.otherSpec]].filter(x=>x[1]);
-  const hero=photos[0]?.url?'<img id="heroPhoto" src="'+esc(photos[0].url)+'" alt="Фото объявления">':'Фото не добавлено';
-  const gallery=photos.length>1?'<div class="gallery">'+photos.map((p,i)=>'<button type="button" data-photo="'+i+'"><img src="'+esc(p.url)+'" alt="Фото '+(i+1)+'"></button>').join('')+'</div>':'';
+  const hero=photos[0]?.url?'<img id="heroPhoto" data-api-photo src="'+esc(apiPhoto(photos[0].url))+'" alt="Фото объявления">':'Фото не добавлено';
+  const gallery=photos.length>1?'<div class="gallery">'+photos.map((p,i)=>'<button type="button" data-photo="'+i+'"><img data-api-photo src="'+esc(apiPhoto(p.url))+'" alt="Фото '+(i+1)+'"></button>').join('')+'</div>':'';
   $('#detailBody').innerHTML='<div class="detail-top"><div><div class="detail-main">'+hero+'</div>'+gallery+'</div><div><div class="eyebrow">'+esc(cats[a.category]||a.category)+'</div><h2 class="detail-title">'+esc(a.title)+'</h2><p class="meta">'+esc(a.city)+(a.condition?' · '+esc(a.condition):'')+'</p><div class="detail-price">'+esc(money(a.price))+'</div></div></div><dl class="specs">'+specs.map(x=>'<div><dt>'+esc(x[0])+'</dt><dd>'+esc(x[1])+'</dd></div>').join('')+'</dl><h3>Описание</h3><p class="description">'+esc(a.description||'')+'</p><div class="contact"><b>Контакт продавца</b><br>'+esc(a.contact||a.publicContact||'Не указан')+'</div>';
-  $('#detailBody').querySelectorAll('[data-photo]').forEach(btn=>btn.onclick=()=>{const img=$('#heroPhoto');if(img)img.src=photos[Number(btn.dataset.photo)].url});
+  enablePhotoFailover($('#detailBody'));
+  $('#detailBody').querySelectorAll('[data-photo]').forEach(btn=>btn.onclick=()=>{const img=$('#heroPhoto');if(img){img.dataset.fallbackTried='';img.src=apiPhoto(photos[Number(btn.dataset.photo)].url)}});
  }catch(error){$('#detailBody').innerHTML='<div class="loading error">'+esc(error.message||'Не удалось открыть объявление.')+'</div>'}
 }
 $('#cards').onclick=e=>{const b=e.target.closest('[data-id]');if(b)openDetail(b.dataset.id)};
