@@ -55,7 +55,7 @@ dialog{border:1px solid var(--line);background:#0d141a;color:var(--ink);padding:
 
 <dialog id="detail"><div class="dialog-head"><div class="eyebrow" id="detailKind">Объявление</div><button class="close" id="closeDetail" type="button" aria-label="Закрыть">×</button></div><div class="dialog-body" id="detailBody"><div class="loading">Загрузка…</div></div></dialog>
 
-<script src="/assets/board-connection.js?v=20261006-3"></script>
+<script src="/assets/board-connection.js?v=20261006-4"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s);
@@ -67,10 +67,11 @@ const apiPhoto=url=>VargiConnection.assetUrl(url);
 function enablePhotoFailover(root){
  root.querySelectorAll('img[data-api-photo]').forEach(img=>{
   img.onerror=()=>{
-   if(img.dataset.fallbackTried==='1')return;
+   const attempts=Number(img.dataset.fallbackTried||0);
+   if(attempts>=2)return;
    const alternate=VargiConnection.alternateUrl(img.src);
    if(!alternate)return;
-   img.dataset.fallbackTried='1';
+   img.dataset.fallbackTried=String(attempts+1);
    img.src=alternate;
   };
  });

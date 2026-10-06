@@ -1,0 +1,13 @@
+name = "vargi-market-proxy"
+main = "worker.js"
+compatibility_date = "2026-10-06"
+workers_dev = true
+
+[vars]
+MARKET_ORIGIN = "https://market-api-production-d9ab.up.railway.app"
+
+# После добавления домена в Cloudflare раскомментировать routes:
+# routes = [
+#   { pattern = "xn----7sbbfg4a6clj5k.xn--p1ai/api/market/*", zone_name = "xn----7sbbfg4a6clj5k.xn--p1ai" },
+#   { pattern = "www.xn----7sbbfg4a6clj5k.xn--p1ai/api/market/*", zone_name = "xn----7sbbfg4a6clj5k.xn--p1ai" }
+# ]

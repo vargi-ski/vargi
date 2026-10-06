@@ -1,0 +1,27 @@
+name: Deploy Cloudflare market proxy
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'cloudflare/**'
+      - '.github/workflows/deploy-cloudflare-market-proxy.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cloudflare
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy Worker
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          workingDirectory: cloudflare
+          command: deploy --config wrangler.toml
