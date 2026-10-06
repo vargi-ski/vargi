@@ -2,17 +2,14 @@ const PREFIX = '/api/market';
 const DEFAULT_ORIGIN = 'https://market-api-production-d9ab.up.railway.app';
 
 function cacheTtl(pathname) {
-  if (pathname === '/health') return 0;
   if (pathname === '/listings') return 60;
-  if (/^\/listings\/[^/]+\/photos\//.test(pathname)) return 60 * 60 * 24 * 30;
-  if (/^\/listings\/[^/]+$/.test(pathname)) return 300;
   return 0;
 }
 
 export default {
   async fetch(request, env, ctx) {
     const incoming = new URL(request.url);
-    if (!incoming.pathname.startsWith(PREFIX)) {
+    if (incoming.pathname !== PREFIX && !incoming.pathname.startsWith(PREFIX + '/')) {
       return new Response('Not found', { status: 404 });
     }
 
@@ -36,17 +33,19 @@ export default {
       init.body = request.body;
     }
 
-    const ttl = request.method === 'GET' ? cacheTtl(upstreamPath) : 0;
+    const ttl = request.method === 'GET' && !headers.has('authorization') && !headers.has('cookie')
+      ? cacheTtl(upstreamPath) : 0;
     if (ttl > 0) {
       init.cf = {
         cacheEverything: true,
-        cacheTtl: ttl,
         cacheTtlByStatus: {
-          '200-299': ttl,
-          '404': 5,
-          '500-599': 0
+          '200': ttl,
+          '201-599': -1
         }
       };
+    } else {
+      // Cards and photos must reflect moderation changes immediately.
+      init.cache = 'no-store';
     }
 
     let response;
@@ -64,11 +63,9 @@ export default {
 
     const outgoing = new Response(response.body, response);
     outgoing.headers.set('x-vargi-edge', 'cloudflare');
-    if (ttl > 0 && response.ok) {
-      outgoing.headers.set('cache-control', 'public, max-age=' + ttl);
-    } else if (upstreamPath.startsWith('/admin') || upstreamPath === '/submit' || upstreamPath === '/health') {
-      outgoing.headers.set('cache-control', 'no-store');
-    }
+    // Browser caches must never retain contacts or photos after removal.
+    // Only the anonymous catalogue may have an edge TTL of up to 60 seconds.
+    outgoing.headers.set('cache-control', 'no-store');
     return outgoing;
   }
 };

@@ -1,9 +1,9 @@
 name: Forms regression checks
 on:
   push:
-    paths: ['market-api/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
+    paths: ['market-api/**', 'cloudflare/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
   pull_request:
-    paths: ['market-api/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
+    paths: ['market-api/**', 'cloudflare/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
 permissions:
   contents: read
 jobs:
@@ -23,3 +23,12 @@ jobs:
         working-directory: market-api
       - run: npm audit --omit=dev
         working-directory: market-api
+  market-proxy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: node --test cloudflare/test/*.test.mjs

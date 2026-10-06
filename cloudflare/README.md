@@ -1,47 +1,48 @@
-# Cloudflare edge-прокси для барахолки ВАРГИ
+# Cloudflare-прокси для барахолки ВАРГИ
 
-Цель: браузер пользователя обращается только к тому же домену сайта:
+Браузер обращается к `https://варги-стая.рф/api/market/*`.
+Worker передаёт запросы на `https://market-api-production-d9ab.up.railway.app/*`.
+Основной сайт остаётся на GitHub Pages; резервный API — `market.варги-стая.рф`.
 
-`https://варги-стая.рф/api/market/*`
+## Текущее состояние
 
-Cloudflare Worker проксирует эти запросы в Railway:
+Код подготовлен. Публикация Worker запускается только вручную.
+Наличие файлов в main не означает, что Worker опубликован или DNS переключён.
 
-`https://market-api-production-d9ab.up.railway.app/*`
+- Каталог, карточки, фотографии, заявки и admin поддерживают same-origin адрес.
+- CSP каталога разрешает запросы к собственному домену.
+- Только анонимный GET /listings кэшируется на edge до 60 секунд; browser Cache-Control — no-store.
+- Карточки с контактами, фотографии, admin, submit и health не кэшируются.
+- Запросы с Authorization или Cookie обходят кэш.
+- Кэш фотографий можно включить только вместе с проверенной очисткой при изменении статуса/удалении. Иначе старое фото продолжит открываться после снятия объявления.
+- Если Worker ещё не подключён, фронтенд использует прежние адреса API.
 
-Так браузер больше не зависит от прямой доступности доменов Railway и отдельного поддомена market.
+## Проверка до изменения DNS
 
-## Что уже подготовлено
+1. Опубликовать Worker без routes: действующий wrangler.toml подходит для теста на workers.dev.
+2. Проверить тестовый адрес с путями /api/market/health и /api/market/listings; корень Worker возвращает 404.
+3. Проверить фото, карточку, заявку с фото и admin, включая Safari macOS и реальную проблемную сеть.
+4. Провести проверку доступа из российских сетей. Cloudflare сообщает об ограничениях примерно до 16 КБ на соединение у российских провайдеров:
+   https://developers.cloudflare.com/support/troubleshooting/general-troubleshooting/service-disruption/
+   Успех из другой страны не подтверждает доступность в России.
+5. При неудачной проверке не переключать основной домен. Альтернатива — прокси на другом сервере.
 
-- Worker: `cloudflare/worker.js`
-- конфигурация Wrangler: `cloudflare/wrangler.toml.example`
-- фронтенд сначала пробует same-origin `/api/market`
-- если Worker ещё не подключён, фронтенд автоматически откатывается на текущие адреса Railway
-- GET каталога и карточек кэшируются на edge
-- фотографии кэшируются до 30 дней
-- отправка заявок, health и admin не кэшируются
+## Включение основного маршрута после успешной проверки
 
-## Безопасный порядок включения
-
-1. Добавить домен `xn----7sbbfg4a6clj5k.xn--p1ai` в Cloudflare.
-2. Перед сменой NS перенести в Cloudflare все действующие DNS-записи без изменений.
-3. Проверить GitHub Pages, market CNAME, MX/TXT и остальные записи.
-4. Переключить NS у регистратора на Cloudflare.
-5. Убедиться, что основной сайт продолжает открываться по HTTPS.
-6. Развернуть Worker.
-7. Добавить routes из `wrangler.toml.example`.
-8. Проверить:
-   - `/api/market/health`
-   - `/api/market/listings`
-   - фотографии
-   - подачу тестового объявления
-   - Safari macOS / Safari iOS / Chrome macOS / Windows
+1. Добавить домен xn----7sbbfg4a6clj5k.xn--p1ai в Cloudflare.
+2. Сохранить полный снимок действующей DNS-зоны у регистратора, включая A, AAAA, CNAME, MX, TXT, CAA и делегированные NS. Проверить DNSSEC/DS до смены NS.
+3. Перенести записи без потерь. market и подтверждение Railway оставить DNS-only; основной origin — GitHub Pages.
+4. Для основной зоны использовать Full (strict), если сертификат GitHub Pages действителен. Worker fetch к техническому Railway-домену сам проверяет его сертификат; ослабление режима зоны не исправляет исходящий fetch.
+5. Только после сверки DNS и проверки сертификатов заменить NS у регистратора, проверить сайт и почту.
+6. Раскомментировать routes верхнего уровня выше [vars] и вручную опубликовать Worker.
+7. Проверить основные пути, фото, подачу заявки и модерацию с телефона и компьютера.
+8. Для отката вернуть прежние NS/режим proxy по сохранённому снимку. Фронтенд сохраняет fallback на прежний API.
 
 ## GitHub Actions
 
-Workflow `.github/workflows/deploy-cloudflare-market-proxy.yml` использует секреты:
+Workflow .github/workflows/deploy-cloudflare-market-proxy.yml использует CLOUDFLARE_API_TOKEN и CLOUDFLARE_ACCOUNT_ID.
+Вводить секреты только в GitHub Settings → Secrets and variables → Actions. Не передавать их в чат и не хранить в репозитории.
 
-- `CLOUDFLARE_API_TOKEN`
-- `CLOUDFLARE_ACCOUNT_ID`
+## Проверки
 
-Секреты вводятся только в GitHub Settings → Secrets and variables → Actions.
-Не передавать токены в чат и не хранить их в репозитории.
+`node --test cloudflare/test/*.test.mjs`
