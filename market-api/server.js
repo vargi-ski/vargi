@@ -1,8 +1,8 @@
 import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
-import { rateLimit } from 'express-rate-limit';
-import { mkdir, writeFile, readFile, readdir, rm, rename, access } from 'node:fs/promises';
+import { rateLimit, ipKeyGenerator } from 'express-rate-limit';
+import { mkdir, writeFile, readFile, readdir, rm, rename, access, lstat } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { randomUUID, randomBytes, scryptSync, timingSafeEqual, createHmac, createHash } from 'node:crypto';
 import path from 'node:path';
@@ -11,6 +11,8 @@ import heicConvert from 'heic-convert';
 import { S3Client, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import * as tar from 'tar';
+import { createGatewaySubmit, gatewaySecret } from './gateway-transport.mjs';
+import { gatewayJpeg, gatewayPhotoSlot } from './gateway-photo.mjs';
 
 const app = express();
 app.disable('x-powered-by');
@@ -52,7 +54,7 @@ await mkdir(DATA_DIR, { recursive: true });
 
 // Record arrival, response and interrupted uploads without logging form/contact data.
 app.use((req, res, next) => {
-  if (req.path !== '/submit') return next();
+  if (!['/submit', '/gateway/submit'].includes(req.path)) return next();
   const trace = randomUUID();
   const started = Date.now();
   res.set('X-Request-Id', trace);
@@ -695,7 +697,28 @@ app.get('/listings/:id/photos/:filename', async (req, res) => {
 const submissionInFlight = new Map();
 const submissionCategories = { skis: 'Лыжи', boots: 'Ботинки и крепления', poles: 'Палки', rollers: 'Лыжероллеры', clothes: 'Одежда и аксессуары' };
 
-app.post('/submit', upload.array('photos', 6), async (req, res) => {
+// Gateway photos have a separate bounded response. Stored photos and legacy URLs
+// stay unchanged; unpublished submissions are never available on this route.
+app.get('/gateway/photos/:id/:filename', async (req, res) => {
+  if (!gatewaySecret(process.env.GATEWAY_SUBMIT_SECRET)) return res.sendStatus(503);
+  try {
+    const item = await loadSubmission(req.params.id);
+    if (item.status !== 'published') return res.sendStatus(404);
+    const photo = (item.photos || []).find(p => p.filename === req.params.filename);
+    if (!photo || !/^photo-\d{2}\.jpg$/.test(photo.filename)) return res.sendStatus(404);
+    const source = path.join(submissionPath(item.id), photo.filename);
+    const info = await lstat(source);
+    if (!info.isFile() || info.size > 12 * 1024 * 1024) return res.sendStatus(404);
+    const jpeg = await gatewayPhotoSlot(async () => gatewayJpeg(sharp, await readFile(source)));
+    if ((await loadSubmission(req.params.id)).status !== 'published') return res.sendStatus(404);
+    res.set('Cache-Control', 'no-store');
+    res.type('image/jpeg').send(jpeg);
+  } catch (error) {
+    res.sendStatus(error?.status === 503 ? 503 : 404);
+  }
+});
+
+async function submitSubmission(req, res) {
   let submissionDir = null;
   let releaseRequest = null;
   let requestId = '';
@@ -838,7 +861,26 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
   } finally {
     if (releaseRequest) { submissionInFlight.delete(requestId); releaseRequest(); }
   }
+}
+
+app.post('/submit', upload.array('photos', 6), submitSubmission);
+
+const gatewayLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  limit: 6,
+  keyGenerator: req => ipKeyGenerator(req.verifiedGatewayIp),
+  standardHeaders: true,
+  legacyHeaders: false,
+  handler(req, res) {
+    const retryAfter = Math.max(1, Math.ceil(((req.rateLimit?.resetTime?.getTime() || Date.now() + 900000) - Date.now()) / 1000));
+    res.set('Retry-After', String(retryAfter));
+    res.status(429).json({ ok: false, retryAfter, error: `Слишком много попыток. Повторите через ${Math.ceil(retryAfter / 60)} мин. Данные и фото остались в вашей вкладке.` });
+  }
 });
+app.post('/gateway/submit', createGatewaySubmit({
+  secret: process.env.GATEWAY_SUBMIT_SECRET,
+  upload: upload.array('photos', 6), limiter: gatewayLimiter, handler: submitSubmission
+}));
 
 app.get('/admin/status', async (req, res) => {
   res.json({

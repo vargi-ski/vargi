@@ -1,0 +1,243 @@
+# PENDING ONLY: not the first preview specification.
+# Replace function/account IDs after private signer, HMAC backend and uploads pass review.
+# Do not grant allUsers/allAuthenticatedUsers invocation to the signer function.
+openapi: 3.0.0
+info:
+  title: Vargi public gateway — pending private submit function
+  version: '2026-10-07'
+  description: 'PENDING: private authenticated signer and bounded-photo backend must be deployed and accepted
+    first.'
+x-yc-apigateway:
+  validator:
+    validateRequestParameters: true
+    validateRequestBody: false
+    validateResponseBody: false
+  cors:
+    origin:
+    - https://xn----7sbbfg4a6clj5k.xn--p1ai
+    - https://www.xn----7sbbfg4a6clj5k.xn--p1ai
+    methods:
+    - GET
+    - POST
+    - OPTIONS
+    allowedHeaders:
+    - Content-Type
+    exposedHeaders:
+    - Retry-After
+    - X-Request-Id
+    credentials: false
+    maxAge: 300
+    optionsSuccessStatus: 204
+paths:
+  /health:
+    get:
+      operationId: publicHealth
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      - $ref: '#/components/parameters/Accept'
+      responses:
+        default:
+          description: Unmodified upstream health response.
+      x-yc-apigateway-integration:
+        type: http
+        url: https://market-api-production-d9ab.up.railway.app/health
+        method: GET
+        headers:
+          Host: market-api-production-d9ab.up.railway.app
+          Origin: '{Origin}'
+          Accept: '{Accept}'
+        query:
+          '*': '*'
+        omitEmptyHeaders: true
+        timeouts:
+          connect: 5
+          read: 30
+    options:
+      operationId: publicHealthOptions
+      responses:
+        '204':
+          description: Local preflight; no call to Railway.
+      x-yc-apigateway-integration:
+        $ref: '#/components/x-yc-apigateway-integrations/preflight'
+  /listings:
+    get:
+      operationId: publicListings
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      - $ref: '#/components/parameters/Accept'
+      responses:
+        default:
+          description: Unmodified upstream published catalogue response.
+      x-yc-apigateway-integration:
+        type: http
+        url: https://market-api-production-d9ab.up.railway.app/listings
+        method: GET
+        headers:
+          Host: market-api-production-d9ab.up.railway.app
+          Origin: '{Origin}'
+          Accept: '{Accept}'
+        query:
+          '*': '*'
+        omitEmptyHeaders: true
+        timeouts:
+          connect: 5
+          read: 30
+    options:
+      operationId: publicListingsOptions
+      responses:
+        '204':
+          description: Local preflight; no call to Railway.
+      x-yc-apigateway-integration:
+        $ref: '#/components/x-yc-apigateway-integrations/preflight'
+  /listings/{id}:
+    parameters:
+    - $ref: '#/components/parameters/ListingId'
+    get:
+      operationId: publicListing
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      - $ref: '#/components/parameters/Accept'
+      responses:
+        default:
+          description: Unmodified upstream published listing response.
+      x-yc-apigateway-integration:
+        type: http
+        url: https://market-api-production-d9ab.up.railway.app/listings/{id}
+        method: GET
+        headers:
+          Host: market-api-production-d9ab.up.railway.app
+          Origin: '{Origin}'
+          Accept: '{Accept}'
+        query:
+          '*': '*'
+        omitEmptyHeaders: true
+        timeouts:
+          connect: 5
+          read: 30
+    options:
+      operationId: publicListingOptions
+      responses:
+        '204':
+          description: Local preflight; no call to Railway.
+      x-yc-apigateway-integration:
+        $ref: '#/components/x-yc-apigateway-integrations/preflight'
+  /listings/{id}/photos/{filename}:
+    parameters:
+    - $ref: '#/components/parameters/ListingId'
+    - $ref: '#/components/parameters/PhotoFilename'
+    get:
+      operationId: publicPhoto
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      - $ref: '#/components/parameters/Accept'
+      responses:
+        default:
+          description: Upstream binary photo; verify bytes and Content-Type on the test gateway.
+      x-yc-apigateway-integration:
+        type: http
+        url: https://market-api-production-d9ab.up.railway.app/gateway/photos/{id}/{filename}
+        method: GET
+        headers:
+          Host: market-api-production-d9ab.up.railway.app
+          Origin: '{Origin}'
+          Accept: '{Accept}'
+        query:
+          '*': '*'
+        omitEmptyHeaders: true
+        timeouts:
+          connect: 5
+          read: 30
+    options:
+      operationId: publicPhotoOptions
+      responses:
+        '204':
+          description: Local preflight; no call to Railway.
+      x-yc-apigateway-integration:
+        $ref: '#/components/x-yc-apigateway-integrations/preflight'
+  /submit:
+    post:
+      operationId: publicSubmission
+      parameters:
+      - $ref: '#/components/parameters/Origin'
+      - $ref: '#/components/parameters/Accept'
+      - $ref: '#/components/parameters/MultipartContentType'
+      requestBody:
+        required: true
+        description: Multipart bytes are not mapped; total request must fit the 2.5 MB gateway limit.
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              additionalProperties: true
+              properties:
+                requestId:
+                  type: string
+                  description: Existing application idempotency key; remains inside the multipart body.
+                photos:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        default:
+          description: Unmodified upstream submission result, including validation errors and Retry-After.
+      x-yc-apigateway-integration:
+        type: cloud_functions
+        function_id: FUNCTION_ID
+        service_account_id: SERVICE_ACCOUNT_ID
+        tag: gateway-submit-reviewed
+        payload_format_version: '2.0'
+    options:
+      operationId: publicSubmissionOptions
+      responses:
+        '204':
+          description: Local preflight; no call to Railway.
+      x-yc-apigateway-integration:
+        $ref: '#/components/x-yc-apigateway-integrations/preflight'
+components:
+  parameters:
+    Origin:
+      name: Origin
+      in: header
+      required: false
+      schema:
+        type: string
+        enum:
+        - https://xn----7sbbfg4a6clj5k.xn--p1ai
+        - https://www.xn----7sbbfg4a6clj5k.xn--p1ai
+    Accept:
+      name: Accept
+      in: header
+      required: false
+      schema:
+        type: string
+    MultipartContentType:
+      name: Content-Type
+      in: header
+      required: true
+      schema:
+        type: string
+        pattern: ^multipart/form-data;\s*boundary=.+$
+    ListingId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+        pattern: ^[0-9TZ_-]{20,80}_[a-f0-9]{8}$
+    PhotoFilename:
+      name: filename
+      in: path
+      required: true
+      schema:
+        type: string
+        maxLength: 128
+        pattern: ^[A-Za-z0-9_-]+\.(jpg|jpeg|png|webp)$
+  x-yc-apigateway-integrations:
+    preflight:
+      type: dummy
+      http_code: 204
+      http_headers:
+        Cache-Control: no-store
+      content:
+        '*': ''
