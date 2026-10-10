@@ -1,9 +1,9 @@
 name: Forms regression checks
 on:
   push:
-    paths: ['market-api/**', 'cloudflare/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
+    paths: ['market-api/**', 'yandex/**', 'cloudflare/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
   pull_request:
-    paths: ['market-api/**', 'cloudflare/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
+    paths: ['market-api/**', 'yandex/**', 'cloudflare/**', 'board/**', 'assets/board-*.js', '.github/workflows/forms-check.yml']
 permissions:
   contents: read
 jobs:
@@ -32,3 +32,15 @@ jobs:
         with:
           node-version: 22
       - run: node --test cloudflare/test/*.test.mjs
+
+  gateway-preflight:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install -r yandex/test/requirements.txt
+      - run: python -m unittest discover -s yandex/test -p 'test_*.py'
+      - run: python yandex/function/build.py /tmp/vargi-gateway-submit.zip
