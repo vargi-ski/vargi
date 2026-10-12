@@ -6,7 +6,7 @@
 .vargi-camp-banner__dates{color:#bfd2de}
 .vargi-camp-banner .vargi-camp-banner__link{display:inline-flex;align-items:center;min-height:40px;font-size:13px;font-weight:700;text-decoration:none;color:#9addff;white-space:nowrap}
 .vargi-camp-banner .vargi-camp-banner__link:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
-.vargi-camp-promo{box-sizing:border-box;position:fixed;inset:0;z-index:1000;width:min(800px,calc(100% - 32px));max-width:800px;height:auto;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);padding:0;margin:auto;overflow:auto;overscroll-behavior:contain;border:1px solid #42697f;border-radius:18px;background:#0b131a;color:#f0f6f9;box-shadow:0 25px 100px #000a;font:400 15px/1.55 Inter,Arial,sans-serif}
+.vargi-camp-promo{box-sizing:border-box;position:fixed;inset:0;z-index:1000;width:min(800px,calc(100% - 32px));max-width:800px;height:fit-content;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);padding:0;margin:auto;overflow:auto;overscroll-behavior:contain;border:1px solid #42697f;border-radius:18px;background:#0b131a;color:#f0f6f9;box-shadow:0 25px 100px #000a;font:400 15px/1.55 Inter,Arial,sans-serif}
 .vargi-camp-promo:not([open]){display:none}
 .vargi-camp-promo::backdrop{background:rgba(2,7,11,.84);backdrop-filter:blur(5px)}
 .vargi-camp-promo[open]{animation:vargi-camp-enter .2s ease-out}
@@ -32,7 +32,7 @@
   .vargi-camp-banner__inner{gap:4px}
   .vargi-camp-banner__info{align-items:flex-start;flex-direction:column;gap:2px}
   .vargi-camp-banner__dates{font-size:12px}
-  .vargi-camp-promo{width:calc(100% - 24px);max-height:calc(100dvh - 24px);border-radius:14px}
+  .vargi-camp-promo{width:calc(100% - 24px);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);border-radius:14px}
   .vargi-camp-promo__layout{grid-template-columns:1fr;min-height:0}
   .vargi-camp-promo .vargi-camp-promo__photo{height:160px;min-height:0;object-position:center 38%}
   .vargi-camp-promo__content{padding:24px}
