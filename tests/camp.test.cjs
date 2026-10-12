@@ -20,6 +20,8 @@ test('application carries exact dates, package, room, experience and Unicode com
   assert.equal(direct.origin,'https://forms.yandex.ru');
   assert.equal(direct.searchParams.get('message'),message);
   assert.equal(direct.searchParams.get('answer_choices_96193'),'85177');
+  assert.equal(direct.searchParams.get('vargi_camp'),'first-snow-2026');
+  assert.equal(embedded.searchParams.get('vargi_camp'),'first-snow-2026');
   assert.equal(direct.searchParams.has('answer_boolean_9008988974137832'),false);
   assert.equal(embedded.searchParams.get('message'),message);
   assert.equal(embedded.searchParams.get('iframe'),'1');

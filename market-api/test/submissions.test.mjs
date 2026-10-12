@@ -18,10 +18,10 @@ const png = await sharp(jpeg).png().toBuffer();
 const webp = await sharp(jpeg).webp().toBuffer();
 const fields = () => ({requestId:randomUUID(),title:'ТЕСТ — синтетическое объявление',city:'Тестовый город',categoryKey:'clothes',category:'Одежда и аксессуары',condition:'Б/у',priceValue:'1000',price:'1000 ₽',description:'Автоматический тест, не реальный товар.',contactName:'Тест',publicContact:'@test_do_not_contact',consent:'true',consentVersion:'board-submit-2026-10-05'});
 
-async function server(dataDir) {
+async function server(dataDir, env = {}) {
   const probe=createServer();probe.listen(0,'127.0.0.1');await once(probe,'listening');
   const port=probe.address().port;await new Promise(resolve=>probe.close(resolve));
-  const child=spawn(process.execPath,['server.js'],{cwd:root,env:{PATH:process.env.PATH,PORT:String(port),DATA_ROOT:dataDir,SITE_ORIGIN:origin,NODE_ENV:'test'},stdio:['ignore','pipe','pipe']});
+  const child=spawn(process.execPath,['server.js'],{cwd:root,env:{PATH:process.env.PATH,PORT:String(port),DATA_ROOT:dataDir,SITE_ORIGIN:origin,NODE_ENV:'test',...env},stdio:['ignore','pipe','pipe']});
   let logs='';child.stdout.on('data',b=>{logs+=b});child.stderr.on('data',b=>{logs+=b});
   await new Promise((resolve,reject)=>{
     const timer=setTimeout(()=>{child.kill();reject(new Error('Server startup timeout: '+logs))},10000);
@@ -30,11 +30,11 @@ async function server(dataDir) {
   });
   return {url:`http://127.0.0.1:${port}`,logs:()=>logs,async stop(){const exited=once(child,'exit');child.kill('SIGTERM');await exited}};
 }
-async function fixture(t) {
+async function fixture(t, env = {}) {
   const dataDir=await mkdtemp(join(tmpdir(),'vargi-submit-test-'));
-  let app=await server(dataDir);
+  let app=await server(dataDir,env);
   t.after(async()=>{await app.stop();await rm(dataDir,{recursive:true,force:true})});
-  return {get app(){return app},dataDir,async restart(){await app.stop();app=await server(dataDir)}};
+  return {get app(){return app},dataDir,async restart(){await app.stop();app=await server(dataDir,env)}};
 }
 async function post(app,values=fields(),photos=[{bytes:jpeg,type:'image/jpeg'}]) {
   const form=new FormData();for(const [key,value] of Object.entries(values))if(value!==undefined)form.append(key,String(value));
@@ -125,4 +125,29 @@ test('submission response trace is exposed and logged without private fields',as
   assert.match(trace,/^[a-f0-9-]{36}$/);assert(response.headers.get('access-control-expose-headers').includes('X-Request-Id'));
   const until=Date.now()+1000;while(!f.app.logs().includes('status=201')&&Date.now()<until)await new Promise(resolve=>setTimeout(resolve,10));
   assert(f.app.logs().includes('submission_request trace='+trace));assert(f.app.logs().includes('status=201'));assert(!f.app.logs().includes(values.publicContact));
+});
+
+test('camp webhook authenticates, rejects extra data, ignores other traffic, and durably acknowledges without Telegram',async t=>{
+  const token='synthetic-test-token-not-a-real-secret-123';
+  const f=await fixture(t,{CAMP_FORM_WEBHOOK_TOKEN:token});
+  const body={form_id:'6aacf2a849af472ed76c9d3d',response_id:'synthetic-response-123',camp:'first-snow-2026'};
+  const headers={'Content-Type':'application/json',Authorization:'Bearer '+token};
+  const send=(value=body,extra={})=>fetch(f.app.url+'/integrations/yandex/camp',{method:'POST',headers:{...headers,...extra},body:JSON.stringify(value),signal:AbortSignal.timeout(4000)});
+  assert.equal((await send(body,{Authorization:'Bearer invalid'})).status,401);
+  assert.equal((await send(body,{Origin:origin})).status,403);
+  assert.equal((await send({...body,contact:'private-value-must-not-be-stored'})).status,400);
+  assert.equal((await send({...body,form_id:'different-form'})).status,400);
+  const ignored=await send({...body,camp:''});assert.equal(ignored.status,200);assert.equal((await ignored.json()).ignored,true);
+  assert.deepEqual(await readdir(join(f.dataDir,'camp-notifications')),[]);
+  const first=await send();assert.equal(first.status,202);const accepted=await first.json();
+  assert.equal(accepted.duplicate,false);assert.match(accepted.id,/^[a-f0-9]{64}$/);
+  await f.restart();
+  const retry=await send();assert.equal(retry.status,200);const duplicate=await retry.json();assert.equal(duplicate.id,accepted.id);assert.equal(duplicate.duplicate,true);
+  assert.equal((await readdir(join(f.dataDir,'camp-notifications'))).filter(name=>name.endsWith('.json')).length,1);
+  assert.deepEqual(await readdir(join(f.dataDir,'submissions')),[]);
+  assert.equal((await fetch(f.app.url+'/integrations/yandex/camp/status')).status,401);
+  const status=await fetch(f.app.url+'/integrations/yandex/camp/status',{headers});assert.equal(status.status,503);
+  assert.deepEqual(await status.json(),{configured:false,connected:false,botUsername:'',chatLabel:''});
+  const malformed=await fetch(f.app.url+'/integrations/yandex/camp',{method:'POST',headers,body:'{"private-value-must-not-be-logged"'});assert.equal(malformed.status,400);
+  assert(!f.app.logs().includes('private-value'));
 });

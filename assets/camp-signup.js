@@ -11,7 +11,7 @@
     return ['ЗАЯВКА НА КЕМП ВАРГИ — ВКАТКА 2026','Мурманск · 26 ноября — 5 декабря 2026','Проживание: «Акора», Долина Уюта','', 'Размещение: '+rooms[data.room], 'Планирует приехать: '+count, 'Уровень подготовки: '+levels[data.level], comment ? 'Пожелания: '+comment : '', '', 'Полный пакет с двухместным размещением — 115 000 ₽. Стоимость других вариантов и участия сопровождающих согласуется отдельно.', 'Прошу связаться со мной для согласования участия. Место и условия требуют личного подтверждения.'].filter(function(v){return v!=='';}).join('\n');
   }
   function linksFor(message) {
-    var direct = new URL(formBase); direct.searchParams.set('theme','dark'); direct.searchParams.set('answer_choices_96193','85177'); direct.searchParams.set('message',message);
+    var direct = new URL(formBase); direct.searchParams.set('theme','dark'); direct.searchParams.set('answer_choices_96193','85177'); direct.searchParams.set('vargi_camp','first-snow-2026'); direct.searchParams.set('message',message);
     var embedded = new URL(direct.href); embedded.searchParams.set('iframe','1');
     var telegram = new URL('https://t.me/TomMurman'); telegram.searchParams.set('text',message);
     return {direct:direct.href,embedded:embedded.href,telegram:telegram.href};
