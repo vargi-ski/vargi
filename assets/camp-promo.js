@@ -5,7 +5,7 @@
   const CAMPAIGN = 'vargi-camp-murmansk-2026';
   const DISMISS_KEY = CAMPAIGN + ':dismissed-at';
   const END_AT = Date.parse('2026-11-26T00:00:00+03:00');
-  const COOLDOWN = 7 * 24 * 60 * 60 * 1000;
+  const COOLDOWN = 24 * 60 * 60 * 1000;
   const CAMP_URL = '/camps/first-snow/';
 
   function isActive(now) {
