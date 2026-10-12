@@ -93,7 +93,7 @@
     const info = create('div', 'vargi-camp-banner__info');
     info.append(
       create('strong', 'vargi-camp-banner__title', 'Вкатка 2026 · Мурманск'),
-      create('span', 'vargi-camp-banner__dates', '26 ноября — 5 декабря · 115 000 ₽')
+      create('span', 'vargi-camp-banner__dates', '26 ноября — 5 декабря · от 115 000 ₽')
     );
     inner.append(info, campLink('vargi-camp-banner__link', 'Север зовёт своих →'));
     banner.append(inner);
@@ -145,7 +145,7 @@
     const summary = create('p', 'vargi-camp-promo__summary', '10 дней на снегу: тренировки со стаей, коттеджи в Долине Уюта и северные приключения.');
     summary.id = 'vargi-camp-promo-summary';
     const price = create('p', 'vargi-camp-promo__price');
-    price.append(create('strong', '', '115 000 ₽'), create('span', '', 'Полный пакет · двухместное размещение'));
+    price.append(create('strong', '', 'от 115 000 ₽'), create('span', '', 'Полный пакет · двухместное размещение'));
     const action = campLink('vargi-camp-promo__action', 'Программа и заявка');
     action.addEventListener('click', rememberDismissal);
     content.append(

@@ -1,6 +1,6 @@
 (function (root) {
   'use strict';
-  var rooms = {double:'Двухместный коттедж · полный пакет 115 000 ₽',single:'Одноместное · стоимость по запросу',family:'Семейное · стоимость по запросу',suite:'Люкс с собственной сауной · по запросу',help:'Нужна помощь с размещением'};
+  var rooms = {double:'Двухместный коттедж · полный пакет от 115 000 ₽',single:'Одноместное · стоимость по запросу',family:'Семейное · стоимость по запросу',suite:'Люкс с собственной сауной · по запросу',help:'Нужна помощь с размещением'};
   var levels = {beginner:'Начинаю / небольшой опыт',amateur:'Тренируюсь регулярно',marathon:'Есть опыт лыжных марафонов',sport:'Соревнующийся спортсмен',discuss:'Хочу обсудить с тренером'};
   var formBase = 'https://forms.yandex.ru/u/6aacf2a849af472ed76c9d3d';
   function buildMessage(data) {
@@ -8,7 +8,7 @@
     if (!Object.prototype.hasOwnProperty.call(rooms,data.room) || !Object.prototype.hasOwnProperty.call(levels,data.level) || !Number.isInteger(count) || count < 1 || count > 20) throw new Error('Выберите размещение, уровень и количество участников от 1 до 20.');
     var comment = String(data.comment || '').trim();
     if (comment.length > 500) throw new Error('Сократите комментарий до 500 символов.');
-    return ['ЗАЯВКА НА КЕМП ВАРГИ — ВКАТКА 2026','Мурманск · 26 ноября — 5 декабря 2026','Проживание: «Акора», Долина Уюта','', 'Размещение: '+rooms[data.room], 'Планирует приехать: '+count, 'Уровень подготовки: '+levels[data.level], comment ? 'Пожелания: '+comment : '', '', 'Полный пакет с двухместным размещением — 115 000 ₽. Стоимость других вариантов и участия сопровождающих согласуется отдельно.', 'Прошу связаться со мной для согласования участия. Место и условия требуют личного подтверждения.'].filter(function(v){return v!=='';}).join('\n');
+    return ['ЗАЯВКА НА КЕМП ВАРГИ — ВКАТКА 2026','Мурманск · 26 ноября — 5 декабря 2026','Проживание: «Акора», Долина Уюта','', 'Размещение: '+rooms[data.room], 'Планирует приехать: '+count, 'Уровень подготовки: '+levels[data.level], comment ? 'Пожелания: '+comment : '', '', 'Полный пакет с двухместным размещением — от 115 000 ₽. Стоимость других вариантов и участия сопровождающих согласуется отдельно.', 'Прошу связаться со мной для согласования участия. Место и условия требуют личного подтверждения.'].filter(function(v){return v!=='';}).join('\n');
   }
   function linksFor(message) {
     var direct = new URL(formBase); direct.searchParams.set('theme','dark'); direct.searchParams.set('answer_choices_96193','85177'); direct.searchParams.set('vargi_camp','first-snow-2026'); direct.searchParams.set('message',message);
