@@ -20,6 +20,7 @@ dialog{border:1px solid var(--line);background:#0d141a;color:var(--ink);padding:
 </style>
   <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
   <link rel="stylesheet" href="/assets/site-shortcuts.css?v=20261003">
+  <link rel="stylesheet" href="/assets/camp-promo.css?v=20261012">
 </head>
 <body class="site-shortcuts-page">
 <header class="site-header"><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ"><span class="vargi-wordmark">В<span class="vargi-letter-ice">А</span>Р<span class="vargi-letter-ice">Г</span>И</span></a><span class="header-title">Барахолка стаи</span><div class="header-actions"><a class="button secondary" href="/">На основной сайт</a><a class="button" href="/board/submit/">+ Подать объявление</a></div></div></header>
@@ -125,5 +126,6 @@ $('#closeDetail').onclick=()=>$('#detail').close();$('#detail').onclick=e=>{if(e
 $('#reset').onclick=()=>{$('#q').value='';$('#category').value='';$('#city').value='';$('#min').value='';$('#max').value='';$('#sort').value='newest';render()};
 loadListings();
 </script>
+  <script src="/assets/camp-promo.js?v=20261012" defer></script>
 </body>
 </html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Заявка на вкатку в Мурманске — ВАРГИ 2026</title>
+  <meta name="description" content="Запись на лыжный кемп ВАРГИ в Мурманске, 26 ноября — 5 декабря 2026. Выберите размещение и оставьте контакты для согласования участия.">
+  <meta name="theme-color" content="#070b0f"><meta name="robots" content="noindex,follow">
+  <link rel="canonical" href="https://xn----7sbbfg4a6clj5k.xn--p1ai/camps/first-snow/signup/">
+  <meta property="og:type" content="website"><meta property="og:locale" content="ru_RU"><meta property="og:title" content="На вкатку с ВАРГИ · Мурманск 2026"><meta property="og:description" content="26 ноября — 5 декабря · полный пакет 115 000 ₽ · заявка на участие"><meta property="og:image" content="https://xn----7sbbfg4a6clj5k.xn--p1ai/assets/camp-2026/16.jpg">
+  <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002"><link rel="stylesheet" href="/assets/camp-signup.css?v=20261012">
+</head>
+<body>
+  <header><div class="wrap header-row"><a class="brand" href="/" aria-label="ВАРГИ — главная"><img src="/assets/vargi-rune.svg" width="30" height="30" alt=""><span class="vargi-wordmark">В<span class="vargi-letter-ice">А</span>Р<span class="vargi-letter-ice">Г</span>И</span></a><a href="/camps/first-snow/">О кемпе ↗</a></div></header>
+  <main class="wrap">
+    <div class="intro"><p class="eyebrow">Вкатка 2026 · Мурманск</p><h1>Начни сезон<br><span>со стаей.</span></h1><p class="dates">26 ноября — 5 декабря 2026</p><p>Выберите размещение и расскажите об уровне подготовки. Затем оставьте контакты — мы свяжемся с вами и согласуем участие.</p></div>
+    <div class="price-note"><strong>115 000 ₽</strong><p>Полный пакет с проживанием в двухместном коттедже: тренировки, трёхразовое питание, восстановление и программа кемпа. Одноместное и семейное размещение — по запросу.</p></div>
+    <p class="notice" id="bookingNotice">Это заявка на участие. Место и условия подтверждаются лично; оплата на этой странице не принимается.</p>
+    <noscript><p class="notice">Для выбора условий включите JavaScript или <a href="https://t.me/TomMurman" target="_blank" rel="noopener noreferrer">напишите Артему «ВКАТКА» в Telegram</a>. Можно также <a href="/contact/">оставить сообщение через общую форму</a>.</p></noscript>
+    <form id="campBuilder" hidden aria-describedby="bookingNotice">
+      <h2>1. Ваше участие</h2>
+      <label for="campRoom">Размещение</label>
+      <select id="campRoom" name="room" required><option value="">Выберите вариант</option><option value="double">Двухместный коттедж · полный пакет 115 000 ₽</option><option value="single">Одноместное · стоимость по запросу</option><option value="family">Семейное · стоимость по запросу</option><option value="suite">Люкс с собственной сауной · по запросу</option><option value="help">Помогите выбрать размещение</option></select>
+      <div class="field-grid"><div><label for="campParticipants">Сколько человек планирует приехать</label><input id="campParticipants" name="participants" type="number" min="1" max="20" step="1" value="1" inputmode="numeric" required><p class="hint">Включая вас и сопровождающих. Состав и итоговую стоимость уточним лично.</p></div><div><label for="campLevel">Ваш уровень подготовки</label><select id="campLevel" name="level" required><option value="">Выберите уровень</option><option value="beginner">Начинаю / небольшой опыт</option><option value="amateur">Тренируюсь регулярно</option><option value="marathon">Есть опыт лыжных марафонов</option><option value="sport">Соревнующийся спортсмен</option><option value="discuss">Хочу обсудить с тренером</option></select></div></div>
+      <label for="campComment">Пожелания или вопрос <span class="optional">· необязательно</span></label><textarea id="campComment" name="comment" rows="3" maxlength="500" placeholder="Например: еду с семьёй, хочу улучшить коньковую технику"></textarea>
+      <p id="campError" role="alert" class="error" hidden></p>
+      <button class="button primary" type="submit">Далее: контакты и отправка →</button><p class="hint">На следующем шаге — имя, почта для ответа и отправка заявки.</p>
+    </form>
+    <section id="campCheckout" aria-labelledby="checkoutHeading" hidden>
+      <div class="step-head"><h2 id="checkoutHeading" tabindex="-1">2. Контакты и отправка</h2><button type="button" class="text-button" id="editCamp">Изменить условия</button></div>
+      <div class="summary"><p class="eyebrow">Ваша заявка</p><p id="campSummary"></p><p class="hint">Стоимость других вариантов размещения и участия сопровождающих согласуем лично.</p></div>
+      <p class="notice">Заявка ещё не отправлена. Укажите имя и почту в форме ниже, проверьте сообщение и нажмите кнопку отправки. Дождитесь подтверждения от формы.</p>
+      <div class="form-shell"><iframe id="campForm" title="Имя, почта и отправка заявки на кемп ВАРГИ" name="ya-form-6aacf2a849af472ed76c9d3d" width="650" height="1080" referrerpolicy="no-referrer"></iframe></div>
+      <p class="hint">Форма не загрузилась? <a id="openCampForm" href="https://forms.yandex.ru/u/6aacf2a849af472ed76c9d3d" target="_blank" rel="noopener noreferrer">Откройте её отдельно ↗</a> — выбранные условия будут перенесены.</p>
+      <details class="alternative"><summary>Удобнее связаться через Telegram?</summary><p>Откроется сообщение с вашими условиями. Отправьте его Артему самостоятельно.</p><a id="telegramCamp" class="button secondary" href="https://t.me/TomMurman" target="_blank" rel="noopener noreferrer">Продолжить в Telegram ↗</a></details>
+    </section>
+    <p class="help"><a href="/camps/first-snow/">← Программа, проживание и всё о кемпе</a></p>
+  </main>
+  <footer><div class="wrap"><span>© 2026 ВАРГИ</span><a href="/privacy.html">Политика конфиденциальности</a><a href="https://vk.ru/id1054752399" target="_blank" rel="noopener noreferrer">ВК-страница</a></div></footer>
+  <script src="/assets/camp-signup.js?v=20261012"></script><script src="https://forms.yandex.ru/_static/embed.js" defer></script>
+</body>
+</html>
