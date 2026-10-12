@@ -55,7 +55,7 @@
 <fieldset><legend><span class="n">03</span>Описание и фотографии</legend>
 <label class="field"><span>Описание *</span><textarea name="description" required maxlength="3000" placeholder="Состояние, ремонты, особенности, что входит в комплект и другая полезная информация для покупателя."></textarea></label>
 <label class="field"><span>Фотографии *: JPEG, PNG, WebP или HEIC</span><input id="photosInput" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" multiple></label>
-<p class="hint">От 1 до 6 фото. JPEG, PNG и WebP: до 15 МБ и 64 мегапикселей на исходный снимок — автоматически уменьшим. HEIC/HEIF с iPhone: до 8 МБ, преобразуем на сервере. До 24 МБ суммарно после подготовки.</p><div class="photos" id="photos"></div><p class="hint" id="photoProgress" role="status" aria-live="polite"></p><p class="error" id="photoError" role="alert" hidden></p>
+<p class="hint" id="photoHint">От 1 до 6 фото. JPEG, PNG и WebP: до 15 МБ и 64 мегапикселей на исходный снимок — автоматически уменьшим. HEIC/HEIF с iPhone: до 8 МБ, преобразуем на сервере. До 24 МБ суммарно после подготовки.</p><div class="photos" id="photos"></div><p class="hint" id="photoProgress" role="status" aria-live="polite"></p><p class="error" id="photoError" role="alert" hidden></p>
 </fieldset>
 
 <fieldset><legend><span class="n">04</span>Контакт для объявления</legend><div class="grid">
@@ -75,11 +75,14 @@
 
 </main>
 <footer class="footer"><div class="wrap">ВАРГИ / Барахолка стаи · публикация только после модерации <a href="https://vk.ru/id1054752399" target="_blank" rel="noopener noreferrer">ВК-страница</a></div></footer>
-<script src="/assets/board-connection.js?v=20261006-6"></script>
+<script src="/assets/board-transport.js?v=20261007-7"></script>
+<script src="/assets/board-connection.js?v=20261007-7"></script>
+<script src="/assets/board-photos.js?v=20261007-7"></script>
 <script src="/assets/board-draft.js?v=20261006"></script>
 <script>
 'use strict';
 const $=s=>document.querySelector(s);
+if(VargiConnection.transport==='gateway')$('#photoHint').textContent='От 1 до 6 фото. Заявка вместе с фотографиями — до 2 МБ. JPEG, PNG и WebP автоматически уменьшим. HEIC попробуем подготовить в браузере; крупный файл может потребоваться сохранить как JPEG.';
 const categories={skis:'Лыжи',boots:'Ботинки и крепления',poles:'Палки',rollers:'Лыжероллеры',clothes:'Одежда и аксессуары'};
 const kinds={sell:'Продаю',buy:'Куплю',exchange:'Обмен'};
 let photos=[],photoBytes=0,photoRevision=0,busy=false,current=null,preparedSubmission=null;
@@ -100,40 +103,12 @@ $('#kind').onchange=$('#category').onchange=$('#structureKind').onchange=sync;
 function photoError(message){$('#photoError').textContent=message;$('#photoError').hidden=!message}
 function drawPhotos(){$('#photos').innerHTML=photos.map((p,i)=>'<div class="thumb">'+(p.url?'<img src="'+p.url+'" alt="Фото '+(i+1)+'">':'<div style="width:100%;height:100%;display:grid;place-items:center;border:1px solid #304b5c;border-radius:7px;background:#0a141b;color:#8fd0ef;font-size:12px">HEIC</div>')+'<button type="button" data-remove="'+i+'" aria-label="Удалить фото '+(i+1)+'">×</button></div>').join('')}
 $('#photos').onclick=e=>{const b=e.target.closest('[data-remove]');if(!b||busy)return;const i=Number(b.dataset.remove);photoBytes-=photos[i].size;if(photos[i].url)URL.revokeObjectURL(photos[i].url);photos.splice(i,1);photoRevision++;drawPhotos();saveDraft()};
-async function signature(file){const b=new Uint8Array(await file.slice(0,12).arrayBuffer());const brand=String.fromCharCode(...b.slice(8,12)).toLowerCase();return b[0]===255&&b[1]===216&&b[2]===255?'image/jpeg':b[0]===137&&b[1]===80&&b[2]===78&&b[3]===71?'image/png':String.fromCharCode(...b.slice(0,4))==='RIFF'&&String.fromCharCode(...b.slice(8,12))==='WEBP'?'image/webp':String.fromCharCode(...b.slice(4,8))==='ftyp'&&['heic','heix','hevc','hevx','mif1','msf1'].includes(brand)?'image/heic':''}
-async function compressPhoto(file){
- const mime=await signature(file);if(!mime)throw Error('Нужен настоящий JPEG, PNG, WebP или HEIC.');
- const declared=({'image/jpg':'image/jpeg','image/pjpeg':'image/jpeg','image/x-png':'image/png','image/heif':'image/heic','application/octet-stream':''})[file.type]??file.type;
- if(declared&&declared!==mime)throw Error('Тип файла не соответствует его содержимому. Сохраните снимок как JPEG и выберите его заново.');
- if(!file.size||file.size>15*1024*1024)throw Error('Исходный файл должен быть не больше 15 МБ.');
- if(mime==='image/heic'){
-  if(file.size>8*1024*1024)throw Error('HEIC-файл должен быть не больше 8 МБ.');
-  return new File([file],file.name||'photo.heic',{type:'image/heic',lastModified:file.lastModified});
- }
- const src=URL.createObjectURL(file);
- try{
-  const img=new Image();img.src=src;try{await img.decode()}catch(_){throw Error('Не удалось прочитать фото. Сохраните снимок как JPEG или выберите другой файл.');}
-  if(!img.naturalWidth||!img.naturalHeight)throw Error('Не удалось определить размер фото. Выберите другой файл.');
-  if(img.naturalWidth*img.naturalHeight>64000000)throw Error('Фото больше 64 мегапикселей. Уменьшите разрешение снимка и выберите его заново.');
-  const maxSide=1800,scale=Math.min(1,maxSide/Math.max(img.naturalWidth,img.naturalHeight));
-  if(scale===1&&file.size<=1400*1024)return new File([file],file.name,{type:mime,lastModified:file.lastModified});
-  const canvas=document.createElement('canvas');canvas.width=Math.max(1,Math.round(img.naturalWidth*scale));canvas.height=Math.max(1,Math.round(img.naturalHeight*scale));
-  const ctx=canvas.getContext('2d',{alpha:false});ctx.drawImage(img,0,0,canvas.width,canvas.height);
-  let blob=null;
-  for(const quality of [.82,.72,.62,.52]){
-    blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/jpeg',quality));
-    if(blob&&blob.size<=2300*1024)break;
-  }
-  if(!blob)throw Error('Не удалось подготовить фотографию.');
-  if(blob.size>2300*1024)throw Error('Фото не удалось уменьшить до допустимого размера. Выберите другое изображение.');
-  const base=(file.name.replace(/\.[^.]+$/,'')||'photo').replace(/[^a-zA-Z0-9а-яА-ЯёЁ_-]+/g,'-').slice(0,60);
-  return new File([blob],base+'.jpg',{type:'image/jpeg',lastModified:Date.now()});
- }finally{URL.revokeObjectURL(src)}
-}
+async function compressPhoto(file){return VargiPhotos.preparePhoto(file,{gateway:VargiConnection.transport==='gateway'})}
 async function addPhoto(file){
  if(photos.length>=6)throw Error('Можно добавить не более 6 фото.');
  const prepared=await compressPhoto(file);
- if(photoBytes+prepared.size>24*1024*1024)throw Error('Суммарный размер исходных фото не должен превышать 24 МБ.');
+ const gateway=VargiConnection.transport==='gateway';
+ if(photoBytes+prepared.size>VargiPhotos.totalPhotoBytes(gateway))throw Error(gateway?'Фотографии занимают слишком много места для заявки до 2 МБ. Уберите часть фото или выберите меньшие файлы.':'Суммарный размер исходных фото не должен превышать 24 МБ.');
  const url=prepared.type==='image/heic'?'':URL.createObjectURL(prepared);photos.push({url,size:prepared.size,file:prepared});photoBytes+=prepared.size;photoRevision++;
 }
 $('#photosInput').onchange=async function(){

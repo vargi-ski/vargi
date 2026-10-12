@@ -8,9 +8,29 @@
   const proxyEndpoint = siteOrigin + '/api/market';
   const primaryEndpoint = 'https://market.xn----7sbbfg4a6clj5k.xn--p1ai';
   const fallbackEndpoint = 'https://market-api-production-d9ab.up.railway.app';
-  const endpoints = [proxyEndpoint, primaryEndpoint, fallbackEndpoint];
-  const version = '2026-10-06.6';
-  let activeEndpoint = proxyEndpoint;
+  const deployment = window.VARGI_MARKET_CONFIG || {};
+  const gatewayMode = deployment.transport === 'gateway';
+  let configurationInvalid = deployment.transport !== undefined && !['gateway', 'railway'].includes(deployment.transport);
+  let gatewayEndpoint = '';
+  if (gatewayMode) {
+    try {
+      const url = new URL(deployment.gatewayEndpoint);
+      const raw = String(deployment.gatewayEndpoint || '');
+      if (url.protocol !== 'https:' || url.username || url.password || url.pathname !== '/' || url.search || url.hash ||
+          (raw !== url.origin && raw !== url.origin + '/')) throw new Error('invalid_gateway_origin');
+      gatewayEndpoint = url.origin;
+    } catch (_) { configurationInvalid = true; }
+  }
+  const legacyEndpoints = [proxyEndpoint, primaryEndpoint, fallbackEndpoint];
+  const endpoints = gatewayMode ? (gatewayEndpoint ? [gatewayEndpoint] : []) : legacyEndpoints;
+  const assetEndpoints = [...new Set([...legacyEndpoints, gatewayEndpoint].filter(Boolean))];
+  const maxSubmissionBytes = gatewayMode ? 2000000 : null;
+  const version = '2026-10-07.7';
+  let activeEndpoint = gatewayMode ? gatewayEndpoint : proxyEndpoint;
+
+  function checkConfiguration() {
+    if (configurationInvalid) throw Object.assign(new Error('Настройка подключения к серверу некорректна. Повторите позже.'), { code: 'CONFIG' });
+  }
 
   function orderedEndpoints() {
     return [activeEndpoint, ...endpoints.filter(endpoint => endpoint !== activeEndpoint)];
@@ -44,6 +64,7 @@
   }
 
   async function request(path, options = {}, config = {}) {
+    checkConfiguration();
     if (navigator.onLine === false) {
       throw Object.assign(new Error('Нет подключения к интернету.'), { code: 'OFFLINE' });
     }
@@ -62,7 +83,7 @@
         const response = await fetchOnce(base, path, options, timeoutMs);
         // GitHub Pages returns an HTML error while the optional proxy is absent.
         // Skip it even when it is last: it must not conceal the real API failure.
-        if (safeRetry && isUnavailableProxyRoute(base, response)) continue;
+        if (!gatewayMode && safeRetry && isUnavailableProxyRoute(base, response)) continue;
         if (shouldFailOver(base, response, safeRetry) && i < bases.length - 1) {
           lastResponse = response;
           continue;
@@ -87,21 +108,30 @@
     );
   }
 
+  function endpointSuffix(value, endpoint) {
+    if (value === endpoint) return '';
+    if (value.startsWith(endpoint) && ['/', '?', '#'].includes(value[endpoint.length])) return value.slice(endpoint.length);
+    return null;
+  }
+
   function assetUrl(url) {
     const value = String(url || '');
-    for (const endpoint of endpoints) {
-      if (value.startsWith(endpoint)) return activeEndpoint + value.slice(endpoint.length);
+    for (const endpoint of assetEndpoints) {
+      const suffix = endpointSuffix(value, endpoint);
+      if (suffix !== null) return activeEndpoint + suffix;
     }
     return value;
   }
 
   function alternateUrl(url) {
+    if (gatewayMode) return '';
     const value = String(url || '');
     for (let i = 0; i < endpoints.length; i += 1) {
       const endpoint = endpoints[i];
-      if (value.startsWith(endpoint)) {
+      const suffix = endpointSuffix(value, endpoint);
+      if (suffix !== null) {
         const next = endpoints[(i + 1) % endpoints.length];
-        return next + value.slice(endpoint.length);
+        return next + suffix;
       }
     }
     return '';
@@ -112,7 +142,7 @@
       const response = await request(
         '/health',
         { mode: 'cors', credentials: 'omit', cache: 'no-store' },
-        { timeoutMs: Math.max(1800, Math.floor(timeoutMs / endpoints.length)), safeRetry: true }
+        { timeoutMs: Math.max(1800, Math.floor(timeoutMs / Math.max(1, endpoints.length))), safeRetry: true }
       );
       const result = await response.json();
       return response.ok && result.ok === true;
@@ -122,6 +152,7 @@
   }
 
   async function send(data, timeoutMs = 120000) {
+    checkConfiguration();
     if (navigator.onLine === false) {
       throw Object.assign(new Error('Нет подключения к интернету. Подключитесь и повторите отправку.'), { code: 'OFFLINE' });
     }
@@ -134,9 +165,28 @@
     let response;
 
     try {
+      const options = { method: 'POST', body: data, mode: 'cors', credentials: 'omit' };
+      if (gatewayMode) {
+        if (!data || typeof data.get !== 'function' || typeof data.entries !== 'function') {
+          throw Object.assign(new Error('Не удалось подготовить заявку. Вернитесь к редактированию и повторите.'), { code: 'PAYLOAD' });
+        }
+        // Measure the exact multipart that will be transmitted, including UTF-8
+        // fields, filenames, boundaries and headers. Never recompress on retry.
+        const serialized = new Request(gatewayEndpoint + '/submit', { method: 'POST', body: data });
+        const contentType = serialized.headers.get('Content-Type') || '';
+        if (!contentType.toLowerCase().startsWith('multipart/form-data; boundary=')) {
+          throw Object.assign(new Error('Не удалось подготовить заявку. Вернитесь к редактированию и повторите.'), { code: 'PAYLOAD' });
+        }
+        const body = await serialized.blob();
+        if (body.size > maxSubmissionBytes) {
+          throw Object.assign(new Error('Заявка вместе с фотографиями превышает 2 МБ. Уберите часть фото или выберите меньшие файлы. Данные остались в этой вкладке.'), { code: 'PAYLOAD_LIMIT', status: 413 });
+        }
+        options.body = body;
+        options.headers = { 'Content-Type': contentType };
+      }
       response = await request(
         '/submit',
-        { method: 'POST', body: data, mode: 'cors', credentials: 'omit' },
+        options,
         { timeoutMs: perAttemptTimeout, safeRetry: hasRequestId }
       );
 
@@ -170,7 +220,9 @@
       if (error.code === 'OFFLINE') throw error;
       if (error.code === 'TIMEOUT') {
         throw Object.assign(
-          new Error('Сервер не успел ответить. Запрос проверен через основной и резервные каналы. Повторите отправку — повторная заявка не создастся.'),
+          new Error(gatewayMode
+            ? 'Сервер не успел ответить. Повторите отправку — повторная заявка не создастся.'
+            : 'Сервер не успел ответить. Запрос проверен через основной и резервные каналы. Повторите отправку — повторная заявка не создастся.'),
           { code: 'TIMEOUT' }
         );
       }
@@ -198,6 +250,8 @@
     assetUrl,
     alternateUrl,
     version,
+    transport: gatewayMode ? 'gateway' : 'railway',
+    maxSubmissionBytes,
     endpoints: [...endpoints],
     get base() { return activeEndpoint; },
     get active() { return activeEndpoint; }

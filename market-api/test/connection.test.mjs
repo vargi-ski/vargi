@@ -4,15 +4,17 @@ import { readFile } from 'node:fs/promises';
 import vm from 'node:vm';
 
 const source=await readFile(new URL('../../assets/board-connection.js',import.meta.url),'utf8');
-function client(fetch,online=true){
+function client(fetch,online=true,config){
   const scope=vm.createContext({
-    window:{location:{origin:'https://xn----7sbbfg4a6clj5k.xn--p1ai'}},
-    navigator:{onLine:online},fetch,AbortController,setTimeout,clearTimeout,TypeError
+    window:{location:{origin:'https://xn----7sbbfg4a6clj5k.xn--p1ai'},VARGI_MARKET_CONFIG:config},
+    navigator:{onLine:online},fetch,AbortController,setTimeout,clearTimeout,TypeError,URL,Request
   });
   vm.runInContext(source,scope);
   return scope.window.VargiConnection;
 }
 const json=(body,status=200,headers={})=>new Response(JSON.stringify(body),{status,headers});
+const gateway='https://gateway.example.test';
+const gatewayConfig={transport:'gateway',gatewayEndpoint:gateway};
 
 test('connection: offline does not upload',async()=>{
   let calls=0;
@@ -204,4 +206,100 @@ test('connection: non-idempotent writes and explicitly disabled retries keep the
     assert.equal(response.headers.get('Content-Type'),'text/html; charset=utf-8');
     assert.deepEqual(calls,[[proxy+'/admin/action',method]]);
   }
+});
+
+test('gateway: reads, health, uploads and HTTP/network errors never switch to Railway',async()=>{
+  const calls=[];
+  const api=client(async(url,options)=>{
+    calls.push([url,options]);
+    if(url.endsWith('/submit'))throw new TypeError('Failed to fetch');
+    if(url.endsWith('/health'))return json({ok:true});
+    return json({ok:false,error:'Gateway unavailable'},503);
+  },true,gatewayConfig);
+  assert.equal((await api.request('/listings')).status,503);
+  assert.equal(await api.health(),true);
+  const data=new FormData();data.append('requestId','stable-id');
+  await assert.rejects(api.send(data),e=>e.code==='NETWORK');
+  assert.deepEqual(calls.map(([url])=>url),[gateway+'/listings',gateway+'/health',gateway+'/submit']);
+  assert.deepEqual(Array.from(api.endpoints),[gateway]);
+  assert.equal(api.transport,'gateway');
+  assert.equal(api.maxSubmissionBytes,2000000);
+});
+
+test('gateway: invalid or non-canonical HTTPS origin fails before any request',async()=>{
+  for(const gatewayEndpoint of [undefined,'http://gateway.example.test','https://gateway.example.test/api','https://user:secret@gateway.example.test','https://gateway.example.test?token=secret','https://gateway.example.test/#fragment']){
+    let calls=0;
+    const api=client(async()=>{calls++;return json({ok:true})},true,{transport:'gateway',gatewayEndpoint});
+    await assert.rejects(api.request('/listings'),e=>e.code==='CONFIG');
+    await assert.rejects(api.send(new FormData()),e=>e.code==='CONFIG');
+    assert.equal(await api.health(),false);
+    assert.equal(calls,0);
+  }
+});
+
+test('gateway: cap includes UTF-8 text and actual multipart overhead, not only photos',async()=>{
+  let calls=0;
+  const api=client(async()=>{calls++;return json({ok:true,id:'saved'})},true,gatewayConfig);
+  const data=new FormData();
+  data.append('requestId','stable-id');
+  data.append('description','я'.repeat(110000));
+  data.append('photos',new File([new Uint8Array(1800000)],'photo.jpg',{type:'image/jpeg'}));
+  await assert.rejects(api.send(data),e=>e.code==='PAYLOAD_LIMIT'&&e.status===413);
+  assert.equal(calls,0);
+  assert.equal(data.get('requestId'),'stable-id');
+  assert.equal(data.get('photos').size,1800000);
+});
+
+test('gateway: serialized multipart body is measured and passed with its matching boundary',async()=>{
+  const seen=[];
+  const api=client(async(url,options)=>{seen.push([url,options]);return json({ok:true,id:'saved'})},true,gatewayConfig);
+  const photo=new File([new Uint8Array(300000)],'Фото 1.jpg',{type:'image/jpeg'});
+  const data=new FormData();data.append('requestId','stable-id');data.append('description','Тест\nОписание');data.append('photos',photo);
+  await api.send(data);
+  const [url,options]=seen[0];
+  assert.equal(url,gateway+'/submit');
+  assert.ok(options.body instanceof Blob);
+  assert.ok(options.body.size<=2000000);
+  assert.match(options.headers['Content-Type'],/^multipart\/form-data; boundary=/);
+  const decoded=await new Request(url,{method:'POST',body:options.body,headers:options.headers}).formData();
+  assert.equal(decoded.get('requestId'),'stable-id');
+  assert.equal(decoded.get('description'),'Тест\r\nОписание');
+  assert.equal(decoded.get('photos').name,photo.name);
+  assert.deepEqual(new Uint8Array(await decoded.get('photos').arrayBuffer()),new Uint8Array(await photo.arrayBuffer()));
+});
+
+test('gateway: repeated submissions preserve file bytes and requestId across fresh serialization',async()=>{
+  const observed=[];
+  const api=client(async(url,options)=>{
+    const packet=await new Request(url,{method:'POST',body:options.body,headers:options.headers}).formData();
+    observed.push([packet.get('requestId'),packet.get('title'),Buffer.from(await packet.get('photos').arrayBuffer())]);
+    if(observed.length===1)throw new TypeError('Connection interrupted after acceptance');
+    return json({ok:true,id:'same-submission',duplicate:true});
+  },true,gatewayConfig);
+  const data=new FormData();data.append('requestId','stable-id');data.append('title','Синтетический тест');
+  data.append('photos',new File([new Uint8Array([255,216,255,7,8,9])],'prepared.jpg',{type:'image/jpeg'}));
+  await assert.rejects(api.send(data),e=>e.code==='NETWORK');
+  assert.equal((await api.send(data)).duplicate,true);
+  assert.deepEqual(observed[0],observed[1]);
+});
+
+test('gateway: known photo URLs are rewritten without an old-host alternate or prefix confusion',()=>{
+  const api=client(async()=>{},true,gatewayConfig);
+  for(const origin of [proxy,primary,fallback,gateway]){
+    const suffix='/listings/id/photos/photo-01.jpg';
+    assert.equal(api.assetUrl(origin+suffix),gateway+suffix);
+    assert.equal(api.alternateUrl(origin+suffix),'');
+  }
+  assert.equal(api.assetUrl(primary+'.example.test/listings/id/photos/photo.jpg'),primary+'.example.test/listings/id/photos/photo.jpg');
+  assert.equal(api.assetUrl(proxy+'-other/photo.jpg'),proxy+'-other/photo.jpg');
+});
+
+test('railway: a payload over 2 MB is unchanged and is not capped by opt-in gateway policy',async()=>{
+  let body;
+  const api=client(async(_,options)=>{body=options.body;return json({ok:true,id:'saved'})});
+  const data=new FormData();data.append('requestId','stable-id');data.append('photos',new File([new Uint8Array(3000000)],'photo.jpg',{type:'image/jpeg'}));
+  await api.send(data);
+  assert.equal(body,data);
+  assert.equal(api.transport,'railway');
+  assert.equal(api.maxSubmissionBytes,null);
 });

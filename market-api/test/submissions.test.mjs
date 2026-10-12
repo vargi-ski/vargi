@@ -45,14 +45,20 @@ async function post(app,values=fields(),photos=[{bytes:jpeg,type:'image/jpeg'}])
 
 test('client: verified MIME is retained, 48 MP resizes, >64 MP is rejected',async()=>{
   const source=await readFile(join(root,'../board/submit/index.html'),'utf8');
-  const code=source.slice(source.indexOf('async function signature('),source.indexOf('async function addPhoto('));
-  let width=120,height=80,canvas;
-  const scope=vm.createContext({File,Blob,URL,Uint8Array,Image:class {naturalWidth=width;naturalHeight=height;async decode(){}},document:{createElement(){canvas={getContext(){return{drawImage(){}}},toBlob(cb){cb(new Blob([jpeg],{type:'image/jpeg'}))}};return canvas}}});
+  const code=await readFile(join(root,'../assets/board-photos.js'),'utf8');
+  let width=120,height=80;
+  const drawn=[];
+  const scope=vm.createContext({window:{},File,Blob,URL,Uint8Array,setTimeout,clearTimeout,
+    Image:class {naturalWidth=width;naturalHeight=height;async decode(){}},
+    document:{createElement(){return{getContext(){return{drawImage(img,x,y,w,h){drawn.push([w,h])}}},toBlob(cb){cb(new Blob([jpeg],{type:'image/jpeg'}))}}}}});
   vm.runInContext(code,scope);
-  for(const type of ['image/jpeg','','image/jpg','application/octet-stream']){scope.file=new File([jpeg],'test.jpg',{type});const result=await vm.runInContext('compressPhoto(file)',scope);assert.equal(result.type,'image/jpeg')}
+  const prepare=()=>vm.runInContext('window.VargiPhotos.preparePhoto(file)',scope);
+  for(const type of ['image/jpeg','','image/jpg','application/octet-stream']){scope.file=new File([jpeg],'test.jpg',{type});assert.equal((await prepare()).type,'image/jpeg')}
+  for(const [bytes,type] of [[png,'image/png'],[webp,'image/webp']]){scope.file=new File([bytes],'test',{type});assert.equal((await prepare()).type,type)}
+  scope.file=new File([jpeg],'spoof.png',{type:'image/png'});await assert.rejects(prepare,/Тип файла не соответствует/);
   width=8000;height=6000;scope.file=new File([jpeg],'48mp.jpg',{type:'image/jpeg'});
-  const resized=await vm.runInContext('compressPhoto(file)',scope);assert.equal(resized.type,'image/jpeg');assert.equal(canvas.width,1800);assert.equal(canvas.height,1350);
-  width=10000;height=7000;await assert.rejects(()=>vm.runInContext('compressPhoto(file)',scope),/64 мегапикселей/);
+  const resized=await prepare();assert.equal(resized.type,'image/jpeg');assert.deepEqual(drawn,[[1800,1350]]);
+  width=10000;height=7000;await assert.rejects(prepare,/64 мегапикселей/);assert.equal(drawn.length,1);
   assert.match(source,/VargiConnection.send\(data\)/);assert.match(source,/data.append\('requestId'/);assert.match(source,/data.append\('consent','true'\)/);
 });
 

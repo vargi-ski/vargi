@@ -1,0 +1,12 @@
+{
+  "region": "Russia",
+  "name": "vargi-market-public-test",
+  "description": "Read-only test public-route HTTP proxy to the existing Railway technical origin",
+  "executionTimeoutSeconds": 60,
+  "specificationFile": "yandex/openapi.yaml",
+  "loggingEnabled": false,
+  "serviceAccount": null,
+  "userNetwork": null,
+  "customDomain": null,
+  "productionDnsChange": false
+}

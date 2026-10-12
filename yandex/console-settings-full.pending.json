@@ -1,0 +1,26 @@
+{
+  "region": "Russia",
+  "name": "vargi-market-public-pending",
+  "description": "PENDING: read routes plus a private signed submission integration; not first preview",
+  "executionTimeoutSeconds": 120,
+  "specificationFile": "yandex/openapi-full.pending.yaml",
+  "loggingEnabled": false,
+  "serviceAccount": "SERVICE_ACCOUNT_ID (function invocation only; function-scoped role)",
+  "userNetwork": null,
+  "customDomain": null,
+  "productionDnsChange": false,
+  "function": {
+    "id": "FUNCTION_ID",
+    "tag": "gateway-submit-reviewed",
+    "payloadFormatVersion": "2.0",
+    "runtime": "nodejs22",
+    "entrypoint": "index.handler",
+    "timeoutSeconds": 120,
+    "memoryMiB": 128,
+    "loggingEnabled": false,
+    "publicInvocation": false,
+    "invokerRole": "functions.functionInvoker",
+    "roleScope": "signer function only",
+    "sharedSecretLocation": "server/function environment only; never YAML, public config or repository"
+  }
+}
