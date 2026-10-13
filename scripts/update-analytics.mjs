@@ -61,6 +61,27 @@ function url(base,params){const u=new URL(base);Object.entries(params).forEach((
 
 async function yandexReport(params){return json(url('https://api-metrika.yandex.net/stat/v1/data',{id:'111210969',accuracy:'full',filters:"ym:s:isRobot=='No'",limit:100,...params}),{headers:{Authorization:`OAuth ${env.YANDEX_METRIKA_TOKEN}`}})}
 const metric = (report,index=0) => num(report?.totals?.[index]);
+async function logYandexFreshness(timeline){
+  const lastDate=(timeline.data||[]).map(x=>x.dimensions?.[0]?.name||'').sort().at(-1)||null;
+  const diagnostic={source:'yandex',dateFrom:timeline.query?.date1||null,dateThrough:timeline.query?.date2||null,lastDate,dataLagSeconds:num(timeline.data_lag),containsSensitiveData:Boolean(timeline.contains_sensitive_data),sampled:Boolean(timeline.sampled)};
+  // Publish only collection metadata: never tokens, visitor details or traffic counts.
+  if(!lastDate||lastDate<daysAgo(1)){
+    try{
+      const unfiltered=await yandexReport({date1:'13daysAgo',date2:'today',metrics:'ym:s:visits',dimensions:'ym:s:date',sort:'ym:s:date',filters:undefined});
+      diagnostic.unfilteredLastDate=(unfiltered.data||[]).map(x=>x.dimensions?.[0]?.name||'').sort().at(-1)||null;
+      diagnostic.unfilteredDataLagSeconds=num(unfiltered.data_lag);
+      diagnostic.newerDatesWithoutRobotFilter=Boolean(diagnostic.unfilteredLastDate&&(!lastDate||diagnostic.unfilteredLastDate>lastDate));
+    }catch{diagnostic.unfilteredCheck='unavailable'}
+    try{
+      const response=await json('https://api-metrika.yandex.net/management/v1/counter/111210969',{headers:{Authorization:`OAuth ${env.YANDEX_METRIKA_TOKEN}`}});
+      diagnostic.counterStatus=response.counter?.status||null;
+      diagnostic.counterCodeStatus=response.counter?.code_status||null;
+      diagnostic.counterTimezone=response.counter?.time_zone_name||null;
+      diagnostic.counterRobotFilter=response.counter?.filter_robots??null;
+    }catch{diagnostic.counterCheck='unavailable'}
+  }
+  console.log(`ANALYTICS_FRESHNESS ${JSON.stringify(diagnostic)}`);
+}
 async function fetchYandex(){
   const metrics='ym:s:visits,ym:s:users,ym:s:pageviews,ym:s:bounceRate,ym:s:avgVisitDurationSeconds';
   const [current,previous,timeline,sources,pages,goalsInfo]=await Promise.all([
@@ -74,6 +95,7 @@ async function fetchYandex(){
   if(goals.length){const names=goals.map(g=>`ym:s:goal${g.id}reaches`).join(',');const [gr,prevGr]=await Promise.all([yandexReport({date1:'6daysAgo',date2:'today',metrics:names}),yandexReport({date1:'13daysAgo',date2:'7daysAgo',metrics:names})]);goalRows=goals.map((g,i)=>({name:g.name,reaches:num(gr.totals?.[i])})).sort((a,b)=>b.reaches-a.reaches);previousReaches=(prevGr.totals||[]).reduce((s,x)=>s+num(x),0)}
   const reaches=goalRows.reduce((s,x)=>s+x.reaches,0),previousVisits=metric(previous,0);
   const timelineRows=(timeline.data||[]).map(x=>({date:x.dimensions[0].name,visits:num(x.metrics[0])}));
+  await logYandexFreshness(timeline);
   return {summary:{visits:metric(current,0),users:metric(current,1),pageviews:metric(current,2),bounceRate:metric(current,3),avgDuration:metric(current,4),conversionRate:metric(current,0)?reaches/metric(current,0)*100:0,previousVisits,previousUsers:metric(previous,1),previousPageviews:metric(previous,2),previousConversionRate:previousVisits?previousReaches/previousVisits*100:0},timeline:timelineRows,sources:(sources.data||[]).slice(0,8).map(x=>({name:x.dimensions[0].name,visits:num(x.metrics[0])})),pages:aggregatePages(pages.data||[],x=>x.dimensions[0].name,x=>x.metrics[0],10),goals:goalRows,meta:{period:'7 дней, включая сегодня',dataLagSeconds:num(current.data_lag),lastDataAt:timelineRows.at(-1)?.date||iso(new Date())}};
 }
 
@@ -192,3 +214,4 @@ async function restoreLastSuccessful(payload,password){
 async function main(){let payload;const password=env.DASHBOARD_PASSWORD||(env.MOCK_MODE==='1'?'vargi-test':'');if(env.MOCK_MODE==='1'){payload=await mock()}else{const missing=required.filter(k=>!env[k]);if(missing.length)throw new Error(`Missing secrets: ${missing.join(', ')}`);const [yandex,google,ga4,clarity]=await Promise.all([safe(fetchYandex,{summary:{},timeline:[],sources:[],pages:[],goals:[],meta:{period:'7 дней, включая сегодня'}}),safe(fetchGoogle,{summary:{},queries:[],meta:{period:'7 последних доступных дней'}}),safe(fetchGa4,{summary:{},timeline:[],sources:[],pages:[],meta:{period:'7 дней, включая сегодня'}}),safe(fetchClarity,{summary:{},raw:[],meta:{period:'последние 72 часа'}})]);const generatedAt=new Date().toISOString();for(const source of [yandex,google,ga4,clarity])if(!source.__error)source.meta={...source.meta,lastSuccessfulAt:generatedAt};const healthFor=source=>({ok:!source.__error,stale:false,message:source.__error||'Данные получены',period:source.meta?.period||'',lastDataAt:source.meta?.lastDataAt||null,lastSuccessfulAt:source.meta?.lastSuccessfulAt||null,dataLagSeconds:source.meta?.dataLagSeconds||0});payload={generatedAt,period:{yandex:yandex.meta?.period,google:google.meta?.period,ga4:ga4.meta?.period,clarity:clarity.meta?.period},yandex,google,ga4,clarity,health:{yandex:healthFor(yandex),google:healthFor(google),ga4:healthFor(ga4),clarity:healthFor(clarity)}};payload=await restoreLastSuccessful(payload,password)}
   await mkdir(dirname(OUT),{recursive:true});await writeFile(OUT,JSON.stringify(await encrypt(payload,password),null,2)+'\n');console.log(`Encrypted analytics written to ${OUT}`)}
 main().catch(e=>{console.error(e);process.exit(1)});
+
