@@ -180,6 +180,11 @@ async function fetchGa4(){
   const cur=current.rows?.[0],prev=previous.rows?.[0];
   console.log('GA4: авторизация через service account работает');
   console.log(`ANALYTICS_FRESHNESS ${JSON.stringify({source:'ga4',lastDate:(timeline.rows||[]).map(x=>String(x.dimensionValues?.[0]?.value||'').replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3')).sort().at(-1)||null})}`);
+  try{
+    const recentPages=await ga4Report(token,{dateRanges:[{startDate:'2daysAgo',endDate:'today'}],dimensions:[{name:'pagePath'}],metrics:[{name:'screenPageViews'}],limit:'1000'});
+    const paths=new Set((recentPages.rows||[]).filter(x=>ga4Metric(x)>0).map(x=>normalizePagePath(x.dimensionValues?.[0]?.value)));
+    console.log(`ANALYTICS_COVERAGE ${JSON.stringify({source:'ga4',period:'last3Days',homepageHasViews:paths.has('/'),campHasViews:paths.has('/camps/first-snow/'),shopHasViews:[...paths].some(x=>x.startsWith('/shop/')),boardHasViews:[...paths].some(x=>x.startsWith('/board/')),contactHasViews:paths.has('/contact/')})}`);
+  }catch{console.log('ANALYTICS_COVERAGE unavailable')}
   return {summary:{users:ga4Metric(cur,0),sessions:ga4Metric(cur,1),views:ga4Metric(cur,2),events:ga4Metric(cur,3),previousUsers:ga4Metric(prev,0),previousSessions:ga4Metric(prev,1),previousViews:ga4Metric(prev,2),previousEvents:ga4Metric(prev,3)},timeline:(timeline.rows||[]).map(x=>({date:String(x.dimensionValues?.[0]?.value||'').replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3'),sessions:ga4Metric(x)})),sources:(sources.rows||[]).map(x=>({name:x.dimensionValues?.[0]?.value||'Не определено',sessions:ga4Metric(x)})),pages:aggregatePages(pages.rows||[],x=>x.dimensionValues?.[0]?.value||'/',x=>ga4Metric(x),10),meta:{period:'7 дней, включая сегодня',lastDataAt:new Date().toISOString()}};
 }
 
