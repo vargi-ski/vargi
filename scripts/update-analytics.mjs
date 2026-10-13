@@ -73,11 +73,13 @@ async function logYandexFreshness(timeline){
       diagnostic.newerDatesWithoutRobotFilter=Boolean(diagnostic.unfilteredLastDate&&(!lastDate||diagnostic.unfilteredLastDate>lastDate));
     }catch{diagnostic.unfilteredCheck='unavailable'}
     try{
-      const response=await json('https://api-metrika.yandex.net/management/v1/counter/111210969',{headers:{Authorization:`OAuth ${env.YANDEX_METRIKA_TOKEN}`}});
+      const response=await json('https://api-metrika.yandex.net/management/v1/counter/111210969?field=filters',{headers:{Authorization:`OAuth ${env.YANDEX_METRIKA_TOKEN}`}});
       diagnostic.counterStatus=response.counter?.status||null;
       diagnostic.counterCodeStatus=response.counter?.code_status||null;
       diagnostic.counterTimezone=response.counter?.time_zone_name||null;
       diagnostic.counterRobotFilter=response.counter?.filter_robots??null;
+      diagnostic.counterFilters=(response.counter?.filters||[]).map(({attr,type,action,status})=>({attr,type,action,status}));
+      diagnostic.counterActivityStatus=response.counter?.activity_status||null;
     }catch{diagnostic.counterCheck='unavailable'}
   }
   console.log(`ANALYTICS_FRESHNESS ${JSON.stringify(diagnostic)}`);
@@ -172,6 +174,7 @@ async function fetchGa4(){
   ]);
   const cur=current.rows?.[0],prev=previous.rows?.[0];
   console.log('GA4: авторизация через service account работает');
+  console.log(`ANALYTICS_FRESHNESS ${JSON.stringify({source:'ga4',lastDate:(timeline.rows||[]).map(x=>String(x.dimensionValues?.[0]?.value||'').replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3')).sort().at(-1)||null})}`);
   return {summary:{users:ga4Metric(cur,0),sessions:ga4Metric(cur,1),views:ga4Metric(cur,2),events:ga4Metric(cur,3),previousUsers:ga4Metric(prev,0),previousSessions:ga4Metric(prev,1),previousViews:ga4Metric(prev,2),previousEvents:ga4Metric(prev,3)},timeline:(timeline.rows||[]).map(x=>({date:String(x.dimensionValues?.[0]?.value||'').replace(/^(\d{4})(\d{2})(\d{2})$/,'$1-$2-$3'),sessions:ga4Metric(x)})),sources:(sources.rows||[]).map(x=>({name:x.dimensionValues?.[0]?.value||'Не определено',sessions:ga4Metric(x)})),pages:aggregatePages(pages.rows||[],x=>x.dimensionValues?.[0]?.value||'/',x=>ga4Metric(x),10),meta:{period:'7 дней, включая сегодня',lastDataAt:new Date().toISOString()}};
 }
 
