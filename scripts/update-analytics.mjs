@@ -73,13 +73,18 @@ async function logYandexFreshness(timeline){
       diagnostic.newerDatesWithoutRobotFilter=Boolean(diagnostic.unfilteredLastDate&&(!lastDate||diagnostic.unfilteredLastDate>lastDate));
     }catch{diagnostic.unfilteredCheck='unavailable'}
     try{
-      const response=await json('https://api-metrika.yandex.net/management/v1/counter/111210969?field=filters',{headers:{Authorization:`OAuth ${env.YANDEX_METRIKA_TOKEN}`}});
+      const response=await json('https://api-metrika.yandex.net/management/v1/counter/111210969?field=filters,mirrors',{headers:{Authorization:`OAuth ${env.YANDEX_METRIKA_TOKEN}`}});
       diagnostic.counterStatus=response.counter?.status||null;
       diagnostic.counterCodeStatus=response.counter?.code_status||null;
       diagnostic.counterTimezone=response.counter?.time_zone_name||null;
       diagnostic.counterRobotFilter=response.counter?.filter_robots??null;
       diagnostic.counterFilters=(response.counter?.filters||[]).map(({attr,type,action,status})=>({attr,type,action,status}));
       diagnostic.counterActivityStatus=response.counter?.activity_status||null;
+      const configuredSites=[response.counter?.site,response.counter?.site2?.site,...(response.counter?.mirrors||[]),...(response.counter?.mirrors2||[])];
+      const configuredHosts=configuredSites.map(site=>{const value=typeof site==='string'?site:site?.site||site?.domain||'';if(!value)return null;try{return new URL(value.includes('://')?value:`https://${value}`).hostname.toLowerCase()}catch{return null}}).filter(Boolean);
+      diagnostic.productionHostListed=configuredHosts.includes('xn----7sbbfg4a6clj5k.xn--p1ai');
+      diagnostic.githubPagesHostListed=configuredHosts.includes('vargi-ski.github.io');
+      diagnostic.configuredHostCount=new Set(configuredHosts).size;
     }catch{diagnostic.counterCheck='unavailable'}
   }
   console.log(`ANALYTICS_FRESHNESS ${JSON.stringify(diagnostic)}`);
