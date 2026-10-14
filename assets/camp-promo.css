@@ -8,13 +8,14 @@
 .vargi-camp-banner .vargi-camp-banner__link:hover{color:#fff;text-decoration:underline;text-underline-offset:4px}
 .vargi-camp-promo{box-sizing:border-box;position:fixed;inset:0;z-index:1000;width:min(800px,calc(100% - 32px));max-width:800px;height:fit-content;max-height:calc(100vh - 32px);max-height:calc(100dvh - 32px);padding:0;margin:auto;overflow:auto;overscroll-behavior:contain;border:1px solid #42697f;border-radius:18px;background:#0b131a;color:#f0f6f9;box-shadow:0 25px 100px #000a;font:400 15px/1.55 Inter,Arial,sans-serif}
 .vargi-camp-promo:not([open]){display:none}
-.vargi-camp-promo::backdrop{background:rgba(2,7,11,.84);backdrop-filter:blur(5px)}
-.vargi-camp-promo[open]{animation:vargi-camp-enter .2s ease-out}
+/* Keep the native dialog and its backdrop free of composited blur/animation. */
+.vargi-camp-promo{filter:none;-webkit-backdrop-filter:none;backdrop-filter:none}
+.vargi-camp-promo::backdrop{background:rgba(2,7,11,.84);-webkit-backdrop-filter:none;backdrop-filter:none}
 .vargi-camp-promo__layout{display:grid;grid-template-columns:.92fr 1.08fr;min-height:440px}
 .vargi-camp-promo .vargi-camp-promo__photo{display:block;width:100%;height:100%;min-height:440px;object-fit:cover;object-position:center;background:#10212c}
 .vargi-camp-promo__content{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:48px 32px 30px}
 .vargi-camp-promo .vargi-camp-promo__eyebrow{margin:0 0 18px;color:#8fd0ef;font:700 11px/1.4 Inter,Arial,sans-serif;letter-spacing:.16em}
-.vargi-camp-promo .vargi-camp-promo__title{margin:0 0 16px;color:#f4f8fa;font:600 clamp(32px,4.7vw,46px)/1.04 Oswald,Arial,sans-serif;letter-spacing:.015em;text-transform:uppercase;text-wrap:balance}
+.vargi-camp-promo .vargi-camp-promo__title{margin:0 0 16px;color:#f4f8fa;font:600 clamp(32px,4.7vw,46px)/1.18 Oswald,Arial,sans-serif;letter-spacing:.015em;text-transform:uppercase;text-wrap:balance}
 .vargi-camp-promo .vargi-camp-promo__location{margin:0;color:#91d5f6;font-size:17px;font-weight:700}
 .vargi-camp-promo .vargi-camp-promo__dates{margin:2px 0 0;font-size:16px;font-weight:600;color:#f0f6f9}
 .vargi-camp-promo .vargi-camp-promo__summary{margin:18px 0 0;color:#bacbd6;font-size:13px;line-height:1.65}
@@ -25,7 +26,6 @@
 .vargi-camp-promo .vargi-camp-promo__close{box-sizing:border-box;position:absolute;top:10px;right:10px;z-index:1;display:flex;align-items:center;justify-content:center;width:44px;height:44px;margin:0;padding:0;border:1px solid #68899c;border-radius:50%;background:#0b1721f5;color:#fff;font:400 30px/1 Arial,sans-serif;cursor:pointer}
 .vargi-camp-promo .vargi-camp-promo__close:hover{background:#233d4d}
 .vargi-camp-promo :focus-visible,.vargi-camp-banner :focus-visible{outline:3px solid #fff;outline-offset:4px}
-@keyframes vargi-camp-enter{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 @media(min-width:1000px){.site-shortcuts-page .vargi-camp-banner__inner{max-width:min(1180px,calc(100vw - 328px))}}
 @media(max-width:600px){
   .vargi-camp-banner{padding:12px 16px}
@@ -33,14 +33,14 @@
   .vargi-camp-banner__info{align-items:flex-start;flex-direction:column;gap:2px}
   .vargi-camp-banner__dates{font-size:12px}
   .vargi-camp-promo{width:calc(100% - 24px);max-height:calc(100vh - 24px);max-height:calc(100dvh - 24px);border-radius:14px}
-  .vargi-camp-promo__layout{grid-template-columns:1fr;min-height:0}
-  .vargi-camp-promo .vargi-camp-promo__photo{height:160px;min-height:0;object-position:center 38%}
-  .vargi-camp-promo__content{padding:24px}
-  .vargi-camp-promo .vargi-camp-promo__eyebrow{margin-bottom:10px}
-  .vargi-camp-promo .vargi-camp-promo__title{font-size:34px;margin-bottom:12px}
-  .vargi-camp-promo .vargi-camp-promo__summary{margin-top:12px;font-size:12px}
-  .vargi-camp-promo .vargi-camp-promo__price{margin:16px 0}
-  .vargi-camp-promo .vargi-camp-promo__action{width:100%}
+  .vargi-camp-promo__layout{grid-template-columns:minmax(0,1fr);min-height:0}
+  /* The portrait poster includes raster text: don't crop it into a mobile strip. */
+  .vargi-camp-promo .vargi-camp-promo__photo{display:none}
+  .vargi-camp-promo__content{min-width:0;padding:60px 22px 24px}
+  .vargi-camp-promo .vargi-camp-promo__eyebrow{margin-bottom:12px;font-size:12px;letter-spacing:.1em}
+  .vargi-camp-promo .vargi-camp-promo__title{font-size:clamp(28px,8.5vw,34px);line-height:1.2;margin-bottom:14px}
+  .vargi-camp-promo .vargi-camp-promo__summary{margin-top:14px;font-size:15px;line-height:1.6;color:#d3dfe7}
+  .vargi-camp-promo .vargi-camp-promo__price{margin:18px 0;font-size:13px;color:#d3dfe7}
+  .vargi-camp-promo .vargi-camp-promo__action{width:100%;font-size:15px;min-height:50px}
 }
-@media(max-height:640px) and (max-width:600px){.vargi-camp-promo .vargi-camp-promo__photo{height:105px}.vargi-camp-promo__content{padding:20px}.vargi-camp-promo .vargi-camp-promo__title{font-size:30px}}
-@media(prefers-reduced-motion:reduce){.vargi-camp-promo[open]{animation:none}.vargi-camp-promo .vargi-camp-promo__action{transition:none}}
+@media(prefers-reduced-motion:reduce){.vargi-camp-promo .vargi-camp-promo__action{transition:none}}
