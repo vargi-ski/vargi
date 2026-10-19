@@ -1,0 +1,166 @@
+{
+  "checkedOn": "2026-10-19",
+  "scope": "RussiaLoppet 2027 calendar; published main and expanded athlete profiles",
+  "countingRule": "Count official Marathon entries, including shortened marathons; exclude half-marathons. Best 50 km requires confirmed distance.",
+  "teamSources": [
+    "https://russialoppet.ru/teams/11425/",
+    "https://russialoppet.ru/teams/11456/"
+  ],
+  "calendarSources": [
+    "https://russialoppet.ru/events/2027/",
+    "https://russialoppet.ru/cups/region-teams-cup/2027/",
+    "https://russialoppet.ru/registration/",
+    "https://t.me/andrey_chibis/11181"
+  ],
+  "mainStatCorrections": {
+    "Артем Грязев": {
+      "classic": 4,
+      "seasonMax": 15
+    },
+    "Константин Нечаев": {
+      "seasonMax": 14,
+      "fastestVerified": false,
+      "fastestNote": "Красногорский марафон · 2006; дистанция архива уточняется"
+    },
+    "Валерия Максименко": {
+      "skate": 12,
+      "classic": 0,
+      "seasonMax": 6
+    },
+    "Елена Богданова": {
+      "skate": 35,
+      "classic": 11,
+      "fastest": "2:42:41",
+      "fastestEvent": "Экопарк-Алмаз-Ski",
+      "fastestYear": "2024",
+      "seasonMax": 11,
+      "fastestLabel": "Подтверждённые 50 км"
+    },
+    "Людмила Удалова": {
+      "fastest": "2:28:16",
+      "fastestEvent": "Шижма",
+      "fastestYear": "2025",
+      "seasonNote": "Сезоны 2025 и 2026"
+    },
+    "Мария Новоселова": {
+      "fastest": "2:04:44",
+      "fastestEvent": "Экопарк-Алмаз-Ski",
+      "fastestYear": "2024",
+      "fastestLabel": "Подтверждённые 50 км"
+    },
+    "Дмитрий Меньшаков": {
+      "seasonMax": 4,
+      "seasonYear": "2022"
+    },
+    "Алексей Мошкин": {
+      "fastestVerified": false,
+      "fastestNote": "Шижма · 2021; дистанция архива уточняется"
+    },
+    "Максим Зубцов": {
+      "fastestVerified": false,
+      "fastestNote": "Марафон МГУ · 2019; дистанция архива уточняется"
+    },
+    "Екатерина Бурянина": {
+      "fastest": "2:25:06",
+      "fastestEvent": "Вологда-Марафон Кирики-Улита",
+      "fastestYear": "2026"
+    },
+    "Лариса Иванова": {
+      "seasonNote": "Сезоны 2024–2026"
+    },
+    "Алексей Кондратьев": {
+      "fastest": "2:03:52",
+      "fastestEvent": "Деминский марафон",
+      "fastestYear": "2025",
+      "seasonNote": "Сезоны 2022, 2023 и 2025"
+    },
+    "Полина Сероносова": {
+      "fastest": "2:01:34",
+      "fastestEvent": "Деминский марафон",
+      "fastestYear": "2025"
+    }
+  },
+  "expandedAdditions": [
+    {
+      "member": {
+        "name": "Анна Неустроева",
+        "city": "Ковдор",
+        "record": "12 марафонов RussiaLoppet",
+        "photo": "",
+        "rl": "https://russialoppet.ru/athletes/17602/"
+      },
+      "stats": {
+        "name": "Анна Неустроева",
+        "skate": 11,
+        "classic": 1,
+        "fastest": "2:08:33",
+        "fastestEvent": "Апатитский марафон",
+        "fastestYear": "2026",
+        "seasonMax": 2,
+        "seasonYear": "2026"
+      },
+      "result": {
+        "year": "2026",
+        "athlete": "Анна Неустроева",
+        "event": "Апатитский марафон",
+        "time": "2:08:33",
+        "absPlace": 3,
+        "group": "Ж35–39",
+        "groupPlace": 1
+      }
+    },
+    {
+      "member": {
+        "name": "Алексей Карасев",
+        "city": "Мурманск",
+        "record": "27 марафонов · Золотой мастер RL",
+        "photo": "assets/alexey-karasev.jpg",
+        "rl": "https://russialoppet.ru/athletes/19727/"
+      },
+      "stats": {
+        "name": "Алексей Карасев",
+        "skate": 21,
+        "classic": 6,
+        "fastest": "2:23:41",
+        "fastestEvent": "Деминский марафон",
+        "fastestYear": "2025",
+        "seasonMax": 10,
+        "seasonYear": "2025"
+      },
+      "result": {
+        "year": "2026",
+        "athlete": "Алексей Карасев",
+        "event": "Апатитский марафон",
+        "time": "2:26:00",
+        "absPlace": 70,
+        "group": "М55–59",
+        "groupPlace": 6
+      }
+    }
+  ],
+  "additionalCorrection": {
+    "athlete": "Андрей Лисов",
+    "fastest50": "2:38:45",
+    "event": "Праздник Севера 2004",
+    "source": "https://russialoppet.ru/events/murmansk2004.html"
+  },
+  "protocolSources": [
+    "https://russialoppet.ru/results/2026/327336/?gender=F",
+    "https://russialoppet.ru/results/2024/370738/?gender=F",
+    "https://russialoppet.ru/results/2025/246601/?gender=F",
+    "https://russialoppet.ru/results/2025/850/",
+    "https://russialoppet.ru/results/2025/850/?gender=F",
+    "https://russialoppet.ru/results/2025/836/",
+    "https://russialoppet.ru/results/2026/370742/"
+  ],
+  "photoSource": {
+    "Алексей Карасев": "https://www.russialoppet.ru/upload/resize_cache/iblock/2d3/600_600_0/jd7rxkkpge07lvfa0lxe619ibteetaer.jpg",
+    "Анна Неустроева": null
+  },
+  "unresolved": [
+    "Exact historical distance: Нечаев Красногорский 2006, Мошкин Шижма 2021, Зубцов МГУ 2019; display as archive result, not verified 50 km.",
+    "Новоселова: two Classic Supercups not independently confirmed; existing claim preserved, no contradictory evidence.",
+    "Новоселова: historical style classification for Finlandia/Николов Перевоз not fully resolved; existing split preserved.",
+    "Богданова and Новоселова: the new 50 km results are verified and faster than previously published; complete historical minimum is not established for every old race."
+  ]
+}

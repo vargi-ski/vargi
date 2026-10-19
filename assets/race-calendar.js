@@ -1,7 +1,7 @@
-// RussiaLoppet 2027: ЦФО и СЗФО. Сверено 06.10.2026.
+// RussiaLoppet 2027: ЦФО и СЗФО. Сверено 19.10.2026.
 // Общие данные главной страницы и atlas-art-review; источники — в каждой гонке.
 window.VARGI_RACE_CALENDAR = {
-  "checkedOn": "2026-10-06",
+  "checkedOn": "2026-10-19",
   "source": "https://russialoppet.ru/events/2027/",
   "races": [
     {
@@ -11,11 +11,17 @@ window.VARGI_RACE_CALENDAR = {
       "year": "2027",
       "name": "Экопарк-Алмаз-Ski",
       "city": "ЦФО · Рязанская область, Рязань",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "23 января · свободный стиль · 50/25 км",
           "href": "https://russialoppet.ru/events/ecopark-ski2027.html"
+        }
+      ],
+      "registrations": [
+        {
+          "label": "Регистрация · 23 января",
+          "href": "https://russialoppet.ru/registration/ecopark2027/"
         }
       ]
     },
@@ -26,14 +32,20 @@ window.VARGI_RACE_CALENDAR = {
       "year": "2027",
       "name": "Вологда-Марафон Кирики-Улита",
       "city": "СЗФО · Вологодская область, д. Болтино",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "24 января · свободный стиль · 50/25/12 км",
           "href": "https://russialoppet.ru/events/kiriki-ulita2027.html"
         }
       ],
-      "note": "В актуальном календаре RussiaLoppet указан один день — 24 января, только свободный стиль."
+      "note": "В актуальном календаре RussiaLoppet указан один день — 24 января, только свободный стиль.",
+      "registrations": [
+        {
+          "label": "Регистрация на сайте организатора",
+          "href": "https://vologdamarafon.ru/marafon/%D0%BC%D0%B0%D1%80%D0%B0%D1%84%D0%BE%D0%BD-%D0%BA%D0%B8%D1%80%D0%B8%D0%BA%D0%B8-%D1%83%D0%BB%D0%B8%D1%82%D1%8B-%D0%B2-%D1%80%D0%B0%D0%BC%D0%BA%D0%B0%D1%85-%D0%BA%D1%83%D0%B1%D0%BA%D0%B0-%D0%BB%D1%8B%D0%B6%D0%BD%D1%8B%D1%85-%D0%BC%D0%B0%D1%80%D0%B0%D1%84%D0%BE%D0%BD%D0%BE%D0%B2-%D1%80%D0%BE%D1%81%D1%81%D0%B8%D0%B8-russialoppet/%D1%80%D0%B5%D0%B3%D0%B8%D1%81%D1%82%D1%80%D0%B0%D1%86%D0%B8%D1%8F/"
+        }
+      ]
     },
     {
       "group": "Февраль",
@@ -57,7 +69,7 @@ window.VARGI_RACE_CALENDAR = {
       "year": "2027",
       "name": "Галичское Заозерье",
       "city": "ЦФО · Костромская область, Галич",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "12–13 февраля · свободный стиль · 50/28/14/12/7,5/6/3/1/0,5 км",
@@ -68,7 +80,17 @@ window.VARGI_RACE_CALENDAR = {
           "href": "https://russialoppet.ru/events/galichcl2027.html"
         }
       ],
-      "note": "Основные дистанции 50 и 28 км свободным стилем — 13 февраля. Дополнительные гонки начинаются 12 февраля."
+      "note": "Основные дистанции 50 и 28 км свободным стилем — 13 февраля. Дополнительные гонки начинаются 12 февраля.",
+      "registrations": [
+        {
+          "label": "Регистрация · 12–13 февраля · свободный стиль",
+          "href": "https://russialoppet.ru/registration/galich2027/"
+        },
+        {
+          "label": "Регистрация · 14 февраля · классический стиль",
+          "href": "https://russialoppet.ru/registration/galichcl2027/"
+        }
+      ]
     },
     {
       "group": "Февраль",
@@ -107,7 +129,7 @@ window.VARGI_RACE_CALENDAR = {
       "year": "2027",
       "name": "Веденинский марафон",
       "city": "ЦФО · Тульская область, Тула",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "21 февраля · свободный стиль · 50/25 км",
@@ -120,6 +142,16 @@ window.VARGI_RACE_CALENDAR = {
         {
           "label": "23 февраля · классический стиль · 50/25 км",
           "href": "https://russialoppet.ru/events/tula2027cl.html"
+        }
+      ],
+      "registrations": [
+        {
+          "label": "Регистрация · 21–22 февраля · свободный стиль",
+          "href": "https://russialoppet.ru/registration/tula2027/"
+        },
+        {
+          "label": "Регистрация · 23 февраля · классический стиль",
+          "href": "https://russialoppet.ru/registration/tulacl2027/"
         }
       ]
     },
@@ -145,11 +177,17 @@ window.VARGI_RACE_CALENDAR = {
       "year": "2027",
       "name": "KareliaSkiFest Ладога",
       "city": "СЗФО · Республика Карелия, Питкяранта",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "27 февраля · свободный стиль · 60/20/10/5 км",
           "href": "https://russialoppet.ru/events/karelia2027.html"
+        }
+      ],
+      "registrations": [
+        {
+          "label": "Регистрация · 27 февраля",
+          "href": "https://russialoppet.ru/registration/kareliaskifest2027/"
         }
       ]
     },
@@ -173,13 +211,33 @@ window.VARGI_RACE_CALENDAR = {
       ]
     },
     {
+      "group": "Февраль",
+      "d": "27–28",
+      "m": "фев",
+      "year": "2027",
+      "name": "Праздник Севера",
+      "city": "СЗФО · Мурманская область, Мурманск",
+      "status": "soon",
+      "program": [
+        {
+          "label": "27 февраля · свободный стиль · 50/25 км",
+          "href": "https://russialoppet.ru/events/murmansk2027.html"
+        },
+        {
+          "label": "28 февраля · классический стиль · 50/25 км",
+          "href": "https://russialoppet.ru/events/murmanskcl2027.html"
+        }
+      ],
+      "note": "Регистрация на RussiaRunning откроется 1 ноября 2026 года."
+    },
+    {
       "group": "Март",
       "d": "05–07",
       "m": "мар",
       "year": "2027",
       "name": "Дёминский марафон",
       "city": "ЦФО · Ярославская область, Рыбинск",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "05 марта · свободный стиль · 30/10/5/2 км",
@@ -193,6 +251,20 @@ window.VARGI_RACE_CALENDAR = {
           "label": "07 марта · классический стиль · 30/2/1 км",
           "href": "https://russialoppet.ru/events/deminocl2027.html"
         }
+      ],
+      "registrations": [
+        {
+          "label": "Регистрация · 5 марта · гонки-спутники",
+          "href": "https://russialoppet.ru/registration/deminoshort2027/"
+        },
+        {
+          "label": "Регистрация · 6 марта · 50 км",
+          "href": "https://russialoppet.ru/registration/demino2027/"
+        },
+        {
+          "label": "Регистрация · 7 марта · классический стиль",
+          "href": "https://russialoppet.ru/registration/deminocl2027/"
+        }
       ]
     },
     {
@@ -202,11 +274,17 @@ window.VARGI_RACE_CALENDAR = {
       "year": "2027",
       "name": "Владимирский Проку",
       "city": "ЦФО · Владимирская область, Владимир",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "07 марта · свободный стиль · 50/25/10/5/3/2/1 км",
           "href": "https://russialoppet.ru/events/proku2027.html"
+        }
+      ],
+      "registrations": [
+        {
+          "label": "Регистрация · 7 марта",
+          "href": "https://russialoppet.ru/registration/vladimir2027/"
         }
       ]
     },
@@ -222,25 +300,6 @@ window.VARGI_RACE_CALENDAR = {
         {
           "label": "13 марта · свободный стиль · 50 км",
           "href": "https://russialoppet.ru/events/msu2027.html"
-        }
-      ]
-    },
-    {
-      "group": "Март",
-      "d": "13–14",
-      "m": "мар",
-      "year": "2027",
-      "name": "Праздник Севера",
-      "city": "СЗФО · Мурманская область, Мурманск",
-      "status": "soon",
-      "program": [
-        {
-          "label": "13 марта · свободный стиль · 50/25 км",
-          "href": "https://russialoppet.ru/events/murmansk2027.html"
-        },
-        {
-          "label": "14 марта · классический стиль · 50/25 км",
-          "href": "https://russialoppet.ru/events/murmanskcl2027.html"
         }
       ]
     },
@@ -266,11 +325,17 @@ window.VARGI_RACE_CALENDAR = {
       "year": "2027",
       "name": "Апатитский марафон",
       "city": "СЗФО · Мурманская область, Апатиты",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "21 марта · свободный стиль · 50/30/10/5 км",
           "href": "https://russialoppet.ru/events/apatitski2027.html"
+        }
+      ],
+      "registrations": [
+        {
+          "label": "Регистрация · 21 марта",
+          "href": "https://russialoppet.ru/registration/apatity2027/"
         }
       ]
     },
@@ -306,7 +371,8 @@ window.VARGI_RACE_CALENDAR = {
           "label": "28 марта · свободный стиль · 50/25/12,5/5 км",
           "href": "https://russialoppet.ru/events/siyanie-severa2027.html"
         }
-      ]
+      ],
+      "note": "Участие в кубках RussiaLoppet сезона 2027 пока не подтверждено."
     }
   ]
 };

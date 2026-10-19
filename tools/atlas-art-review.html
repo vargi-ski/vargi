@@ -353,7 +353,7 @@
   .race .city{color:var(--muted); font-size:14px; margin-top:4px}
   .badge{display:inline-block; margin-top:14px; font-family:'Oswald'; text-transform:uppercase;
     letter-spacing:.1em; font-size:11px; padding:5px 10px; border-radius:6px; border:1px solid var(--line2)}
-  .badge.open{color:#0a0d10; background:var(--ice); border-color:var(--ice)}
+  .badge.open,.badge.available{color:#0a0d10; background:var(--ice); border-color:var(--ice)}
   .badge.soon{color:var(--ice); background:rgba(62,155,214,.1)}
   .badge.done{color:var(--muted2)}
   .cal-month{grid-column:1/-1; margin-top:18px; padding-bottom:10px; border-bottom:1px solid var(--line2);
@@ -890,7 +890,7 @@
   <div class="wrap">
     <div class="eyebrow">Календарь</div>
     <h2>Ближайшие <span class="ice">старты</span></h2>
-    <p class="lead">Календарь RussiaLoppet 2027 · ЦФО и СЗФО. Сверено 6 октября 2026. Даты и программа могут уточняться.</p>
+    <p class="lead">Календарь RussiaLoppet 2027 · ЦФО и СЗФО. Сверено 19 октября 2026. Даты и программа могут уточняться.</p>
     <div class="cal" id="calList"></div>
     <button class="calendar-toggle" id="calendarToggle" type="button" aria-expanded="false">
       <span class="calendar-toggle-label">Показать все старты</span>
@@ -987,7 +987,7 @@
 
 <!-- Для быстрого отката старые image-data-*.js сохранены в репозитории. -->
 <script src="/assets/image-paths.js"></script>
-<script src="/assets/race-calendar.js?v=20261006"></script>
+<script src="/assets/race-calendar.js?v=20261019"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
 <script src="assets/geography/pack-atlas.js?v=20260916"></script>
 <script>
@@ -1499,7 +1499,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   const wrap = $("#calList");
   const toggle = $("#calendarToggle");
   const initialLimit = 6;
-  const map = {open:"Регистрация открыта", soon:"Предварительно", done:"Завершён"};
+  const map = {open:"Регистрация открыта", available:"Есть регистрация", soon:"Предварительно", done:"Завершён"};
   let currentGroup="";
   CALENDAR.forEach((r,index)=>{
     if(r.group!==currentGroup){
@@ -1526,6 +1526,20 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       program.appendChild(line);
     });
     c.appendChild(program);
+    if(r.registrations?.length){
+      const registrations=el("ul","race-program race-registrations");
+      r.registrations.forEach(item=>{
+        const line=el("li");
+        const link=el("a");
+        link.textContent=item.label+" ↗";
+        link.href=item.href;
+        link.target="_blank";
+        link.rel="noopener noreferrer";
+        line.appendChild(link);
+        registrations.appendChild(line);
+      });
+      c.appendChild(registrations);
+    }
     if(r.note){
       const note=el("p","race-note");
       note.textContent=r.note;
