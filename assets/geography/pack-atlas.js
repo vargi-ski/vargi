@@ -6,7 +6,8 @@
   const WIDTH=1774, HEIGHT=887;
   const locations={
     "Мурманск":{point:[350,107],label:[377,103]},
-    "Мончегорск":{point:[344,154],label:[319,158],align:"end"},
+    "Мончегорск":{point:[344,154],label:[395,177]},
+    "Ковдор":{point:[309,174],label:[230,186],align:"end"},
     "Чупа":{point:[342,216],label:[315,218],align:"end"},
     "Северодвинск":{point:[448,277],label:[471,260]},
     "Мелиоративный":{point:[337,363],label:[307,329],align:"end"},
