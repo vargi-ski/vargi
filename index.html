@@ -822,7 +822,7 @@
       <div class="wolf-stats-grid" id="wolfStatsMain" aria-label="Статистика основного состава"></div>
     </div>
     <div class="stats-tier collapsible-tier" id="wolfStatsReserveTier" hidden>
-      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">10 спортсменов · единая стая</div></div>
+      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">11 спортсменов · единая стая</div></div>
       <div class="wolf-stats-grid" id="wolfStatsReserve" aria-label="Статистика расширенного состава"></div>
     </div>
     <button class="results-toggle" id="statsToggle" type="button" aria-expanded="false" aria-controls="wolfStatsMain wolfStatsReserveTier">
@@ -850,7 +850,7 @@
       </div>
     </div>
     <div class="results-tier collapsible-tier" id="resultsReserveTier" hidden>
-      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">10 спортсменов</div></div>
+      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">11 спортсменов</div></div>
       <div class="team-table-wrap">
         <table class="team-table results-table" aria-label="Крайние марафоны расширенного состава">
           <thead><tr><th>Спортсмен</th><th class="center-head">Год</th><th>Марафон</th><th>Время</th><th>Абсолют</th><th>Группа</th><th>В группе</th></tr></thead>
@@ -983,7 +983,7 @@
 <script src="/assets/race-calendar.js?v=20261019"></script>
 <script src="/assets/shop-catalog.js?v=20261002-compact"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
-<script src="assets/geography/pack-atlas.js?v=20261019-kovdor"></script>
+<script src="assets/geography/pack-atlas.js?v=20261019-vologda"></script>
 <script>
 /* ============================================================
    DATA — правьте здесь. Вёрстка подхватит автоматически.
@@ -1032,7 +1032,8 @@ const RESERVE_ROSTER = [
   { name:"Алексей Марков", city:"Северодвинск", record:"4 марафона RussiaLoppet", photo:"assets/alexey-markov.jpg", rl:"https://russialoppet.ru/athletes/596404/" },
   { name:"Кирилл Гречников", city:"Москва", record:"5 марафонов RussiaLoppet", photo:"assets/kirill-grechnikov.webp", rl:"https://russialoppet.ru/athletes/742977/" },
   {"name":"Анна Неустроева","city":"Ковдор","record":"12 марафонов RussiaLoppet","photo":"","rl":"https://russialoppet.ru/athletes/17602/"},
-  {"name":"Алексей Карасев","city":"Мурманск","record":"27 марафонов · Золотой мастер RL","photo":"assets/alexey-karasev.jpg","rl":"https://russialoppet.ru/athletes/19727/"},
+  {"name":"Алексей Карасев","city":"Мурманск","record":"27 марафонов · Золотой мастер RL","photo":"","rl":"https://russialoppet.ru/athletes/19727/"},
+  {name:"Максим Устинов",city:"Вологда",record:"20 марафонов RussiaLoppet",photo:"assets/maxim-ustinov.jpg",rl:"https://russialoppet.ru/athletes/18911/"},
   { join:true }
 ];
 
@@ -1070,6 +1071,7 @@ const ALL_MEMBERS = [...ROSTER,...RESERVE_ROSTER.filter(member=>!member.join)];
 // Алексей Марков: data/russialoppet-alexey-markov-2026-09-21.json.
 // Сокращённые марафоны входят в общий счёт RL, но не в рекорд ровно на 50 км.
 WOLF_STATS.push(
+  {name:"Максим Устинов",skate:19,classic:1,fastest:"2:02:17",fastestEvent:"Деминский марафон",fastestYear:"2024",fastestLabel:"Подтверждённые 50 км",seasonMax:4,seasonYear:"2024"},
   {"name":"Анна Неустроева","skate":11,"classic":1,"fastest":"2:08:33","fastestEvent":"Апатитский марафон","fastestYear":"2026","seasonMax":2,"seasonYear":"2026"},
   {"name":"Алексей Карасев","skate":21,"classic":6,"fastest":"2:23:41","fastestEvent":"Деминский марафон","fastestYear":"2025","seasonMax":10,"seasonYear":"2025"},
   {name:"Андрей Лисов",skate:6,classic:0,fastest:"2:38:45",fastestEvent:"Праздник Севера",fastestYear:"2004",seasonMax:2,seasonYear:"2025"},
@@ -1082,6 +1084,7 @@ WOLF_STATS.push(
   {name:"Кирилл Гречников",skate:5,classic:0,fastest:"2:26:47",fastestEvent:"Байкальский марафон",fastestYear:"2026",seasonMax:5,seasonYear:"2026"}
 );
 const ATHLETE_PROFILE_LINKS = {
+  "Максим Устинов":"https://russialoppet.ru/athletes/18911/",
   "Анна Неустроева":"https://russialoppet.ru/athletes/17602/",
   "Алексей Карасев":"https://russialoppet.ru/athletes/19727/",
   "Артем Грязев":"https://russialoppet.ru/athletes/17489/",
@@ -1103,6 +1106,7 @@ const ATHLETE_PROFILE_LINKS = {
 
 // Крайний марафон каждого действующего волка. Места — по протоколам RussiaLoppet.
 const RESULTS = [
+  {year:"2026",athlete:"Максим Устинов",event:"Московский лыжный марафон",time:"2:31:51",absPlace:36,group:"М35–39",groupPlace:12},
   {"year":"2026","athlete":"Анна Неустроева","event":"Апатитский марафон","time":"2:08:33","absPlace":3,"group":"Ж35–39","groupPlace":1},
   {"year":"2026","athlete":"Алексей Карасев","event":"Апатитский марафон","time":"2:26:00","absPlace":70,"group":"М55–59","groupPlace":6},
   {year:"2026",athlete:"Кирилл Гречников",event:"Байкальский марафон",time:"2:26:47",absPlace:75,group:"М35–39",groupPlace:12},

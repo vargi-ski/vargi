@@ -114,7 +114,7 @@
         "name": "Алексей Карасев",
         "city": "Мурманск",
         "record": "27 марафонов · Золотой мастер RL",
-        "photo": "assets/alexey-karasev.jpg",
+        "photo": "",
         "rl": "https://russialoppet.ru/athletes/19727/"
       },
       "stats": {
@@ -136,6 +136,44 @@
         "group": "М55–59",
         "groupPlace": 6
       }
+    },
+    {
+      "member": {
+        "name": "Максим Устинов",
+        "city": "Вологда",
+        "record": "20 марафонов RussiaLoppet",
+        "photo": "assets/maxim-ustinov.jpg",
+        "rl": "https://russialoppet.ru/athletes/18911/"
+      },
+      "stats": {
+        "name": "Максим Устинов",
+        "skate": 19,
+        "classic": 1,
+        "fastest": "2:02:17",
+        "fastestEvent": "Деминский марафон",
+        "fastestYear": "2024",
+        "fastestLabel": "Подтверждённые 50 км",
+        "seasonMax": 4,
+        "seasonYear": "2024"
+      },
+      "result": {
+        "year": "2026",
+        "athlete": "Максим Устинов",
+        "event": "Московский лыжный марафон",
+        "time": "2:31:51",
+        "absPlace": 36,
+        "group": "М35–39",
+        "groupPlace": 12
+      },
+      "membershipSource": "Added to expanded roster at owner request on 2026-10-19.",
+      "excludedShortRaces": [
+        "Кирики-Улита 2023: 34 км",
+        "На Комёле 2021: 25 км"
+      ],
+      "fastest50Notes": [
+        "Кирики-Улита 2025: 1:44:47 on shortened 40 km course; counted as official marathon, excluded from 50 km record.",
+        "На Комёле 2020: 1:47:13; final race distance not independently verified, so published time is labeled confirmed 50 km rather than all-time minimum."
+      ]
     }
   ],
   "additionalCorrection": {
@@ -151,16 +189,28 @@
     "https://russialoppet.ru/results/2025/850/",
     "https://russialoppet.ru/results/2025/850/?gender=F",
     "https://russialoppet.ru/results/2025/836/",
-    "https://russialoppet.ru/results/2026/370742/"
+    "https://russialoppet.ru/results/2026/370742/",
+    "https://www.russialoppet.ru/events/demino2024.html",
+    "https://www.russialoppet.ru/results/2024/850/",
+    "https://vologdamarafon.ru/competitions/259/results/protocol/?distance=658&group=True"
   ],
   "photoSource": {
     "Алексей Карасев": "https://www.russialoppet.ru/upload/resize_cache/iblock/2d3/600_600_0/jd7rxkkpge07lvfa0lxe619ibteetaer.jpg",
-    "Анна Неустроева": null
+    "Анна Неустроева": null,
+    "Максим Устинов": "Owner-provided photo_2026-10-19_15-59-31.jpg; original image used unchanged."
   },
   "unresolved": [
     "Exact historical distance: Нечаев Красногорский 2006, Мошкин Шижма 2021, Зубцов МГУ 2019; display as archive result, not verified 50 km.",
     "Новоселова: two Classic Supercups not independently confirmed; existing claim preserved, no contradictory evidence.",
     "Новоселова: historical style classification for Finlandia/Николов Перевоз not fully resolved; existing split preserved.",
     "Богданова and Новоселова: the new 50 km results are verified and faster than previously published; complete historical minimum is not established for every old race."
+  ],
+  "photoUpdates": [
+    {
+      "athlete": "Алексей Карасев",
+      "date": "2026-10-19",
+      "photo": "",
+      "reason": "Owner requested no photo until a VARGI outfit photo is available; previous RussiaLoppet image no longer displayed."
+    }
   ]
 }
