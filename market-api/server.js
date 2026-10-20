@@ -12,6 +12,7 @@ import { S3Client, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/c
 import { Upload } from '@aws-sdk/lib-storage';
 import * as tar from 'tar';
 import { CAMP_ID, CAMP_ALERT_TEXT, CAMP_ANSWERS_URL, createCampOutbox, validateCampPayload } from './camp-notifications.js';
+import { SHOP_ALERT_TEXT, SHOP_ANSWERS_URL, createShopOutbox, validateShopPayload } from './shop-notifications.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -42,6 +43,8 @@ const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN || '';
 const TELEGRAM_CONFIG_FILE = path.join(DATA_ROOT, 'telegram-notify.json');
 const CAMP_FORM_WEBHOOK_TOKEN = process.env.CAMP_FORM_WEBHOOK_TOKEN || '';
 const CAMP_NOTIFICATIONS_DIR = path.join(DATA_ROOT, 'camp-notifications');
+const SHOP_FORM_WEBHOOK_TOKEN = process.env.SHOP_FORM_WEBHOOK_TOKEN || '';
+const SHOP_NOTIFICATIONS_DIR = path.join(DATA_ROOT, 'shop-notifications');
 const BACKUP_S3_ENDPOINT = process.env.BACKUP_S3_ENDPOINT || '';
 const BACKUP_S3_REGION = process.env.BACKUP_S3_REGION || '';
 const BACKUP_S3_BUCKET = process.env.BACKUP_S3_BUCKET || '';
@@ -205,6 +208,7 @@ async function createVolumeBackup(force = false) {
     const entries = ['submissions'];
     if (await fileExists(AUTH_FILE)) entries.push('admin-auth.json');
     if (await fileExists(CAMP_NOTIFICATIONS_DIR)) entries.push('camp-notifications');
+    if (await fileExists(SHOP_NOTIFICATIONS_DIR)) entries.push('shop-notifications');
     await tar.c({ gzip: true, cwd: DATA_ROOT, file: tmp }, entries);
     const key = 'daily/' + stamp + '.tgz';
     const uploader = new Upload({
@@ -388,6 +392,54 @@ app.post('/integrations/yandex/camp', requireCampWebhook, async (req, res) => {
     return res.status(delivery.duplicate ? 200 : 202).json({ ok: true, queued: true, duplicate: delivery.duplicate, id: delivery.key });
   } catch {
     console.error('camp_webhook_store_error');
+    return res.status(503).json({ ok: false, error: 'storage_unavailable' });
+  }
+});
+
+const shopOutbox = await createShopOutbox({
+  directory: SHOP_NOTIFICATIONS_DIR,
+  async send() {
+    const cfg = await telegramConfig();
+    if (!TELEGRAM_BOT_TOKEN || !cfg?.chatId) throw new Error('telegram_not_configured');
+    await telegramApi('sendMessage', {
+      chat_id: cfg.chatId,
+      text: SHOP_ALERT_TEXT,
+      disable_web_page_preview: true,
+      reply_markup: { inline_keyboard: [[{ text: 'Открыть заказы магазина', url: SHOP_ANSWERS_URL }]] }
+    });
+  },
+  log(event, key) { console.log(key ? `${event} id=${key}` : event); }
+});
+
+function requireShopWebhook(req, res, next) {
+  res.set('Cache-Control', 'no-store');
+  if (SHOP_FORM_WEBHOOK_TOKEN.length < 32) return res.status(503).json({ ok: false, error: 'not_configured' });
+  if (!safeEqualText(req.get('authorization'), 'Bearer ' + SHOP_FORM_WEBHOOK_TOKEN)) return res.status(401).json({ ok: false, error: 'unauthorized' });
+  if (req.get('origin')) return res.status(403).json({ ok: false, error: 'server_to_server_only' });
+  next();
+}
+
+app.get('/integrations/yandex/shop/status', requireShopWebhook, async (req, res) => {
+  const cfg = await telegramConfig();
+  const status = { configured: Boolean(TELEGRAM_BOT_TOKEN), connected: Boolean(cfg?.chatId), botReachable: false, botUsername: '', queue: null };
+  try { status.queue = await shopOutbox.status(); }
+  catch { return res.status(503).json({ ...status, error: 'storage_unavailable' }); }
+  if (!TELEGRAM_BOT_TOKEN) return res.status(503).json(status);
+  try {
+    const bot = await telegramApi('getMe');
+    status.botReachable = true;
+    status.botUsername = bot?.username ? '@' + bot.username : '';
+    return res.status(cfg?.chatId ? 200 : 503).json(status);
+  } catch { return res.status(502).json(status); }
+});
+
+app.post('/integrations/yandex/shop', requireShopWebhook, async (req, res) => {
+  if (!validateShopPayload(req.body)) return res.status(400).json({ ok: false, error: 'invalid_payload' });
+  try {
+    const delivery = await shopOutbox.enqueue(req.body.response_id);
+    return res.status(delivery.duplicate ? 200 : 202).json({ ok: true, queued: true, duplicate: delivery.duplicate, id: delivery.key });
+  } catch {
+    console.error('shop_webhook_store_error');
     return res.status(503).json({ ok: false, error: 'storage_unavailable' });
   }
 });
@@ -1181,6 +1233,10 @@ app.delete('/admin/telegram', requireAdmin, async (req, res) => {
 });
 
 app.use((error, req, res, next) => {
+  if (req.path.startsWith('/integrations/yandex/shop')) {
+    console.error('shop_webhook_request_error');
+    return res.status(error?.status === 413 ? 413 : 400).json({ ok: false, error: 'invalid_request' });
+  }
   if (req.path.startsWith('/integrations/yandex/camp')) {
     console.error('camp_webhook_request_error');
     return res.status(error?.status === 413 ? 413 : 400).json({ ok: false, error: 'invalid_request' });
@@ -1196,6 +1252,7 @@ app.use((error, req, res, next) => {
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`vargi-market-api listening on ${PORT}; storage=${DATA_DIR}`);
   campOutbox.start();
+  shopOutbox.start();
   const firstRun = setTimeout(() => runMaintenance(), 15000);
   firstRun.unref?.();
   const maintenanceTimer = setInterval(() => runMaintenance(), 6 * 60 * 60 * 1000);

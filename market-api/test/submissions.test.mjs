@@ -30,8 +30,9 @@ async function server(dataDir, env = {}) {
   });
   return {url:`http://127.0.0.1:${port}`,logs:()=>logs,async stop(){const exited=once(child,'exit');child.kill('SIGTERM');await exited}};
 }
-async function fixture(t, env = {}) {
+async function fixture(t, env = {}, prepare = async () => {}) {
   const dataDir=await mkdtemp(join(tmpdir(),'vargi-submit-test-'));
+  await prepare(dataDir);
   let app=await server(dataDir,env);
   t.after(async()=>{await app.stop();await rm(dataDir,{recursive:true,force:true})});
   return {get app(){return app},dataDir,async restart(){await app.stop();app=await server(dataDir,env)}};
@@ -150,4 +151,74 @@ test('camp webhook authenticates, rejects extra data, ignores other traffic, and
   assert.deepEqual(await status.json(),{configured:false,connected:false,botUsername:'',chatLabel:''});
   const malformed=await fetch(f.app.url+'/integrations/yandex/camp',{method:'POST',headers,body:'{"private-value-must-not-be-logged"'});assert.equal(malformed.status,400);
   assert(!f.app.logs().includes('private-value'));
+});
+
+test('shop webhook isolates authorization and data, durably deduplicates and reports queue health',async t=>{
+  const token='synthetic-shop-token-not-a-real-secret-123';
+  const campToken='synthetic-camp-token-not-a-real-secret-456';
+  const f=await fixture(t,{SHOP_FORM_WEBHOOK_TOKEN:token,CAMP_FORM_WEBHOOK_TOKEN:campToken});
+  const body={form_id:'6aad189e84227c2dd4dbd7a6',response_id:'synthetic-shop-response-123'};
+  const headers={'Content-Type':'application/json',Authorization:'Bearer '+token};
+  const send=(value=body,extra={})=>fetch(f.app.url+'/integrations/yandex/shop',{method:'POST',headers:{...headers,...extra},body:JSON.stringify(value),signal:AbortSignal.timeout(4000)});
+  assert.equal((await send(body,{Authorization:'Bearer invalid'})).status,401);
+  assert.equal((await send(body,{Authorization:'Bearer '+campToken})).status,401);
+  assert.equal((await send(body,{Origin:origin})).status,403);
+  assert.equal((await send({...body,contact:'private-value-must-not-be-stored'})).status,400);
+  assert.equal((await send({...body,form_id:'6aacf2a849af472ed76c9d3d'})).status,400);
+  assert.deepEqual(await readdir(join(f.dataDir,'shop-notifications')),[]);
+  const first=await send();assert.equal(first.status,202);const accepted=await first.json();
+  assert.equal(accepted.duplicate,false);assert.match(accepted.id,/^[a-f0-9]{64}$/);
+  await f.restart();
+  const retry=await send();assert.equal(retry.status,200);const duplicate=await retry.json();
+  assert.equal(duplicate.id,accepted.id);assert.equal(duplicate.duplicate,true);
+  assert.equal((await readdir(join(f.dataDir,'shop-notifications'))).filter(name=>name.endsWith('.json')).length,1);
+  assert.deepEqual(await readdir(join(f.dataDir,'camp-notifications')),[]);
+  assert.deepEqual(await readdir(join(f.dataDir,'submissions')),[]);
+  assert.equal((await fetch(f.app.url+'/integrations/yandex/shop/status')).status,401);
+  const status=await fetch(f.app.url+'/integrations/yandex/shop/status',{headers});assert.equal(status.status,503);
+  assert.deepEqual(await status.json(),{configured:false,connected:false,botReachable:false,botUsername:'',queue:{pending:1,sent:0,unreadable:0,lastSentAt:null}});
+  const malformed=await fetch(f.app.url+'/integrations/yandex/shop',{method:'POST',headers,body:'{"private-value-must-not-be-logged"'});assert.equal(malformed.status,400);
+  const oversized=await fetch(f.app.url+'/integrations/yandex/shop',{method:'POST',headers,body:JSON.stringify({...body,contact:'private-value-'+ 'x'.repeat(33000)})});assert.equal(oversized.status,413);
+  assert(!f.app.logs().includes('private-value'));
+  assert(!f.app.logs().includes(token));
+});
+
+test('shop webhook stays closed when its own token has not been configured',async t=>{
+  const f=await fixture(t,{CAMP_FORM_WEBHOOK_TOKEN:'synthetic-camp-token-not-a-real-secret-456'});
+  const response=await fetch(f.app.url+'/integrations/yandex/shop',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({form_id:'6aad189e84227c2dd4dbd7a6',response_id:'synthetic-no-token'})});
+  assert.equal(response.status,503);
+  assert.deepEqual(await response.json(),{ok:false,error:'not_configured'});
+  assert.deepEqual(await readdir(join(f.dataDir,'shop-notifications')),[]);
+});
+
+test('shop delivery uses the existing recipient and a fixed private-data-free Telegram message',async t=>{
+  const token='synthetic-shop-token-not-a-real-secret-123';
+  const env={SHOP_FORM_WEBHOOK_TOKEN:token,TELEGRAM_BOT_TOKEN:'synthetic-bot-token'};
+  const f=await fixture(t,env,async dataDir=>{
+    await writeFile(join(dataDir,'telegram-notify.json'),JSON.stringify({chatId:123456,chatLabel:'synthetic-user'}));
+    const preload=join(dataDir,'mock-telegram.mjs');
+    await writeFile(preload,`import { appendFile } from 'node:fs/promises';
+globalThis.fetch = async (url, options) => {
+  if (!String(url).startsWith('https://api.telegram.org/botsynthetic-bot-token/')) throw new Error('Unexpected outbound request');
+  const method = String(url).split('/').pop();
+  if (method === 'getMe') return Response.json({ok:true,result:{username:'synthetic_vargi_bot'}});
+  if (method !== 'sendMessage') throw new Error('Unexpected Telegram method');
+  await appendFile(${JSON.stringify(join(dataDir,'telegram-mock.jsonl'))}, JSON.stringify(JSON.parse(options.body))+'\\n');
+  return Response.json({ok:true,result:{message_id:1}});
+};`);
+    env.NODE_OPTIONS='--import='+preload;
+  });
+  const headers={'Content-Type':'application/json',Authorization:'Bearer '+token};
+  const status=await fetch(f.app.url+'/integrations/yandex/shop/status',{headers});
+  assert.equal(status.status,200);
+  const ready=await status.json();assert.equal(ready.connected,true);assert.equal(ready.botReachable,true);
+  const body={form_id:'6aad189e84227c2dd4dbd7a6',response_id:'synthetic-full-flow'};
+  const send=()=>fetch(f.app.url+'/integrations/yandex/shop',{method:'POST',headers,body:JSON.stringify(body)});
+  assert.equal((await send()).status,202);
+  const deadline=Date.now()+3000;
+  while(!f.app.logs().includes('shop_telegram_sent')&&Date.now()<deadline)await new Promise(resolve=>setTimeout(resolve,10));
+  assert(f.app.logs().includes('shop_telegram_sent'));
+  assert.equal((await send()).status,200);
+  const messages=(await readFile(join(f.dataDir,'telegram-mock.jsonl'),'utf8')).trim().split('\n').map(JSON.parse);
+  assert.deepEqual(messages,[{chat_id:123456,text:'Новый заказ экипировки ВАРГИ',disable_web_page_preview:true,reply_markup:{inline_keyboard:[[{text:'Открыть заказы магазина',url:'https://forms.yandex.ru/admin/6aad189e84227c2dd4dbd7a6/answers'}]]}}]);
 });
