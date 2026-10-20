@@ -31,7 +31,8 @@
   }
   function timing(product) {
     if (!product.preorder) return '';
-    return product.preorderRelease ? 'Плановый выпуск — ' + product.preorderRelease + '.' : product.preorderLeadTime ? 'Срок предзаказа — ' + product.preorderLeadTime + '.' : 'Размер и срок согласуем при подтверждении заказа.';
+    const schedule = product.preorderRelease ? 'Плановый выпуск — ' + product.preorderRelease + '.' : product.preorderLeadTime ? 'Срок предзаказа — ' + product.preorderLeadTime + '.' : 'Размер и срок согласуем при подтверждении заказа.';
+    return schedule + ' При предзаказе — предоплата 50% стоимости товара.';
   }
   function productCard(product) {
     const sizes = Object.entries(product.stock || {}).filter(([, quantity]) => quantity > 0);
