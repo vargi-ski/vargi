@@ -140,13 +140,16 @@ window.VARGI_SHOP = [
     "category": "upcoming"
   },
   {
-    "name": "Разминка",
-    "desc": "Разминочный костюм стаи. Ближе к сезону.",
-    "price": "Скоро",
-    "img": "",
-    "soon": true,
+    "name": "Разминочный костюм",
+    "desc": "Куртка и брюки в фирменном дизайне ВАРГИ — горы, волки и ледяной синий.",
+    "price": "22 000 ₽",
+    "img": "/assets/shop-warmup-suit-front-back-2026.webp",
+    "available": false,
     "id": "warmup-suit",
-    "category": "upcoming"
+    "basePrice": 22000,
+    "sizeKind": "clothing",
+    "preorder": true,
+    "category": "warmup"
   },
   {
     "name": "Шапка / бафф",
@@ -179,5 +182,10 @@ window.VARGI_SHOP_CATEGORIES = [
     "id": "racing",
     "title": "Гоночные костюмы",
     "preview": "race-suit"
+  },
+  {
+    "id": "warmup",
+    "title": "Разминочные костюмы",
+    "preview": "warmup-suit"
   }
 ];

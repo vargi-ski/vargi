@@ -25,7 +25,7 @@
       return input.dataset.measurement + ': ' + money.format(input.valueAsNumber) + ' см';
     });
   }
-  function preorderTiming(product) { return product.preorderRelease ? 'плановая дата выпуска — ' + product.preorderRelease : 'срок — ' + product.preorderLeadTime; }
+  function preorderTiming(product) { return product.preorderRelease ? 'плановая дата выпуска — ' + product.preorderRelease : product.preorderLeadTime ? 'срок — ' + product.preorderLeadTime : 'срок согласуем при подтверждении заказа'; }
   function stockTotal(product) { return Object.values(product.stock || {}).reduce(function (sum, value) { return sum + value; }, 0); }
   function quantityFor(row) {
     var value = row.querySelector('.quantity').valueAsNumber;
@@ -79,7 +79,7 @@
     photo.style.backgroundColor = product.bg || '#0b1015';
     row.querySelector('.product-material').textContent = product.material || product.desc;
     row.querySelector('.stock-note').textContent = product.preorder
-      ? (product.preorderRelease ? 'Доступен предзаказ. Плановая дата выпуска — ' + product.preorderRelease + '.' : 'Товар закончился. Возможен предзаказ. Срок — ' + product.preorderLeadTime + '.')
+      ? (product.preorderRelease ? 'Доступен предзаказ. Плановая дата выпуска — ' + product.preorderRelease + '.' : product.preorderLeadTime ? 'Товар закончился. Возможен предзаказ. Срок — ' + product.preorderLeadTime + '.' : 'Доступен предзаказ. Размер и срок согласуем при подтверждении заказа.')
       : 'В наличии: ' + Object.entries(product.stock || {}).filter(function (entry) { return entry[1] > 0; }).map(function (entry) { return entry[0] + ' — ' + entry[1] + ' шт.'; }).join(' · ');
     var isCap = product.sizeKind === 'cap';
     var customSize = usesCustomSize(product);

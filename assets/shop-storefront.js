@@ -25,20 +25,20 @@
     return Boolean(product.available && (!product.stock || Object.values(product.stock).some(quantity => quantity > 0)));
   }
   function availability(product) {
-    if (product.preorderRelease) return 'Доступен предзаказ';
+    if (product.preorder && (product.preorderRelease || !product.preorderLeadTime)) return 'Доступен предзаказ';
     if (!inStock(product)) return product.preorder ? 'Товар закончился · доступен предзаказ' : 'Товар закончился';
     return 'В наличии';
   }
   function timing(product) {
     if (!product.preorder) return '';
-    return product.preorderRelease ? 'Плановый выпуск — ' + product.preorderRelease + '.' : product.preorderLeadTime ? 'Срок предзаказа — ' + product.preorderLeadTime + '.' : '';
+    return product.preorderRelease ? 'Плановый выпуск — ' + product.preorderRelease + '.' : product.preorderLeadTime ? 'Срок предзаказа — ' + product.preorderLeadTime + '.' : 'Размер и срок согласуем при подтверждении заказа.';
   }
   function productCard(product) {
     const sizes = Object.entries(product.stock || {}).filter(([, quantity]) => quantity > 0);
     const soldOutSizes = Object.entries(product.stock || {}).filter(([, quantity]) => quantity === 0);
     return '<a class="product-card" data-product="' + escape(product.id) + '" href="' + escape(productUrl(product.id)) + '">' +
       '<div class="card-photo"><img src="' + escape(product.img) + '" alt="' + escape(product.name) + '" loading="lazy" decoding="async"></div>' +
-      '<div class="card-info"><p class="availability' + (!inStock(product) && !product.preorderRelease ? ' availability--sold-out' : '') + '">' + escape(availability(product)) + '</p>' +
+      '<div class="card-info"><p class="availability' + (!inStock(product) && !product.preorderRelease && (!product.preorder || product.preorderLeadTime) ? ' availability--sold-out' : '') + '">' + escape(availability(product)) + '</p>' +
       '<h3>' + escape(product.name) + '</h3>' +
       '<div class="card-description">' + product.desc + '</div>' +
       (product.material ? '<p class="card-material">Состав: ' + escape(product.material) + '</p>' : '') +
