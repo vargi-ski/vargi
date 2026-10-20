@@ -1,7 +1,9 @@
-// RussiaLoppet 2027: ЦФО и СЗФО. Сверено 19.10.2026.
+// RussiaLoppet 2027: ЦФО и СЗФО. Сверено 20.10.2026.
 // Общие данные главной страницы и atlas-art-review; источники — в каждой гонке.
+// «Сияние Севера» отсутствует в общем календаре и списке регионального кубка
+// на дату сверки; это не подтверждение отмены самой гонки.
 window.VARGI_RACE_CALENDAR = {
-  "checkedOn": "2026-10-19",
+  "checkedOn": "2026-10-20",
   "source": "https://russialoppet.ru/events/2027/",
   "races": [
     {
@@ -357,22 +359,6 @@ window.VARGI_RACE_CALENDAR = {
           "href": "https://russialoppet.ru/events/pomorcl2027.html"
         }
       ]
-    },
-    {
-      "group": "Март",
-      "d": "28",
-      "m": "мар",
-      "year": "2027",
-      "name": "Сияние Севера",
-      "city": "СЗФО · Республика Коми, Ухта",
-      "status": "soon",
-      "program": [
-        {
-          "label": "28 марта · свободный стиль · 50/25/12,5/5 км",
-          "href": "https://russialoppet.ru/events/siyanie-severa2027.html"
-        }
-      ],
-      "note": "Участие в кубках RussiaLoppet сезона 2027 пока не подтверждено."
     }
   ]
 };
