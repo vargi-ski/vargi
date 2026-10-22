@@ -11,10 +11,10 @@ vm.runInContext(html.slice(html.indexOf('const ROSTER ='),html.indexOf('const AT
 const {buildCities}=context.window.VargiAtlas;
 assert.ok(!fs.readFileSync(path.join(root,'assets/geography/pack-atlas.js'),'utf8').includes('"data-count"'),'Do not reuse the site counter hook: it replaces child nodes.');
 const cities=buildCities(context.members);
-assert.equal(context.members.length,26);
+assert.equal(context.members.length,27);
 assert.equal(cities.length,16);
 assert.equal(cities.reduce((sum,c)=>sum+c.members.length,0),context.members.length);
-assert.equal(cities.find(c=>c.city==='Петрозаводск').members.length,4);
+assert.equal(cities.find(c=>c.city==='Петрозаводск').members.length,5);
 assert.equal(cities.find(c=>c.city==='Мурманск').members.length,5);
 assert.deepEqual(Array.from(cities.find(c=>c.city==='Ковдор').members,m=>m.name),['Анна Неустроева']);
 assert.ok(cities.find(c=>c.city==='Мурманск').members.some(m=>m.name==='Алексей Карасев'));
@@ -35,4 +35,4 @@ assert.throws(()=>buildCities([{name:'Некорректная точка',city:
 assert.ok(html.includes('@media(prefers-reduced-motion:reduce){.atlas-beacon'));
 assert.deepEqual(Array.from(context.members.slice(15,19),m=>m.name),['Андрей Лисов','Андрей Касьяненко','Даниил Махов','Виталий Ильин']);
 assert.equal(context.members.find(m=>m.name==='Андрей Касьяненко').rl,'https://russialoppet.ru/athletes/807465/');
-console.log('PASS: 26 actual roster members / 16 cities; Kovdor and Vologda mapped; requested expanded roster order; updated RL link; exact wolf counts; missing/new cities validated.');
+console.log('PASS: 27 actual roster members / 16 cities; Kovdor and Vologda mapped; requested expanded roster order; updated RL link; exact wolf counts; missing/new cities validated.');

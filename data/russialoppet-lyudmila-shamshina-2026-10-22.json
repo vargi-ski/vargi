@@ -1,0 +1,32 @@
+{
+  "checkedAt": "2026-10-22",
+  "name": "Людмила Шамшина",
+  "profile": "https://russialoppet.ru/athletes/182505/",
+  "city": "Петрозаводск",
+  "title": "Золотой мастер RL",
+  "titleYear": 2024,
+  "marathons": 34,
+  "skate": 28,
+  "classic": 6,
+  "federalDistricts": 6,
+  "regions": 18,
+  "mastersCup2026Place": 3,
+  "marathonsBySeason": {"2020": 1, "2021": 2, "2022": 4, "2023": 8, "2024": 8, "2025": 3, "2026": 8},
+  "countMethod": "Only profile rows labelled Марафон; half marathons, satellites and online races excluded.",
+  "classicMarathons": ["Веденинский КЛ 2026", "МВТУ 2026", "Сахалинский КЛ 2025", "Праздник Севера КЛ 2024", "Николов Перевоз ВЕЛО1 2024", "Карелия Ски Фест КЛ 2023"],
+  "confirmed50km": {
+    "event": "Экопарк-Алмаз-Ski", "year": 2023, "time": "2:47:30",
+    "source": "https://russialoppet.ru/events/ecopark-ski2023.html",
+    "note": "Displayed as a confirmed 50 km result, not a claim of the all-time fastest result. Archive distances are not all verified."
+  },
+  "latestMarathon": {
+    "event": "Настоящий Мужик", "year": 2026, "distanceKm": 30, "time": "2:08:54",
+    "absPlace": 22, "group": "Ж50–54", "groupPlace": 3,
+    "source": "https://russialoppet.ru/results/2026/246576/"
+  },
+  "styleSources": [
+    "https://russialoppet.ru/events/perevoz-velo-2024.html",
+    "https://russialoppet.ru/events/toksovo2021-2.html",
+    "https://russialoppet.ru/results/2026/839/"
+  ]
+}
