@@ -1,9 +1,9 @@
 name: Forms regression checks
 on:
   push:
-    paths: ['market-api/**', 'cloudflare/**', 'board/**', 'shop/order/**', 'assets/board-*.js', 'assets/shop-order.*', 'tests/shop-order.test.cjs', '.github/workflows/forms-check.yml']
+    paths: ['market-api/**', 'cloudflare/**', 'board/**', 'shop/order/**', 'assets/board-*.js', 'assets/shop-order.*', 'tests/shop-order.test.cjs', 'tests/board-contact.test.cjs', '.github/workflows/forms-check.yml']
   pull_request:
-    paths: ['market-api/**', 'cloudflare/**', 'board/**', 'shop/order/**', 'assets/board-*.js', 'assets/shop-order.*', 'tests/shop-order.test.cjs', '.github/workflows/forms-check.yml']
+    paths: ['market-api/**', 'cloudflare/**', 'board/**', 'shop/order/**', 'assets/board-*.js', 'assets/shop-order.*', 'tests/shop-order.test.cjs', 'tests/board-contact.test.cjs', '.github/workflows/forms-check.yml']
 permissions:
   contents: read
 jobs:
@@ -33,3 +33,4 @@ jobs:
           node-version: 22
       - run: node --test cloudflare/test/*.test.mjs
       - run: node --test tests/shop-order.test.cjs
+      - run: node --test tests/board-contact.test.cjs

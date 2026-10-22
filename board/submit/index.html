@@ -61,6 +61,7 @@
 <fieldset><legend><span class="n">04</span>Контакт для объявления</legend><div class="grid">
 <label class="field"><span>Имя *</span><input name="contactName" required minlength="2" maxlength="60" placeholder="Как к вам обращаться"></label>
 <label class="field"><span>Telegram / телефон / другой контакт *</span><input name="publicContact" required minlength="4" maxlength="120" placeholder="@username или номер телефона"></label>
+<label class="field full"><span>Телефон для связи (необязательно)</span><input name="contactPhone" type="tel" inputmode="tel" autocomplete="tel" maxlength="40" placeholder="+7 (___) ___-__-__" aria-describedby="contactPhoneHint"><span id="contactPhoneHint">По желанию — для связи с модератором по заявке. Этот номер не публикуется в объявлении. Можно оставить поле пустым.</span></label>
 </div><label class="check"><input name="consent" type="checkbox" required><span>Согласен на обработку заявки, передачу её модератору и публикацию указанного контакта после модерации. <a href="/privacy.html" target="_blank" rel="noopener noreferrer">Политика обработки данных</a>.</span></label></fieldset>
 
 <div class="actions"><p class="hint">Предпросмотр ничего не публикует.</p><button class="button" id="previewButton" type="submit" formnovalidate>Проверить объявление →</button></div>
@@ -148,7 +149,7 @@ function newRequestId(){
 }
 function collect(form){
  const a=Object.fromEntries(new FormData(form));
- ['title','city','description','contactName','publicContact','brand','model','otherSpec','flex','weight','bindings','structureValue'].forEach(k=>{if(typeof a[k]==='string')a[k]=a[k].trim()});
+ ['title','city','description','contactName','publicContact','contactPhone','brand','model','otherSpec','flex','weight','bindings','structureValue'].forEach(k=>{if(typeof a[k]==='string')a[k]=a[k].trim()});
  a.price=a.price===''?null:Number(a.price);return a;
 }
 function showPreview(a){
@@ -162,6 +163,7 @@ function showPreview(a){
  const lines=['ОБЪЯВЛЕНИЕ ВАРГИ','',kinds[a.kind]+' / '+categories[a.category],a.title,'Город: '+a.city,'Цена / бюджет: '+priceText(a)];
  if(a.category==='skis')lines.push('Стиль: '+a.style,'Длина: '+a.length+' см','Структура: '+structure(a),'Жёсткость / маркировка: '+(a.flex||'не указана'),'Вес по подбору: '+(a.weight||'не указан'),'Крепления: '+(a.bindings||'не указаны'));else lines.push('Характеристики: '+(a.otherSpec||'не указаны'));
  lines.push('Состояние: '+(a.condition||'не указано'),'Передача: '+(a.delivery||'обсудим'),'','Описание: '+a.description,'','Контакт: '+a.contactName+' — '+a.publicContact,'','Фотографий в заявке: '+photos.length+'.');
+ if(a.contactPhone)lines.push('','Телефон для связи с модератором (не публиковать): '+a.contactPhone);
  const message=lines.join('\n');
  const tg=new URL('https://t.me/TomMurman');tg.searchParams.set('text',message+'\n\nФото в Telegram нужно прикрепить вручную.');$('#telegramButton').href=tg.href;
  const fingerprint=JSON.stringify([a,photoRevision]);
