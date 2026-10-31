@@ -288,6 +288,9 @@
   } else initialItem();
   document.getElementById('resetOrder').addEventListener('click', function () {
     if (!root.confirm('Очистить выбранные товары, размеры и мерки и начать заново?')) return;
+    // An identical new order must not reuse the completed Yandex form.
+    lastMessage = '';
+    document.getElementById('orderForm').removeAttribute('src');
     ready = false; items.replaceChildren(); initialItem(); refresh(); ready = true; remember();
     document.getElementById('draftStatus').textContent = 'Выбор очищен. Можно собрать новый заказ.';
   });

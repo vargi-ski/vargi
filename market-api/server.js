@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import multer from 'multer';
 import { rateLimit } from 'express-rate-limit';
-import { mkdir, writeFile, readFile, readdir, rm, rename, access } from 'node:fs/promises';
+import { mkdir, open, writeFile, readFile, readdir, rm, rename, access } from 'node:fs/promises';
 import { createReadStream } from 'node:fs';
 import { randomUUID, randomBytes, scryptSync, timingSafeEqual, createHmac, createHash } from 'node:crypto';
 import path from 'node:path';
@@ -11,8 +11,10 @@ import heicConvert from 'heic-convert';
 import { S3Client, ListObjectsV2Command, DeleteObjectsCommand } from '@aws-sdk/client-s3';
 import { Upload } from '@aws-sdk/lib-storage';
 import * as tar from 'tar';
-import { CAMP_ID, CAMP_ALERT_TEXT, CAMP_ANSWERS_URL, createCampOutbox, validateCampPayload } from './camp-notifications.js';
+import { CAMP_FORM_ID, CAMP_ID, CAMP_ALERT_TEXT, CAMP_ANSWERS_URL, createCampOutbox, validateCampPayload } from './camp-notifications.js';
 import { SHOP_ALERT_TEXT, SHOP_ANSWERS_URL, createShopOutbox, validateShopPayload } from './shop-notifications.js';
+import { createSubmissionOutbox } from './submission-notifications.js';
+import { createBirthdayReminders } from './birthday-reminders.js';
 
 const app = express();
 app.disable('x-powered-by');
@@ -45,6 +47,11 @@ const CAMP_FORM_WEBHOOK_TOKEN = process.env.CAMP_FORM_WEBHOOK_TOKEN || '';
 const CAMP_NOTIFICATIONS_DIR = path.join(DATA_ROOT, 'camp-notifications');
 const SHOP_FORM_WEBHOOK_TOKEN = process.env.SHOP_FORM_WEBHOOK_TOKEN || '';
 const SHOP_NOTIFICATIONS_DIR = path.join(DATA_ROOT, 'shop-notifications');
+const CONTACT_NOTIFICATIONS_DIR = path.join(DATA_ROOT, 'contact-notifications');
+const SUBMISSION_NOTIFICATIONS_DIR = path.join(DATA_ROOT, 'submission-notifications');
+const BIRTHDAY_REMINDERS_DIR = path.join(DATA_ROOT, 'birthday-reminders');
+const BIRTHDAY_REMINDERS_ENABLED = process.env.BIRTHDAY_REMINDERS_ENABLED !== 'false';
+const VERIFIED_BIRTHDAYS = JSON.parse(await readFile(new URL('./birthdays.json', import.meta.url), 'utf8'));
 const BACKUP_S3_ENDPOINT = process.env.BACKUP_S3_ENDPOINT || '';
 const BACKUP_S3_REGION = process.env.BACKUP_S3_REGION || '';
 const BACKUP_S3_BUCKET = process.env.BACKUP_S3_BUCKET || '';
@@ -164,8 +171,20 @@ async function readJson(file) {
 
 async function writeJsonAtomic(file, value) {
   const tmp = file + '.tmp-' + randomUUID().slice(0, 8);
-  await writeFile(tmp, JSON.stringify(value, null, 2), 'utf8');
-  await rename(tmp, file);
+  let handle;
+  try {
+    handle = await open(tmp, 'wx', 0o600);
+    await handle.writeFile(JSON.stringify(value, null, 2), 'utf8');
+    await handle.sync();
+    await handle.close();
+    handle = null;
+    await rename(tmp, file);
+    const directory = await open(path.dirname(file), 'r');
+    try { await directory.sync(); } finally { await directory.close(); }
+  } finally {
+    await handle?.close();
+    await rm(tmp, { force: true });
+  }
 }
 
 async function loadSubmission(id) {
@@ -209,6 +228,9 @@ async function createVolumeBackup(force = false) {
     if (await fileExists(AUTH_FILE)) entries.push('admin-auth.json');
     if (await fileExists(CAMP_NOTIFICATIONS_DIR)) entries.push('camp-notifications');
     if (await fileExists(SHOP_NOTIFICATIONS_DIR)) entries.push('shop-notifications');
+    if (await fileExists(CONTACT_NOTIFICATIONS_DIR)) entries.push('contact-notifications');
+    if (await fileExists(SUBMISSION_NOTIFICATIONS_DIR)) entries.push('submission-notifications');
+    if (await fileExists(BIRTHDAY_REMINDERS_DIR)) entries.push('birthday-reminders');
     await tar.c({ gzip: true, cwd: DATA_ROOT, file: tmp }, entries);
     const key = 'daily/' + stamp + '.tgz';
     const uploader = new Upload({
@@ -320,7 +342,7 @@ function telegramChatLabel(message) {
 
 async function notifyNewSubmission(item) {
   const cfg = await telegramConfig();
-  if (!TELEGRAM_BOT_TOKEN || !cfg?.chatId) return false;
+  if (!TELEGRAM_BOT_TOKEN || !cfg?.chatId) throw new Error('telegram_not_configured');
   const lines = [
     'Новая заявка на модерацию',
     '',
@@ -330,7 +352,7 @@ async function notifyNewSubmission(item) {
     item.price ? 'Цена: ' + item.price : '',
     'Фото: ' + String(item.photos?.length || 0)
   ].filter(Boolean);
-  await telegramApi('sendMessage', {
+  return telegramApi('sendMessage', {
     chat_id: cfg.chatId,
     text: lines.join('\n'),
     disable_web_page_preview: true,
@@ -341,8 +363,35 @@ async function notifyNewSubmission(item) {
       }]]
     }
   });
-  return true;
 }
+
+function logNotification(event, key, details) {
+  console.log(event + (key ? ` id=${key}` : '')
+    + (Number.isSafeInteger(details?.messageId) ? ` message_id=${details.messageId}` : ''));
+}
+
+const submissionOutbox = await createSubmissionOutbox({
+  directory: SUBMISSION_NOTIFICATIONS_DIR,
+  loadSubmission,
+  listSubmissions,
+  send: notifyNewSubmission,
+  log: logNotification
+});
+
+const birthdayReminders = await createBirthdayReminders({
+  directory: BIRTHDAY_REMINDERS_DIR,
+  birthdays: VERIFIED_BIRTHDAYS,
+  async send(reminder) {
+    const cfg = await telegramConfig();
+    if (!TELEGRAM_BOT_TOKEN || !cfg?.chatId) throw new Error('telegram_not_configured');
+    return telegramApi('sendMessage', {
+      chat_id: cfg.chatId,
+      text: reminder.text,
+      disable_web_page_preview: true
+    });
+  },
+  log: logNotification
+});
 
 function safeEqualText(a, b) {
   const aa = Buffer.from(String(a || ''));
@@ -352,17 +401,35 @@ function safeEqualText(a, b) {
 
 const campOutbox = await createCampOutbox({
   directory: CAMP_NOTIFICATIONS_DIR,
-  async send() {
+  async send(item) {
     const cfg = await telegramConfig();
     if (!TELEGRAM_BOT_TOKEN || !cfg?.chatId) throw new Error('telegram_not_configured');
-    await telegramApi('sendMessage', {
+    return telegramApi('sendMessage', {
       chat_id: cfg.chatId,
-      text: CAMP_ALERT_TEXT,
+      text: CAMP_ALERT_TEXT + '\nНомер заявки: ' + item.responseId,
       disable_web_page_preview: true,
       reply_markup: { inline_keyboard: [[{ text: 'Открыть заявки на кемп', url: CAMP_ANSWERS_URL }]] }
     });
   },
-  log(event, key) { console.log(key ? `${event} id=${key}` : event); }
+  log: logNotification
+});
+
+const contactOutbox = await createCampOutbox({
+  directory: CONTACT_NOTIFICATIONS_DIR,
+  namespace: CAMP_FORM_ID + ':contact',
+  logPrefix: 'contact',
+  async send(item) {
+    const cfg = await telegramConfig();
+    if (!TELEGRAM_BOT_TOKEN || !cfg?.chatId) throw new Error('telegram_not_configured');
+    return telegramApi('sendMessage', {
+      chat_id: cfg.chatId,
+      text: 'Новое обращение с сайта ВАРГИ\nНомер заявки: ' + item.responseId
+        + '\nВступление в стаю, подготовка, партнёрство или другой вопрос — подробности в заявке.',
+      disable_web_page_preview: true,
+      reply_markup: { inline_keyboard: [[{ text: 'Открыть обращения', url: CAMP_ANSWERS_URL }]] }
+    });
+  },
+  log: logNotification
 });
 
 function requireCampWebhook(req, res, next) {
@@ -386,10 +453,11 @@ app.get('/integrations/yandex/camp/status', requireCampWebhook, async (req, res)
 
 app.post('/integrations/yandex/camp', requireCampWebhook, async (req, res) => {
   if (!validateCampPayload(req.body)) return res.status(400).json({ ok: false, error: 'invalid_payload' });
-  if (req.body.camp !== CAMP_ID) return res.json({ ok: true, ignored: true });
+  const kind = req.body.camp === CAMP_ID ? 'camp' : 'contact';
   try {
-    const delivery = await campOutbox.enqueue(req.body.response_id);
-    return res.status(delivery.duplicate ? 200 : 202).json({ ok: true, queued: true, duplicate: delivery.duplicate, id: delivery.key });
+    // Older direct form links have no marker. Preserve their notifications too.
+    const delivery = await (kind === 'camp' ? campOutbox : contactOutbox).enqueue(req.body.response_id);
+    return res.status(delivery.duplicate ? 200 : 202).json({ ok: true, queued: true, kind, duplicate: delivery.duplicate, id: delivery.key });
   } catch {
     console.error('camp_webhook_store_error');
     return res.status(503).json({ ok: false, error: 'storage_unavailable' });
@@ -398,17 +466,17 @@ app.post('/integrations/yandex/camp', requireCampWebhook, async (req, res) => {
 
 const shopOutbox = await createShopOutbox({
   directory: SHOP_NOTIFICATIONS_DIR,
-  async send() {
+  async send(item) {
     const cfg = await telegramConfig();
     if (!TELEGRAM_BOT_TOKEN || !cfg?.chatId) throw new Error('telegram_not_configured');
-    await telegramApi('sendMessage', {
+    return telegramApi('sendMessage', {
       chat_id: cfg.chatId,
-      text: SHOP_ALERT_TEXT,
+      text: SHOP_ALERT_TEXT + '\nНомер заказа: ' + item.responseId,
       disable_web_page_preview: true,
       reply_markup: { inline_keyboard: [[{ text: 'Открыть заказы магазина', url: SHOP_ANSWERS_URL }]] }
     });
   },
-  log(event, key) { console.log(key ? `${event} id=${key}` : event); }
+  log: logNotification
 });
 
 function requireShopWebhook(req, res, next) {
@@ -751,7 +819,7 @@ app.get('/health', async (req, res) => {
     await writeFile(probe, 'ok', { flag: 'wx' });
     if (await readFile(probe, 'utf8') !== 'ok') throw new Error('storage_probe_failed');
     await rm(probe);
-    res.json({ ok: true, service: 'vargi-market-api', version: '2026-10-06', storage: 'persistent-volume', adminInitialized: Boolean(await authState()) });
+    res.json({ ok: true, service: 'vargi-market-api', version: '2026-10-31', storage: 'persistent-volume', adminInitialized: Boolean(await authState()) });
   } catch (error) {
     try { await rm(probe, { force: true }); } catch (_) {}
     console.error('health_storage_error', error?.code || 'unknown');
@@ -896,6 +964,7 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
       createdAt: new Date().toISOString(),
       requestId,
       requestHash,
+      telegramNotification: { version: 1 },
       consent: { accepted: true, version: 'board-submit-2026-10-05', acceptedAt: new Date().toISOString(), policyUrl: SITE_ORIGIN + '/privacy.html' },
       kind: 'Продаю',
       category,
@@ -926,9 +995,10 @@ app.post('/submit', upload.array('photos', 6), async (req, res) => {
 
     await writeJsonAtomic(path.join(submissionDir, 'submission.json'), metadata);
     console.log(`submission_saved id=${id} photos=${savedPhotos.length}`);
-    void notifyNewSubmission(metadata)
-      .then(sent => console.log(`${sent ? 'telegram_notify_sent' : 'telegram_notify_not_configured'} id=${id}`))
-      .catch(error => console.error(`telegram_notify_error id=${id}`, error?.message || error));
+    // The saved marker lets the worker recover even if enqueue fails or the
+    // process stops here. Never remove an accepted submission for a bot failure.
+    try { await submissionOutbox.enqueue(id); }
+    catch { console.error(`submission_outbox_enqueue_error id=${id}`); }
     res.status(201).json({ ok: true, id });
   } catch (error) {
     console.error('submit_error', error?.message || error);
@@ -1167,6 +1237,15 @@ app.get('/admin/telegram/status', requireAdmin, async (req, res) => {
   });
 });
 
+app.get('/admin/notifications/status', requireAdmin, async (req, res) => {
+  res.set('Cache-Control', 'no-store');
+  const [birthdays, submissions, camp, contact, shop] = await Promise.all([
+    birthdayReminders.status(), submissionOutbox.status(), campOutbox.status(),
+    contactOutbox.status(), shopOutbox.status()
+  ]);
+  res.json({ ok: true, birthdays: { enabled: BIRTHDAY_REMINDERS_ENABLED, ...birthdays }, submissions, camp, contact, shop });
+});
+
 app.post('/admin/telegram/connect', requireAdmin, async (req, res) => {
   try {
     if (!TELEGRAM_BOT_TOKEN) {
@@ -1249,12 +1328,37 @@ app.use((error, req, res, next) => {
   res.status(400).json({ ok: false, error: 'Не удалось обработать запрос.' });
 });
 
-app.listen(PORT, '0.0.0.0', () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`vargi-market-api listening on ${PORT}; storage=${DATA_DIR}`);
   campOutbox.start();
+  contactOutbox.start();
   shopOutbox.start();
+  submissionOutbox.start();
+  if (BIRTHDAY_REMINDERS_ENABLED) birthdayReminders.start();
+  console.log(`birthday_reminders_ready enabled=${BIRTHDAY_REMINDERS_ENABLED} count=${VERIFIED_BIRTHDAYS.length} hour=09 time_zone=Europe/Moscow offsets=1,0`);
+  void (async () => {
+    const cfg = await telegramConfig();
+    const bot = await telegramApi('getMe');
+    console.log(`telegram_configuration bot=@${bot.username} connected=${Boolean(cfg?.chatId)}`);
+  })().catch(() => console.error('telegram_configuration_unavailable'));
   const firstRun = setTimeout(() => runMaintenance(), 15000);
   firstRun.unref?.();
   const maintenanceTimer = setInterval(() => runMaintenance(), 6 * 60 * 60 * 1000);
   maintenanceTimer.unref?.();
 });
+
+let stopping = false;
+async function stopServer() {
+  if (stopping) return;
+  stopping = true;
+  const deadline = setTimeout(() => process.exit(1), 10000);
+  deadline.unref?.();
+  await Promise.allSettled([
+    new Promise(resolve => server.close(resolve)),
+    birthdayReminders.close(), submissionOutbox.close(), campOutbox.close(),
+    contactOutbox.close(), shopOutbox.close()
+  ]);
+  process.exit(0);
+}
+process.once('SIGTERM', stopServer);
+process.once('SIGINT', stopServer);

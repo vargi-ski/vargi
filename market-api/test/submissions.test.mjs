@@ -21,7 +21,7 @@ const fields = () => ({requestId:randomUUID(),title:'ТЕСТ — синтети
 async function server(dataDir, env = {}) {
   const probe=createServer();probe.listen(0,'127.0.0.1');await once(probe,'listening');
   const port=probe.address().port;await new Promise(resolve=>probe.close(resolve));
-  const child=spawn(process.execPath,['server.js'],{cwd:root,env:{PATH:process.env.PATH,PORT:String(port),DATA_ROOT:dataDir,SITE_ORIGIN:origin,NODE_ENV:'test',...env},stdio:['ignore','pipe','pipe']});
+  const child=spawn(process.execPath,['server.js'],{cwd:root,env:{PATH:process.env.PATH,PORT:String(port),DATA_ROOT:dataDir,SITE_ORIGIN:origin,NODE_ENV:'test',BIRTHDAY_REMINDERS_ENABLED:'false',...env},stdio:['ignore','pipe','pipe']});
   let logs='';child.stdout.on('data',b=>{logs+=b});child.stderr.on('data',b=>{logs+=b});
   await new Promise((resolve,reject)=>{
     const timer=setTimeout(()=>{child.kill();reject(new Error('Server startup timeout: '+logs))},10000);
@@ -115,7 +115,7 @@ test('real 48 MP JPEG is safely resized by server and CORS remains restricted',a
 test('health checks actual storage and failed writes cannot report a healthy service',async t=>{
   const f=await fixture(t);
   let response=await fetch(f.app.url+'/health');assert.equal(response.status,200);assert.equal(response.headers.get('cache-control'),'no-store');
-  assert.equal((await response.json()).version,'2026-10-06');
+  assert.equal((await response.json()).version,'2026-10-31');
   const data=join(f.dataDir,'submissions');await rename(data,data+'-saved');await writeFile(data,'not a directory');
   response=await fetch(f.app.url+'/health');assert.equal(response.status,503);assert.equal((await response.json()).ok,false);
 });
@@ -128,7 +128,7 @@ test('submission response trace is exposed and logged without private fields',as
   assert(f.app.logs().includes('submission_request trace='+trace));assert(f.app.logs().includes('status=201'));assert(!f.app.logs().includes(values.publicContact));
 });
 
-test('camp webhook authenticates, rejects extra data, ignores other traffic, and durably acknowledges without Telegram',async t=>{
+test('camp webhook authenticates, rejects extra data, routes general contacts, and durably acknowledges without Telegram',async t=>{
   const token='synthetic-test-token-not-a-real-secret-123';
   const f=await fixture(t,{CAMP_FORM_WEBHOOK_TOKEN:token});
   const body={form_id:'6aacf2a849af472ed76c9d3d',response_id:'synthetic-response-123',camp:'first-snow-2026'};
@@ -138,7 +138,8 @@ test('camp webhook authenticates, rejects extra data, ignores other traffic, and
   assert.equal((await send(body,{Origin:origin})).status,403);
   assert.equal((await send({...body,contact:'private-value-must-not-be-stored'})).status,400);
   assert.equal((await send({...body,form_id:'different-form'})).status,400);
-  const ignored=await send({...body,camp:''});assert.equal(ignored.status,200);assert.equal((await ignored.json()).ignored,true);
+  const contact=await send({...body,camp:''});assert.equal(contact.status,202);const contactAccepted=await contact.json();assert.equal(contactAccepted.kind,'contact');
+  assert.equal((await readdir(join(f.dataDir,'contact-notifications'))).filter(name=>name.endsWith('.json')).length,1);
   assert.deepEqual(await readdir(join(f.dataDir,'camp-notifications')),[]);
   const first=await send();assert.equal(first.status,202);const accepted=await first.json();
   assert.equal(accepted.duplicate,false);assert.match(accepted.id,/^[a-f0-9]{64}$/);
@@ -176,7 +177,7 @@ test('shop webhook isolates authorization and data, durably deduplicates and rep
   assert.deepEqual(await readdir(join(f.dataDir,'submissions')),[]);
   assert.equal((await fetch(f.app.url+'/integrations/yandex/shop/status')).status,401);
   const status=await fetch(f.app.url+'/integrations/yandex/shop/status',{headers});assert.equal(status.status,503);
-  assert.deepEqual(await status.json(),{configured:false,connected:false,botReachable:false,botUsername:'',queue:{pending:1,sent:0,unreadable:0,lastSentAt:null}});
+  assert.deepEqual(await status.json(),{configured:false,connected:false,botReachable:false,botUsername:'',queue:{pending:1,sent:0,unreadable:0,lastSentAt:null,lastMessageId:null}});
   const malformed=await fetch(f.app.url+'/integrations/yandex/shop',{method:'POST',headers,body:'{"private-value-must-not-be-logged"'});assert.equal(malformed.status,400);
   const oversized=await fetch(f.app.url+'/integrations/yandex/shop',{method:'POST',headers,body:JSON.stringify({...body,contact:'private-value-'+ 'x'.repeat(33000)})});assert.equal(oversized.status,413);
   assert(!f.app.logs().includes('private-value'));
@@ -220,5 +221,6 @@ globalThis.fetch = async (url, options) => {
   assert(f.app.logs().includes('shop_telegram_sent'));
   assert.equal((await send()).status,200);
   const messages=(await readFile(join(f.dataDir,'telegram-mock.jsonl'),'utf8')).trim().split('\n').map(JSON.parse);
-  assert.deepEqual(messages,[{chat_id:123456,text:'Новый заказ экипировки ВАРГИ',disable_web_page_preview:true,reply_markup:{inline_keyboard:[[{text:'Открыть заказы магазина',url:'https://forms.yandex.ru/admin/6aad189e84227c2dd4dbd7a6/answers'}]]}}]);
+  assert.deepEqual(messages,[{chat_id:123456,text:'Новый заказ экипировки ВАРГИ\nНомер заказа: synthetic-full-flow',disable_web_page_preview:true,reply_markup:{inline_keyboard:[[{text:'Открыть заказы магазина',url:'https://forms.yandex.ru/admin/6aad189e84227c2dd4dbd7a6/answers'}]]}}]);
+  assert(f.app.logs().includes('message_id=1'));
 });

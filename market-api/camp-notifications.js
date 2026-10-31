@@ -36,7 +36,8 @@ async function durableJson(file, value) {
   }
 }
 
-export async function createCampOutbox({ directory, send, log = () => {}, pollMs = 15000, retryBaseMs = 30000 }) {
+export async function createCampOutbox({ directory, send, log = () => {}, pollMs = 15000, retryBaseMs = 30000, namespace = CAMP_FORM_ID, logPrefix = 'camp' }) {
+  if (typeof namespace !== 'string' || !namespace || namespace.length > 128 || !/^[a-z][a-z0-9_]*$/.test(logPrefix)) throw new Error('invalid_outbox_namespace');
   await mkdir(directory, { recursive: true, mode: 0o700 });
   const locks = new Map();
   let started = false;
@@ -48,7 +49,7 @@ export async function createCampOutbox({ directory, send, log = () => {}, pollMs
     if (!started || closed || running) return;
     clearTimeout(timer);
     timer = setTimeout(() => {
-      running = drain().catch(() => log('camp_outbox_scan_error')).finally(() => {
+      running = drain().catch(() => log(`${logPrefix}_outbox_scan_error`)).finally(() => {
         running = null;
         schedule(pollMs);
       });
@@ -63,7 +64,7 @@ export async function createCampOutbox({ directory, send, log = () => {}, pollMs
       const file = path.join(directory, filename);
       let item;
       try { item = JSON.parse(await readFile(file, 'utf8')); }
-      catch { log('camp_outbox_read_error'); continue; }
+      catch { log(`${logPrefix}_outbox_read_error`); continue; }
       if (item.status !== 'pending' || item.nextAttemptAt > Date.now()) continue;
       // Keep a retry scheduled on disk even if the process exits during send.
       item.attempts += 1;
@@ -71,24 +72,26 @@ export async function createCampOutbox({ directory, send, log = () => {}, pollMs
       item.nextAttemptAt = Date.now() + retryMs;
       await durableJson(file, item);
       try {
-        await send();
+        const receipt = await send(item);
+        if (!Number.isSafeInteger(receipt?.message_id) || receipt.message_id <= 0) throw new Error('telegram_receipt_missing');
         item.status = 'sent';
         item.sentAt = new Date().toISOString();
+        item.messageId = receipt.message_id;
         item.nextAttemptAt = null;
         await durableJson(file, item);
-        log('camp_telegram_sent', item.key);
+        log(`${logPrefix}_telegram_sent`, item.key, { messageId: item.messageId });
       } catch {
         // Do not log provider errors: they may contain a URL with a bot token.
-        log('camp_telegram_retry', item.key);
+        log(`${logPrefix}_telegram_retry`, item.key);
       }
     }
   }
 
   return {
     async enqueue(responseId) {
-      if (closed) throw new Error('camp_outbox_closed');
+      if (closed) throw new Error(`${logPrefix}_outbox_closed`);
       if (typeof responseId !== 'string' || !/^[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$/.test(responseId)) throw new Error('invalid_response_id');
-      const key = createHash('sha256').update(CAMP_FORM_ID + ':' + responseId).digest('hex');
+      const key = createHash('sha256').update(namespace + ':' + responseId).digest('hex');
       while (locks.has(key)) await locks.get(key);
       let release;
       locks.set(key, new Promise(resolve => { release = resolve; }));
@@ -101,10 +104,28 @@ export async function createCampOutbox({ directory, send, log = () => {}, pollMs
         } catch (error) { if (error.code !== 'ENOENT') throw error; }
         const item = { version: 1, key, formId: CAMP_FORM_ID, responseId, status: 'pending', createdAt: new Date().toISOString(), attempts: 0, nextAttemptAt: 0, sentAt: null };
         await durableJson(file, item);
-        log('camp_outbox_queued', key);
+        log(`${logPrefix}_outbox_queued`, key);
         schedule();
         return { key, duplicate: false };
       } finally { locks.delete(key); release(); }
+    },
+    async status() {
+      const summary = { pending: 0, sent: 0, unreadable: 0, lastSentAt: null, lastMessageId: null };
+      for (const filename of await readdir(directory)) {
+        if (!/^[a-f0-9]{64}\.json$/.test(filename)) continue;
+        let item;
+        try { item = JSON.parse(await readFile(path.join(directory, filename), 'utf8')); }
+        catch { summary.unreadable++; continue; }
+        if (item.status === 'pending') summary.pending++;
+        else if (item.status === 'sent') {
+          summary.sent++;
+          if (item.sentAt && (!summary.lastSentAt || item.sentAt > summary.lastSentAt)) {
+            summary.lastSentAt = item.sentAt;
+            summary.lastMessageId = Number.isSafeInteger(item.messageId) ? item.messageId : null;
+          }
+        } else summary.unreadable++;
+      }
+      return summary;
     },
     start() { if (!closed) { started = true; schedule(); } },
     async close() { closed = true; clearTimeout(timer); await running; },

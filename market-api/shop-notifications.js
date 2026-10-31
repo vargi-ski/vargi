@@ -68,12 +68,14 @@ export async function createShopOutbox({ directory, send, log = () => {}, pollMs
       item.nextAttemptAt = Date.now() + retryMs;
       await durableJson(file, item);
       try {
-        await send();
+        const receipt = await send(item);
+        if (!Number.isSafeInteger(receipt?.message_id) || receipt.message_id <= 0) throw new Error('telegram_receipt_missing');
         item.status = 'sent';
         item.sentAt = new Date().toISOString();
+        item.messageId = receipt.message_id;
         item.nextAttemptAt = null;
         await durableJson(file, item);
-        log('shop_telegram_sent', item.key);
+        log('shop_telegram_sent', item.key, { messageId: item.messageId });
       } catch {
         // Provider errors can contain a bot-token URL; never log them.
         log('shop_telegram_retry', item.key);
@@ -104,7 +106,7 @@ export async function createShopOutbox({ directory, send, log = () => {}, pollMs
       } finally { locks.delete(key); release(); }
     },
     async status() {
-      const summary = { pending: 0, sent: 0, unreadable: 0, lastSentAt: null };
+      const summary = { pending: 0, sent: 0, unreadable: 0, lastSentAt: null, lastMessageId: null };
       for (const filename of await readdir(directory)) {
         if (!/^[a-f0-9]{64}\.json$/.test(filename)) continue;
         let item;
@@ -113,7 +115,10 @@ export async function createShopOutbox({ directory, send, log = () => {}, pollMs
         if (item.status === 'pending') summary.pending++;
         else if (item.status === 'sent') {
           summary.sent++;
-          if (item.sentAt && (!summary.lastSentAt || item.sentAt > summary.lastSentAt)) summary.lastSentAt = item.sentAt;
+          if (item.sentAt && (!summary.lastSentAt || item.sentAt > summary.lastSentAt)) {
+            summary.lastSentAt = item.sentAt;
+            summary.lastMessageId = Number.isSafeInteger(item.messageId) ? item.messageId : null;
+          }
         } else summary.unreadable++;
       }
       return summary;

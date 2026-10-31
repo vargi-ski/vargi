@@ -5,10 +5,12 @@
   var message = (params.get('message') || '').slice(0, 3500);
   var form = new URL(base);
   form.searchParams.set('theme', 'dark');
-  if (message) form.searchParams.set('message', message);
+  form.searchParams.set('vargi_camp', 'contact');
+  form.searchParams.set('answer_choices_96193', '');
+  form.searchParams.set('message', message);
   document.getElementById('openForm').href = form.href;
   form.searchParams.set('iframe', '1');
-  if (message) document.getElementById('contactForm').src = form.href;
+  document.getElementById('contactForm').src = form.href;
   var telegram = new URL('https://t.me/TomMurman');
   if (message) telegram.searchParams.set('text', message);
   document.getElementById('telegramContact').href = telegram.href;
