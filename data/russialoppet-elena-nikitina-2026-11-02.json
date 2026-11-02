@@ -1,0 +1,185 @@
+{
+  "checkedAt": "2026-11-02",
+  "name": "Елена Никитина",
+  "profile": "https://russialoppet.ru/athletes/28493/",
+  "city": "Санкт-Петербург",
+  "marathons": 12,
+  "skate": 12,
+  "classic": 0,
+  "federalDistricts": 3,
+  "regions": 7,
+  "marathonsBySeason": {
+    "2017": 1,
+    "2018": 2,
+    "2020": 1,
+    "2021": 1,
+    "2022": 1,
+    "2023": 1,
+    "2024": 2,
+    "2025": 1,
+    "2026": 2
+  },
+  "seasonMax": 2,
+  "seasonMaxYears": [
+    2018,
+    2024,
+    2026
+  ],
+  "countMethod": "Учтены только записи вкладки «Марафоны» в профиле RussiaLoppet. Полумарафоны, спутники и онлайн-гонки не включены. Классификация RL включает сокращённые и исторические женские дистанции; 12 марафонов не означает 12 дистанций ровно 50 км.",
+  "confirmed50km": {
+    "label": "Подтверждённые 50 км",
+    "event": "Деминский марафон",
+    "year": 2022,
+    "date": "2022-03-06",
+    "distanceKm": 50,
+    "style": "Свободный",
+    "time": "2:38:41",
+    "absPlace": 44,
+    "absCategory": "Женщины",
+    "group": "Ж45–49",
+    "groupPlace": 8,
+    "sources": [
+      "https://russialoppet.ru/results/2022/850/?gender=F",
+      "https://russialoppet.ru/events/demino2022.html"
+    ],
+    "note": "Подтверждённый результат на 50 км; абсолютный личный рекорд не заявляется, поскольку дистанции всех архивных гонок не подтверждены."
+  },
+  "latestMarathon": {
+    "event": "Байкальский марафон",
+    "year": 2026,
+    "date": "2026-04-18",
+    "distanceKm": 50,
+    "style": "Свободный",
+    "time": "2:38:43",
+    "absPlace": 25,
+    "absCategory": "Женщины",
+    "group": "Ж45–49",
+    "groupPlace": 4,
+    "source": "https://russialoppet.ru/results/2026/855/?gender=F",
+    "eventSource": "https://russialoppet.ru/events/baikal2026.html"
+  },
+  "styleSources": [
+    "https://russialoppet.ru/events/baikal2026.html",
+    "https://russialoppet.ru/events/kiriki-ulita2026.html?ID=3219.html",
+    "https://www.russialoppet.ru/events/kiriki-ulita2025.html",
+    "https://russialoppet.ru/events/sakhalin2024.html",
+    "https://russialoppet.ru/events/kiriki-ulita2024.html",
+    "https://russialoppet.ru/events/demino2023.html",
+    "https://russialoppet.ru/events/demino2022.html",
+    "https://russialoppet.ru/events/murmansk2021.html",
+    "https://russialoppet.ru/events/komela2020.html",
+    "https://russialoppet.ru/events/toksovo2018.html",
+    "https://russialoppet.ru/events/dvigatel2018.html",
+    "https://russialoppet.ru/events/toksovo2017.html"
+  ],
+  "marathonRecords": [
+    {
+      "year": 2026,
+      "event": "Байкальский марафон",
+      "time": "2:38:43",
+      "absPlace": 25,
+      "absCategory": "Женщины",
+      "groupPlace": 4,
+      "source": "https://russialoppet.ru/results/2026/855/"
+    },
+    {
+      "year": 2026,
+      "event": "Вологда-Марафон Кирики-Улита",
+      "time": "2:54:37",
+      "absPlace": 16,
+      "absCategory": "Женщины",
+      "groupPlace": 2,
+      "source": "https://russialoppet.ru/results/2026/327336/"
+    },
+    {
+      "year": 2025,
+      "event": "Вологда-Марафон Кирики-Улита",
+      "time": "2:12:57",
+      "absPlace": 12,
+      "absCategory": "Женщины",
+      "groupPlace": 3,
+      "source": "https://russialoppet.ru/results/2025/327336/"
+    },
+    {
+      "year": 2024,
+      "event": "Сахалинский марафон",
+      "time": "3:20:23",
+      "absPlace": 13,
+      "absCategory": "Женщины",
+      "groupPlace": 2,
+      "source": "https://russialoppet.ru/results/2024/856/"
+    },
+    {
+      "year": 2024,
+      "event": "Вологда-Марафон Кирики-Улита",
+      "time": "2:05:53",
+      "absPlace": 11,
+      "absCategory": "Женщины",
+      "groupPlace": 2,
+      "source": "https://russialoppet.ru/results/2024/327336/"
+    },
+    {
+      "year": 2023,
+      "event": "Деминский марафон",
+      "time": "2:47:47",
+      "absPlace": 35,
+      "absCategory": "Женщины",
+      "groupPlace": 5,
+      "source": "https://russialoppet.ru/results/2023/850/"
+    },
+    {
+      "year": 2022,
+      "event": "Деминский марафон",
+      "time": "2:38:41",
+      "absPlace": 44,
+      "absCategory": "Женщины",
+      "groupPlace": 8,
+      "source": "https://russialoppet.ru/results/2022/850/"
+    },
+    {
+      "year": 2021,
+      "event": "Праздник Севера",
+      "time": "3:27:09",
+      "absPlace": 44,
+      "absCategory": "Женщины",
+      "groupPlace": 6,
+      "source": "https://russialoppet.ru/results/2021/842/"
+    },
+    {
+      "year": 2020,
+      "event": "На Комёле",
+      "time": "0:55:10",
+      "absPlace": 32,
+      "absCategory": "Женщины",
+      "groupPlace": 1,
+      "source": "https://russialoppet.ru/results/2020/170591/"
+    },
+    {
+      "year": 2018,
+      "event": "Токсово Марафон",
+      "time": "2:32:39",
+      "absPlace": 41,
+      "absCategory": "Женщины",
+      "groupPlace": 3,
+      "source": "https://russialoppet.ru/results/2018/836/"
+    },
+    {
+      "year": 2018,
+      "event": "Двигатель",
+      "time": "2:38:40",
+      "absPlace": 16,
+      "absCategory": "Женщины",
+      "groupPlace": 1,
+      "source": "https://russialoppet.ru/results/2018/854/"
+    },
+    {
+      "year": 2017,
+      "event": "Токсово Марафон",
+      "time": "2:55:28",
+      "absPlace": 38,
+      "absCategory": "Женщины",
+      "groupPlace": 3,
+      "source": "https://russialoppet.ru/results/2017/836/"
+    }
+  ]
+}

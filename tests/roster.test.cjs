@@ -18,6 +18,7 @@ const reserve = RESERVE_ROSTER.filter(member => !member.join);
 const names = members => Array.from(members, member => member.name);
 const lyudmila = 'Людмила Шамшина';
 const polina = 'Полина Сероносова';
+const elena = 'Елена Никитина';
 const profile = 'https://russialoppet.ru/athletes/182505/';
 
 function sectionNames(id) {
@@ -26,16 +27,17 @@ function sectionNames(id) {
   return Array.from(section[1].matchAll(/<h3\b[^>]*>([^<]+)<\/h3>/g), match => match[1].trim());
 }
 
-test('roster has 15 main and 12 expanded athletes, with no duplicate members', () => {
+test('roster has 15 main and 13 expanded athletes, with no duplicate members', () => {
   assert.equal(ROSTER.length, 15);
-  assert.equal(reserve.length, 12);
-  assert.equal(ALL_MEMBERS.length, 27);
-  assert.equal(new Set(names(ALL_MEMBERS)).size, 27);
+  assert.equal(reserve.length, 13);
+  assert.equal(ALL_MEMBERS.length, 28);
+  assert.equal(new Set(names(ALL_MEMBERS)).size, 28);
   assert.deepEqual(names(ALL_MEMBERS), [...names(ROSTER), ...names(reserve)]);
   assert.ok(names(ROSTER).includes(lyudmila));
   assert.ok(!names(ROSTER).includes(polina));
   assert.ok(names(reserve).includes(polina));
   assert.ok(!names(reserve).includes(lyudmila));
+  assert.ok(names(reserve).includes(elena));
 });
 
 test('Lyudmila uses the supplied portrait asset and official RussiaLoppet profile', () => {
@@ -55,8 +57,8 @@ test('opening carousel shows Lyudmila instead of Polina', () => {
   for (const name of opening) assert.ok(names(ROSTER).includes(name), name + ' must be in the main roster.');
 });
 
-test('both athletes retain one statistics record and one results record', () => {
-  for (const name of [lyudmila, polina]) {
+test('updated athletes have one statistics record and one results record', () => {
+  for (const name of [lyudmila, polina, elena]) {
     assert.equal(WOLF_STATS.filter(record => record.name === name).length, 1, name + ': statistics record');
     assert.equal(RESULTS.filter(record => record.athlete === name).length, 1, name + ': results record');
   }
@@ -73,14 +75,14 @@ test('team structured data contains every athlete exactly once', () => {
   const organization = nodes.find(node => node['@type'] === 'SportsOrganization');
   assert.ok(organization, 'SportsOrganization structured data must exist.');
   const members = names(organization.member);
-  assert.equal(members.length, 27);
-  assert.equal(new Set(members).size, 27);
+  assert.equal(members.length, 28);
+  assert.equal(new Set(members).size, 28);
   assert.deepEqual(members.sort(), names(ALL_MEMBERS).sort());
 });
 
 test('displayed tier counts agree with the new roster', () => {
   const notes = Array.from(html.matchAll(/<div class="roster-tier-note">([^<]+)<\/div>/g), match => match[1]);
   assert.equal(notes.filter(note => note.startsWith('15 спортсменов')).length, 3);
-  assert.equal(notes.filter(note => note.startsWith('12 спортсменов')).length, 2);
-  assert.ok(!notes.some(note => note.startsWith('11 спортсменов')));
+  assert.equal(notes.filter(note => note.startsWith('13 спортсменов')).length, 2);
+  assert.ok(!notes.some(note => /^(11|12) спортсменов/.test(note)));
 });

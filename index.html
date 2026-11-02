@@ -822,7 +822,7 @@
       <div class="wolf-stats-grid" id="wolfStatsMain" aria-label="Статистика основного состава"></div>
     </div>
     <div class="stats-tier collapsible-tier" id="wolfStatsReserveTier" hidden>
-      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">12 спортсменов · единая стая</div></div>
+      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">13 спортсменов · единая стая</div></div>
       <div class="wolf-stats-grid" id="wolfStatsReserve" aria-label="Статистика расширенного состава"></div>
     </div>
     <button class="results-toggle" id="statsToggle" type="button" aria-expanded="false" aria-controls="wolfStatsMain wolfStatsReserveTier">
@@ -850,7 +850,7 @@
       </div>
     </div>
     <div class="results-tier collapsible-tier" id="resultsReserveTier" hidden>
-      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">12 спортсменов</div></div>
+      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">13 спортсменов</div></div>
       <div class="team-table-wrap">
         <table class="team-table results-table" aria-label="Крайние марафоны расширенного состава">
           <thead><tr><th>Спортсмен</th><th class="center-head">Год</th><th>Марафон</th><th>Время</th><th>Абсолют</th><th>Группа</th><th>В группе</th></tr></thead>
@@ -982,7 +982,7 @@
 <script src="/assets/race-calendar.js?v=20261020"></script>
 <script src="/assets/shop-catalog.js?v=20261020-warmup"></script>
 <script>document.getElementById("heroLogo").src = window.VARGI_IMAGES.i01;</script>
-<script src="assets/geography/pack-atlas.js?v=20261019-vologda"></script>
+<script src="assets/geography/pack-atlas.js?v=20261102-saint-petersburg"></script>
 <script>
 /* ============================================================
    DATA — правьте здесь. Вёрстка подхватит автоматически.
@@ -1034,6 +1034,7 @@ const RESERVE_ROSTER = [
   {"name":"Алексей Карасев","city":"Мурманск","record":"27 марафонов · Золотой мастер RL","photo":"","rl":"https://russialoppet.ru/athletes/19727/"},
   {name:"Максим Устинов",city:"Вологда",record:"20 марафонов RussiaLoppet",photo:"assets/maxim-ustinov.jpg",rl:"https://russialoppet.ru/athletes/18911/"},
   { name:"Полина Сероносова", city:"Петрозаводск", record:"16 марафонов · Кандидат в мастера RL", photo:"assets/polina-seronosova.webp", rl:"https://russialoppet.ru/athletes/29562/" },
+  { name:"Елена Никитина", city:"Санкт-Петербург", record:"12 марафонов RussiaLoppet", photo:"assets/elena-nikitina.webp", photoPosition:"center top", rl:"https://russialoppet.ru/athletes/28493/" },
   { join:true }
 ];
 
@@ -1047,6 +1048,7 @@ ROSTER[0].photo = LEADER_SEA_PHOTO;
 // seasonMax — максимум марафонов RussiaLoppet за один сезон, без полумарафонов.
 // Аудит и источники: data/russialoppet-review-2026-10-19.json.
 // Людмила Шамшина: data/russialoppet-lyudmila-shamshina-2026-10-22.json.
+// Елена Никитина: data/russialoppet-elena-nikitina-2026-11-02.json.
 const WOLF_STATS = [
   { name:"Артем Грязев",       skate:45, classic:4, fastest:"1:48:05", fastestEvent:"Деминский марафон",     fastestYear:"2025", seasonMax:15, seasonYear:"2025" },
   { name:"Константин Нечаев",  skate:52, classic:10, fastest:"1:42:23", fastestEvent:"Красногорский марафон", fastestYear:"2006", seasonMax:14, seasonYear:"2025", fastestVerified:false, fastestNote:"Красногорский марафон · 2006; дистанция архива уточняется" },
@@ -1083,7 +1085,8 @@ WOLF_STATS.push(
   {name:"Виталий Ильин",skate:9,classic:1,fastest:"2:40:23",fastestEvent:"Праздник Севера",fastestYear:"2019",seasonMax:1,seasonNote:"По одному марафону за сезон"},
   {name:"Александр Сучков",skate:14,classic:3,fastest:"1:59:54",fastestEvent:"Экопарк-Алмаз-Ski",fastestYear:"2024",seasonMax:5,seasonYear:"2026"},
   {name:"Алексей Марков",skate:4,classic:0,fastest:"2:12:35",fastestEvent:"Деминский марафон",fastestYear:"2025",seasonMax:2,seasonNote:"Сезоны 2025 и 2026"},
-  {name:"Кирилл Гречников",skate:5,classic:0,fastest:"2:26:47",fastestEvent:"Байкальский марафон",fastestYear:"2026",seasonMax:5,seasonYear:"2026"}
+  {name:"Кирилл Гречников",skate:5,classic:0,fastest:"2:26:47",fastestEvent:"Байкальский марафон",fastestYear:"2026",seasonMax:5,seasonYear:"2026"},
+  {name:"Елена Никитина",skate:12,classic:0,fastest:"2:38:41",fastestEvent:"Деминский марафон",fastestYear:"2022",fastestLabel:"Подтверждённые 50 км",seasonMax:2,seasonNote:"Сезоны 2018, 2024 и 2026"}
 );
 const ATHLETE_PROFILE_LINKS = {
   "Максим Устинов":"https://russialoppet.ru/athletes/18911/",
@@ -1104,11 +1107,13 @@ const ATHLETE_PROFILE_LINKS = {
   "Полина Сероносова":"https://russialoppet.ru/athletes/29562/",
   "Людмила Шамшина":"https://russialoppet.ru/athletes/182505/",
   "Климентий Агалаков":"https://russialoppet.ru/athletes/806162/",
-  "Кирилл Гречников":"https://russialoppet.ru/athletes/742977/"
+  "Кирилл Гречников":"https://russialoppet.ru/athletes/742977/",
+  "Елена Никитина":"https://russialoppet.ru/athletes/28493/"
 };
 
 // Крайний марафон каждого действующего волка. Места — по протоколам RussiaLoppet.
 const RESULTS = [
+  {year:"2026",athlete:"Елена Никитина",event:"Байкальский марафон",time:"2:38:43",absPlace:25,group:"Ж45–49",groupPlace:4},
   {year:"2026",athlete:"Максим Устинов",event:"Московский лыжный марафон",time:"2:31:51",absPlace:36,group:"М35–39",groupPlace:12},
   {"year":"2026","athlete":"Анна Неустроева","event":"Апатитский марафон","time":"2:08:33","absPlace":3,"group":"Ж35–39","groupPlace":1},
   {"year":"2026","athlete":"Алексей Карасев","event":"Апатитский марафон","time":"2:26:00","absPlace":70,"group":"М55–59","groupPlace":6},
@@ -1342,7 +1347,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       <button class="btn" type="button" data-reserve-join>Стать частью стаи →</button>
     </article>`;
     const photo=item.photo
-      ? `<img src="${item.photo}" alt="${item.name}" loading="lazy" decoding="async">`
+      ? `<img src="${item.photo}" alt="${item.name}" loading="lazy" decoding="async"${item.photoPosition ? ` style="object-position:${item.photoPosition}"` : ""}>`
       : `<span class="reserve-photo-placeholder"><img src="assets/vargi-rune.svg" alt="" aria-hidden="true"><span>Фото скоро</span></span>`;
     return `<article class="reserve-card">
       <a class="reserve-photo" href="${item.rl}" target="_blank" rel="noopener noreferrer" aria-label="${item.profileLabel || "Профиль RussiaLoppet"}: ${item.name}">
