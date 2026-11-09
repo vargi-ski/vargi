@@ -283,6 +283,9 @@
     .reserve-card{min-height:320px}.reserve-photo{height:195px}
     .reserve-capacity{align-self:flex-start}
   }
+  @media(max-width:375px){
+    .reserve-photo img[src$="/zamyatin-vargi.webp"]{object-fit:contain}
+  }
   /* ---------- PACK STATS ---------- */
   .pack-stats-section{position:relative; overflow:hidden}
   .pack-stats-section:before{content:""; position:absolute; inset:10% -20% auto 35%; height:420px;
@@ -1035,7 +1038,7 @@ const RESERVE_ROSTER = [
   {name:"Максим Устинов",city:"Вологда",record:"20 марафонов RussiaLoppet",photo:"assets/maxim-ustinov.jpg",rl:"https://russialoppet.ru/athletes/18911/"},
   { name:"Полина Сероносова", city:"Петрозаводск", record:"16 марафонов · Кандидат в мастера RL", photo:"assets/polina-seronosova.webp", rl:"https://russialoppet.ru/athletes/29562/" },
   { name:"Елена Никитина", city:"Санкт-Петербург", record:"12 марафонов RussiaLoppet", photo:"assets/elena-nikitina.webp", photoPosition:"center top", rl:"https://russialoppet.ru/athletes/28493/" },
-  { name:"Семен Замятин", city:"Петрозаводск", record:"8 марафонов RussiaLoppet", photo:"assets/zamyatin-vargi.webp", rl:"https://russialoppet.ru/athletes/25744/" },
+  { name:"Семен Замятин", city:"Петрозаводск", record:"8 марафонов RussiaLoppet", photo:"assets/zamyatin-vargi.webp", photoPosition:"left top", rl:"https://russialoppet.ru/athletes/25744/" },
   { join:true }
 ];
 
