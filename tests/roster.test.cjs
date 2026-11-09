@@ -27,17 +27,22 @@ function sectionNames(id) {
   return Array.from(section[1].matchAll(/<h3\b[^>]*>([^<]+)<\/h3>/g), match => match[1].trim());
 }
 
-test('roster has 15 main and 13 expanded athletes, with no duplicate members', () => {
+test('roster has 15 main and 14 expanded athletes, with no duplicate members', () => {
   assert.equal(ROSTER.length, 15);
-  assert.equal(reserve.length, 13);
-  assert.equal(ALL_MEMBERS.length, 28);
-  assert.equal(new Set(names(ALL_MEMBERS)).size, 28);
+  assert.equal(reserve.length, 14);
+  assert.equal(ALL_MEMBERS.length, 29);
+  assert.equal(new Set(names(ALL_MEMBERS)).size, 29);
   assert.deepEqual(names(ALL_MEMBERS), [...names(ROSTER), ...names(reserve)]);
   assert.ok(names(ROSTER).includes(lyudmila));
   assert.ok(!names(ROSTER).includes(polina));
   assert.ok(names(reserve).includes(polina));
   assert.ok(!names(reserve).includes(lyudmila));
   assert.ok(names(reserve).includes(elena));
+  const z = reserve.find(member => member.name === "Семен Замятин");
+  assert.equal(z.city, "Петрозаводск");
+  assert.equal(z.rl, "https://russialoppet.ru/athletes/25744/");
+  assert.equal(ATHLETE_PROFILE_LINKS[z.name], z.rl);
+  assert.ok(fs.existsSync(path.join(root, z.photo)));
 });
 
 test('Lyudmila uses the supplied portrait asset and official RussiaLoppet profile', () => {
@@ -58,7 +63,7 @@ test('opening carousel shows Lyudmila instead of Polina', () => {
 });
 
 test('updated athletes have one statistics record and one results record', () => {
-  for (const name of [lyudmila, polina, elena]) {
+  for (const name of [lyudmila, polina, elena, "Семен Замятин"]) {
     assert.equal(WOLF_STATS.filter(record => record.name === name).length, 1, name + ': statistics record');
     assert.equal(RESULTS.filter(record => record.athlete === name).length, 1, name + ': results record');
   }
@@ -75,14 +80,14 @@ test('team structured data contains every athlete exactly once', () => {
   const organization = nodes.find(node => node['@type'] === 'SportsOrganization');
   assert.ok(organization, 'SportsOrganization structured data must exist.');
   const members = names(organization.member);
-  assert.equal(members.length, 28);
-  assert.equal(new Set(members).size, 28);
+  assert.equal(members.length, 29);
+  assert.equal(new Set(members).size, 29);
   assert.deepEqual(members.sort(), names(ALL_MEMBERS).sort());
 });
 
 test('displayed tier counts agree with the new roster', () => {
   const notes = Array.from(html.matchAll(/<div class="roster-tier-note">([^<]+)<\/div>/g), match => match[1]);
   assert.equal(notes.filter(note => note.startsWith('15 спортсменов')).length, 3);
-  assert.equal(notes.filter(note => note.startsWith('13 спортсменов')).length, 2);
-  assert.ok(!notes.some(note => /^(11|12) спортсменов/.test(note)));
+  assert.equal(notes.filter(note => note.startsWith('14 спортсменов')).length, 2);
+  assert.ok(!notes.some(note => /^(11|12|13) спортсменов/.test(note)));
 });

@@ -1,0 +1,120 @@
+{
+  "checkedAt": "2026-11-09",
+  "name": "Семен Замятин",
+  "profile": "https://russialoppet.ru/athletes/25744/",
+  "city": "Петрозаводск",
+  "marathons": 8,
+  "federalDistricts": 2,
+  "regions": 4,
+  "skate": 8,
+  "classic": 0,
+  "seasonMax": 2,
+  "seasonMaxYears": [
+    2023,
+    2025,
+    2026
+  ],
+  "confirmed50km": {
+    "year": 2026,
+    "event": "Вологда-Марафон Кирики-Улита",
+    "time": "2:23:05",
+    "absPlace": 81,
+    "group": "М 30-34",
+    "groupPlace": 12,
+    "source": "https://russialoppet.ru/results/2026/327336/",
+    "styleSource": "https://russialoppet.ru/events/kiriki-ulita2026.html",
+    "distanceKm": 50
+  },
+  "latestMarathon": {
+    "year": 2026,
+    "event": "Деминский марафон",
+    "time": "2:27:11",
+    "absPlace": 260,
+    "group": "М 30-34",
+    "groupPlace": 33,
+    "source": "https://russialoppet.ru/results/2026/850/",
+    "styleSource": "https://russialoppet.ru/events/demino2026.html"
+  },
+  "marathonRecords": [
+    {
+      "year": 2026,
+      "event": "Деминский марафон",
+      "time": "2:27:11",
+      "absPlace": 260,
+      "group": "М 30-34",
+      "groupPlace": 33,
+      "source": "https://russialoppet.ru/results/2026/850/",
+      "styleSource": "https://russialoppet.ru/events/demino2026.html"
+    },
+    {
+      "year": 2026,
+      "event": "Вологда-Марафон Кирики-Улита",
+      "time": "2:23:05",
+      "absPlace": 81,
+      "group": "М 30-34",
+      "groupPlace": 12,
+      "source": "https://russialoppet.ru/results/2026/327336/",
+      "styleSource": "https://russialoppet.ru/events/kiriki-ulita2026.html"
+    },
+    {
+      "year": 2025,
+      "event": "Вологда-Марафон Кирики-Улита",
+      "time": "2:00:30",
+      "absPlace": 149,
+      "group": "М 30-34",
+      "groupPlace": 17,
+      "source": "https://russialoppet.ru/results/2025/327336/",
+      "styleSource": "https://russialoppet.ru/events/kiriki-ulita2025.html"
+    },
+    {
+      "year": 2025,
+      "event": "Праздник Севера",
+      "time": "3:01:21",
+      "absPlace": 304,
+      "group": "М 30-34",
+      "groupPlace": 37,
+      "source": "https://russialoppet.ru/results/2025/842/",
+      "styleSource": "https://russialoppet.ru/events/murmansk2025.html"
+    },
+    {
+      "year": 2024,
+      "event": "Вологда-Марафон Кирики-Улита",
+      "time": "2:39:59",
+      "absPlace": 59,
+      "group": "М 24-29",
+      "groupPlace": 13,
+      "source": "https://russialoppet.ru/results/2024/327336/",
+      "styleSource": "https://russialoppet.ru/events/kiriki-ulita2024.html"
+    },
+    {
+      "year": 2023,
+      "event": "Праздник Севера",
+      "time": "3:11:35",
+      "absPlace": 220,
+      "group": "М 24-29",
+      "groupPlace": 24,
+      "source": "https://russialoppet.ru/results/2023/842/",
+      "styleSource": "https://russialoppet.ru/events/murmansk2023.html"
+    },
+    {
+      "year": 2023,
+      "event": "KareliaSkiFest",
+      "time": "2:38:00",
+      "absPlace": 59,
+      "group": "М 24-29",
+      "groupPlace": 7,
+      "source": "https://russialoppet.ru/results/2023/170593/",
+      "styleSource": "https://russialoppet.ru/events/kareliya2023.html"
+    },
+    {
+      "year": 2015,
+      "event": "Праздник Севера",
+      "time": "2:59:38",
+      "absPlace": 227,
+      "group": "М 19-20",
+      "groupPlace": 32,
+      "source": "https://russialoppet.ru/results/2015/842/",
+      "styleSource": "https://russialoppet.ru/events/murmansk2015.html"
+    }
+  ]
+}
