@@ -41,7 +41,7 @@
       '<div class="card-photo"><img src="' + escape(product.img) + '" alt="' + escape(product.name) + '" loading="lazy" decoding="async"></div>' +
       '<div class="card-info"><p class="availability' + (!inStock(product) && !product.preorderRelease && (!product.preorder || product.preorderLeadTime) ? ' availability--sold-out' : '') + '">' + escape(availability(product)) + '</p>' +
       '<h3>' + escape(product.name) + '</h3>' +
-      '<div class="card-description">' + product.desc + '</div>' +
+      '<div class="card-description">' + (product.shortDesc || product.desc) + '</div>' +
       (product.material ? '<p class="card-material">Состав: ' + escape(product.material) + '</p>' : '') +
       '<div class="card-stock">' +
       (inStock(product) && sizes.length ? '<p>Размеры в наличии:</p><div class="card-sizes">' + sizes.map(([size, quantity]) => '<span>' + escape(size) + ' · ' + quantity + ' шт.</span>').join('') + '</div>' : '') +
