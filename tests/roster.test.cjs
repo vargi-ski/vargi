@@ -27,11 +27,11 @@ function sectionNames(id) {
   return Array.from(section[1].matchAll(/<h3\b[^>]*>([^<]+)<\/h3>/g), match => match[1].trim());
 }
 
-test('roster has 15 main and 14 expanded athletes, with no duplicate members', () => {
+test('roster has 15 main and 15 expanded athletes, with no duplicate members', () => {
   assert.equal(ROSTER.length, 15);
-  assert.equal(reserve.length, 14);
-  assert.equal(ALL_MEMBERS.length, 29);
-  assert.equal(new Set(names(ALL_MEMBERS)).size, 29);
+  assert.equal(reserve.length, 15);
+  assert.equal(ALL_MEMBERS.length, 30);
+  assert.equal(new Set(names(ALL_MEMBERS)).size, 30);
   assert.deepEqual(names(ALL_MEMBERS), [...names(ROSTER), ...names(reserve)]);
   assert.ok(names(ROSTER).includes(lyudmila));
   assert.ok(!names(ROSTER).includes(polina));
@@ -63,7 +63,7 @@ test('opening carousel shows Lyudmila instead of Polina', () => {
 });
 
 test('updated athletes have one statistics record and one results record', () => {
-  for (const name of [lyudmila, polina, elena, "Семен Замятин"]) {
+  for (const name of [lyudmila, polina, elena, "Семен Замятин", "Сергей Прокопьев"]) {
     assert.equal(WOLF_STATS.filter(record => record.name === name).length, 1, name + ': statistics record');
     assert.equal(RESULTS.filter(record => record.athlete === name).length, 1, name + ': results record');
   }
@@ -80,14 +80,35 @@ test('team structured data contains every athlete exactly once', () => {
   const organization = nodes.find(node => node['@type'] === 'SportsOrganization');
   assert.ok(organization, 'SportsOrganization structured data must exist.');
   const members = names(organization.member);
-  assert.equal(members.length, 29);
-  assert.equal(new Set(members).size, 29);
+  assert.equal(members.length, 30);
+  assert.equal(new Set(members).size, 30);
   assert.deepEqual(members.sort(), names(ALL_MEMBERS).sort());
 });
 
 test('displayed tier counts agree with the new roster', () => {
   const notes = Array.from(html.matchAll(/<div class="roster-tier-note">([^<]+)<\/div>/g), match => match[1]);
-  assert.equal(notes.filter(note => note.startsWith('15 спортсменов')).length, 3);
-  assert.equal(notes.filter(note => note.startsWith('14 спортсменов')).length, 2);
+  assert.equal(notes.filter(note => note.startsWith('15 спортсменов')).length, 5);
   assert.ok(!notes.some(note => /^(11|12|13) спортсменов/.test(note)));
+});
+
+
+test('Sergey Prokopyev has the verified RL profile, results and crop-safe portrait', () => {
+  const name = 'Сергей Прокопьев';
+  const member = reserve.find(member => member.name === name);
+  const snapshot = JSON.parse(fs.readFileSync(path.join(root, 'data/russialoppet-sergey-prokopyev-2026-11-11.json'), 'utf8'));
+  const stats = WOLF_STATS.find(record => record.name === name);
+  const latest = RESULTS.find(record => record.athlete === name);
+  assert.equal(member.city, snapshot.city);
+  assert.equal(member.rl, snapshot.profile);
+  assert.equal(ATHLETE_PROFILE_LINKS[name], snapshot.profile);
+  assert.ok(fs.statSync(path.join(root, member.photo)).size > 0);
+  assert.equal(stats.total, snapshot.marathons);
+  assert.equal(stats.skate + stats.classic, snapshot.marathons);
+  assert.equal(stats.classic, 2);
+  assert.equal(stats.fastest, snapshot.confirmed50km.time);
+  assert.equal(stats.seasonMax, 4);
+  assert.equal(latest.time, snapshot.latestMarathon.time);
+  assert.equal(latest.absPlace, snapshot.latestMarathon.absPlace);
+  assert.equal(latest.groupPlace, snapshot.latestMarathon.groupPlace);
+  assert.ok(team.includes('id="sergey-prokopyev"'));
 });
