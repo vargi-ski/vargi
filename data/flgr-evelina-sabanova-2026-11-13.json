@@ -9,8 +9,12 @@
   "fisCode": "3486891",
   "rank": "МС",
   "sourceNameLatin": "SABANOVA Avelina",
-  "russialoppetStatistics": null,
-  "note": "Профиль ФЛГР не подтверждает количество марафонов RussiaLoppet; неизвестные показатели не заменяются нулями. Портрет — утверждённый владельцем фотомонтаж с исходными пикселями лица и волос, экспорт WebP без потерь.",
+  "russialoppetStatistics": {
+    "profile": "https://russialoppet.ru/athletes/28484/",
+    "marathons": 2,
+    "snapshot": "russialoppet-evelina-sabanova-2026-11-13.json"
+  },
+  "note": "Дополнено подтверждённым профилем RussiaLoppet по ссылке владельца сайта. Портрет — утверждённый фотомонтаж, экспорт WebP без потерь.",
   "confirmedResult": {
     "date": "2025-08-02",
     "competition": "Чемпионат России по лыжероллерам",

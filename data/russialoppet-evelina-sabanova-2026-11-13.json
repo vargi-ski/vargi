@@ -1,0 +1,54 @@
+{
+  "checkedAt": "2026-11-13",
+  "name": "Эвелина Сабанова",
+  "profile": "https://russialoppet.ru/athletes/28484/",
+  "flgrProfile": "https://flgr-results.ru/athletes/204321/",
+  "birthYear": 1999,
+  "city": "Санкт-Петербург",
+  "marathons": 2,
+  "federalDistricts": 1,
+  "regions": 1,
+  "skate": 2,
+  "classic": 0,
+  "seasonMax": 1,
+  "seasonMaxYears": [
+    2017,
+    2022
+  ],
+  "confirmed50km": null,
+  "distanceNote": "Токсово 2022: женская марафонная дистанция 34 км. Источник не подтверждает рекорд ровно на 50 км; время 1:58:43 не записывается в рекорд на 50 км.",
+  "styleSources": [
+    "https://russialoppet.ru/events/toksovo2022.html",
+    "https://russialoppet.ru/events/toksovo2017.html"
+  ],
+  "latestMarathon": {
+    "year": 2022,
+    "event": "Токсово Марафон",
+    "time": "1:58:43",
+    "absPlace": 2,
+    "group": "Ж 21-23",
+    "groupPlace": 1,
+    "source": "https://russialoppet.ru/results/2022/836/",
+    "distanceKm": 34
+  },
+  "marathonRecords": [
+    {
+      "year": 2022,
+      "event": "Токсово Марафон",
+      "time": "1:58:43",
+      "absPlace": 2,
+      "group": "Ж 21-23",
+      "groupPlace": 1,
+      "source": "https://russialoppet.ru/results/2022/836/"
+    },
+    {
+      "year": 2017,
+      "event": "Токсово Марафон",
+      "time": "2:02:42",
+      "absPlace": 6,
+      "group": "Ж 19-20",
+      "groupPlace": 3,
+      "source": "https://russialoppet.ru/results/2017/836/"
+    }
+  ]
+}

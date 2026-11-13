@@ -115,18 +115,22 @@ test('Sergey Prokopyev has the verified RL profile, results and crop-safe portra
 });
 
 
-test('FLGR athlete keeps an FLGR link without invented marathon statistics', () => {
+test('Evelina uses her confirmed RL statistics while preserving FLGR and portrait', () => {
   const name = 'Эвелина Сабанова';
   const member = reserve.find(member => member.name === name);
   const stats = WOLF_STATS.find(record => record.name === name);
   const latest = RESULTS.find(record => record.athlete === name);
-  assert.equal(member.city, 'Санкт-Петербург');
-  assert.equal(member.rl, 'https://flgr-results.ru/athletes/204321/');
-  assert.equal(member.profileLabel, 'Профиль ФЛГР');
+  assert.equal(member.rl, 'https://russialoppet.ru/athletes/28484/');
+  assert.equal(member.flgr, 'https://flgr-results.ru/athletes/204321/');
   assert.equal(ATHLETE_PROFILE_LINKS[name], member.rl);
   assert.ok(fs.statSync(path.join(root, member.photo)).size > 0);
-  for (const field of ['total', 'skate', 'classic', 'seasonMax', 'fastest']) assert.equal(stats[field], undefined);
-  assert.equal(latest.time, '—');
-  assert.equal(latest.absPlace, null);
-  assert.equal(latest.groupPlace, null);
+  assert.equal(stats.total, 2);
+  assert.equal(stats.skate, 2);
+  assert.equal(stats.classic, 0);
+  assert.equal(stats.seasonMax, 1);
+  assert.equal(stats.fastest, undefined, 'Shorter marathon distances must not become a 50 km record');
+  assert.equal(latest.time, '1:58:43');
+  assert.equal(latest.absPlace, 2);
+  assert.equal(latest.groupPlace, 1);
+  assert.ok(team.includes(member.flgr));
 });
