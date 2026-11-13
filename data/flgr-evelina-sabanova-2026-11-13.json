@@ -1,0 +1,31 @@
+{
+  "checkedAt": "2026-11-13",
+  "name": "Эвелина Сабанова",
+  "profile": "https://flgr-results.ru/athletes/204321/",
+  "birthDate": "1999-08-04",
+  "region": "Санкт-Петербург",
+  "rusCode": "204321",
+  "rusStatus": "Активный",
+  "fisCode": "3486891",
+  "rank": "МС",
+  "sourceNameLatin": "SABANOVA Avelina",
+  "russialoppetStatistics": null,
+  "note": "Профиль ФЛГР не подтверждает количество марафонов RussiaLoppet; неизвестные показатели не заменяются нулями. Портрет — утверждённый владельцем фотомонтаж с исходными пикселями лица и волос, экспорт WebP без потерь.",
+  "confirmedResult": {
+    "date": "2025-08-02",
+    "competition": "Чемпионат России по лыжероллерам",
+    "location": "Казань",
+    "discipline": "Лыжероллеры - Спринт",
+    "place": 5,
+    "source": "https://flgr-results.ru/athletes/204321/"
+  },
+  "latestPublishedResult": {
+    "date": "2026-08-23",
+    "competitionCategory": "ЧР",
+    "location": "Ханты-Мансийск",
+    "discipline": "Лыжероллеры - Масстарт",
+    "place": 11,
+    "points": 67.55,
+    "source": "https://flgr-results.ru/athletes/204321/"
+  }
+}

@@ -819,14 +819,14 @@
   <div class="wrap">
     <div class="eyebrow">Статистика стаи</div>
     <h2>Стая в <span class="ice">цифрах</span></h2>
-    <p class="lead">Марафоны RussiaLoppet: стили, результаты на 50 км и рекорд по количеству марафонов за сезон. Полумарафоны не включены. Сверено по профилям и протоколам: основной состав — 19 октября 2026; расширенный состав обновлён 11 ноября 2026.</p>
+    <p class="lead">Марафоны RussiaLoppet: стили, результаты на 50 км и рекорд по количеству марафонов за сезон. Полумарафоны не включены. Сверено по профилям и протоколам: основной состав — 19 октября 2026; расширенный состав обновлён 13 ноября 2026.</p>
 
     <div class="stats-tier">
       <div class="roster-tier-head"><div class="roster-tier-title">Основной состав</div><div class="roster-tier-note">15 спортсменов · ядро стаи</div></div>
       <div class="wolf-stats-grid" id="wolfStatsMain" aria-label="Статистика основного состава"></div>
     </div>
     <div class="stats-tier collapsible-tier" id="wolfStatsReserveTier" hidden>
-      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">15 спортсменов · единая стая</div></div>
+      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">16 спортсменов · единая стая</div></div>
       <div class="wolf-stats-grid" id="wolfStatsReserve" aria-label="Статистика расширенного состава"></div>
     </div>
     <button class="results-toggle" id="statsToggle" type="button" aria-expanded="false" aria-controls="wolfStatsMain wolfStatsReserveTier">
@@ -854,7 +854,7 @@
       </div>
     </div>
     <div class="results-tier collapsible-tier" id="resultsReserveTier" hidden>
-      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">15 спортсменов</div></div>
+      <div class="roster-tier-head"><div class="roster-tier-title">Расширенный состав</div><div class="roster-tier-note">16 спортсменов</div></div>
       <div class="team-table-wrap">
         <table class="team-table results-table" aria-label="Крайние марафоны расширенного состава">
           <thead><tr><th>Спортсмен</th><th class="center-head">Год</th><th>Марафон</th><th>Время</th><th>Абсолют</th><th>Группа</th><th>В группе</th></tr></thead>
@@ -1041,6 +1041,7 @@ const RESERVE_ROSTER = [
   { name:"Елена Никитина", city:"Санкт-Петербург", record:"12 марафонов RussiaLoppet", photo:"assets/elena-nikitina.webp", photoPosition:"center top", rl:"https://russialoppet.ru/athletes/28493/" },
   { name:"Семен Замятин", city:"Петрозаводск", record:"8 марафонов RussiaLoppet", photo:"assets/zamyatin-vargi.webp", photoPosition:"left top", rl:"https://russialoppet.ru/athletes/25744/" },
   { name:"Сергей Прокопьев", city:"Оренбург", record:"14 марафонов RussiaLoppet", photo:"assets/sergey-prokopyev-vargi.webp", photoPosition:"center top", rl:"https://russialoppet.ru/athletes/275573/" },
+  { name:"Эвелина Сабанова", city:"Санкт-Петербург", record:"Мастер спорта России", photo:"assets/evelina-sabanova-vargi.webp", photoPosition:"center 72%", rl:"https://flgr-results.ru/athletes/204321/", profileLabel:"Профиль ФЛГР", profileGoal:"reserve_flgr_click" },
   { join:true }
 ];
 
@@ -1057,6 +1058,7 @@ ROSTER[0].photo = LEADER_SEA_PHOTO;
 // Елена Никитина: data/russialoppet-elena-nikitina-2026-11-02.json.
 // Семен Замятин: data/russialoppet-semen-zamyatin-2026-11-09.json.
 // Сергей Прокопьев: data/russialoppet-sergey-prokopyev-2026-11-11.json.
+// Эвелина Сабанова: data/flgr-evelina-sabanova-2026-11-13.json; статистика RL не подтверждена.
 const WOLF_STATS = [
   { name:"Артем Грязев",       skate:45, classic:4, fastest:"1:48:05", fastestEvent:"Деминский марафон",     fastestYear:"2025", seasonMax:15, seasonYear:"2025" },
   { name:"Константин Нечаев",  skate:52, classic:10, fastest:"1:42:23", fastestEvent:"Красногорский марафон", fastestYear:"2006", seasonMax:14, seasonYear:"2025", fastestVerified:false, fastestNote:"Красногорский марафон · 2006; дистанция архива уточняется" },
@@ -1083,6 +1085,7 @@ const ALL_MEMBERS = [...ROSTER,...RESERVE_ROSTER.filter(member=>!member.join)];
 // Алексей Марков: data/russialoppet-alexey-markov-2026-09-21.json.
 // Сокращённые марафоны входят в общий счёт RL, но не в рекорд ровно на 50 км.
 WOLF_STATS.push(
+  {name:"Эвелина Сабанова",fastestNote:"Марафонные результаты RussiaLoppet уточняются",seasonNote:"Марафонная статистика не подтверждена"},
   {name:"Сергей Прокопьев",total:14,skate:12,classic:2,fastest:"2:49:43",fastestEvent:"Уфимский марафон",fastestYear:"2023",fastestLabel:"Подтверждённые 50 км",seasonMax:4,seasonYear:"2024"},
   {name:"Максим Устинов",skate:19,classic:1,fastest:"2:02:17",fastestEvent:"Деминский марафон",fastestYear:"2024",fastestLabel:"Подтверждённые 50 км",seasonMax:4,seasonYear:"2024"},
   {"name":"Анна Неустроева","skate":11,"classic":1,"fastest":"2:08:33","fastestEvent":"Апатитский марафон","fastestYear":"2026","seasonMax":2,"seasonYear":"2026"},
@@ -1099,6 +1102,7 @@ WOLF_STATS.push(
   {name:"Елена Никитина",skate:12,classic:0,fastest:"2:38:41",fastestEvent:"Деминский марафон",fastestYear:"2022",fastestLabel:"Подтверждённые 50 км",seasonMax:2,seasonNote:"Сезоны 2018, 2024 и 2026"}
 );
 const ATHLETE_PROFILE_LINKS = {
+  "Эвелина Сабанова":"https://flgr-results.ru/athletes/204321/",
   "Сергей Прокопьев":"https://russialoppet.ru/athletes/275573/",
   "Семен Замятин":"https://russialoppet.ru/athletes/25744/",
   "Максим Устинов":"https://russialoppet.ru/athletes/18911/",
@@ -1125,6 +1129,7 @@ const ATHLETE_PROFILE_LINKS = {
 
 // Крайний марафон каждого действующего волка. Места — по протоколам RussiaLoppet.
 const RESULTS = [
+  {year:"—",athlete:"Эвелина Сабанова",event:"Марафонные результаты не подтверждены",time:"—",absPlace:null,group:"—",groupPlace:null},
   {year:"2026",athlete:"Сергей Прокопьев",event:"Уфимский марафон",time:"3:35:00",absPlace:118,group:"М60–64",groupPlace:5},
   {year:"2026",athlete:"Семен Замятин",event:"Деминский марафон",time:"2:27:11",absPlace:260,group:"М30–34",groupPlace:33},
   {year:"2026",athlete:"Елена Никитина",event:"Байкальский марафон",time:"2:38:43",absPlace:25,group:"Ж45–49",groupPlace:4},

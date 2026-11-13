@@ -27,11 +27,11 @@ function sectionNames(id) {
   return Array.from(section[1].matchAll(/<h3\b[^>]*>([^<]+)<\/h3>/g), match => match[1].trim());
 }
 
-test('roster has 15 main and 15 expanded athletes, with no duplicate members', () => {
+test('roster has 15 main and 16 expanded athletes, with no duplicate members', () => {
   assert.equal(ROSTER.length, 15);
-  assert.equal(reserve.length, 15);
-  assert.equal(ALL_MEMBERS.length, 30);
-  assert.equal(new Set(names(ALL_MEMBERS)).size, 30);
+  assert.equal(reserve.length, 16);
+  assert.equal(ALL_MEMBERS.length, 31);
+  assert.equal(new Set(names(ALL_MEMBERS)).size, 31);
   assert.deepEqual(names(ALL_MEMBERS), [...names(ROSTER), ...names(reserve)]);
   assert.ok(names(ROSTER).includes(lyudmila));
   assert.ok(!names(ROSTER).includes(polina));
@@ -63,7 +63,7 @@ test('opening carousel shows Lyudmila instead of Polina', () => {
 });
 
 test('updated athletes have one statistics record and one results record', () => {
-  for (const name of [lyudmila, polina, elena, "Семен Замятин", "Сергей Прокопьев"]) {
+  for (const name of [lyudmila, polina, elena, "Семен Замятин", "Сергей Прокопьев", "Эвелина Сабанова"]) {
     assert.equal(WOLF_STATS.filter(record => record.name === name).length, 1, name + ': statistics record');
     assert.equal(RESULTS.filter(record => record.athlete === name).length, 1, name + ': results record');
   }
@@ -80,14 +80,15 @@ test('team structured data contains every athlete exactly once', () => {
   const organization = nodes.find(node => node['@type'] === 'SportsOrganization');
   assert.ok(organization, 'SportsOrganization structured data must exist.');
   const members = names(organization.member);
-  assert.equal(members.length, 30);
-  assert.equal(new Set(members).size, 30);
+  assert.equal(members.length, 31);
+  assert.equal(new Set(members).size, 31);
   assert.deepEqual(members.sort(), names(ALL_MEMBERS).sort());
 });
 
 test('displayed tier counts agree with the new roster', () => {
   const notes = Array.from(html.matchAll(/<div class="roster-tier-note">([^<]+)<\/div>/g), match => match[1]);
-  assert.equal(notes.filter(note => note.startsWith('15 спортсменов')).length, 5);
+  assert.equal(notes.filter(note => note.startsWith('15 спортсменов')).length, 3);
+  assert.equal(notes.filter(note => note.startsWith('16 спортсменов')).length, 2);
   assert.ok(!notes.some(note => /^(11|12|13) спортсменов/.test(note)));
 });
 
@@ -111,4 +112,21 @@ test('Sergey Prokopyev has the verified RL profile, results and crop-safe portra
   assert.equal(latest.absPlace, snapshot.latestMarathon.absPlace);
   assert.equal(latest.groupPlace, snapshot.latestMarathon.groupPlace);
   assert.ok(team.includes('id="sergey-prokopyev"'));
+});
+
+
+test('FLGR athlete keeps an FLGR link without invented marathon statistics', () => {
+  const name = 'Эвелина Сабанова';
+  const member = reserve.find(member => member.name === name);
+  const stats = WOLF_STATS.find(record => record.name === name);
+  const latest = RESULTS.find(record => record.athlete === name);
+  assert.equal(member.city, 'Санкт-Петербург');
+  assert.equal(member.rl, 'https://flgr-results.ru/athletes/204321/');
+  assert.equal(member.profileLabel, 'Профиль ФЛГР');
+  assert.equal(ATHLETE_PROFILE_LINKS[name], member.rl);
+  assert.ok(fs.statSync(path.join(root, member.photo)).size > 0);
+  for (const field of ['total', 'skate', 'classic', 'seasonMax', 'fastest']) assert.equal(stats[field], undefined);
+  assert.equal(latest.time, '—');
+  assert.equal(latest.absPlace, null);
+  assert.equal(latest.groupPlace, null);
 });
