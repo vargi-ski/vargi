@@ -1,9 +1,9 @@
-// RussiaLoppet 2027: ЦФО и СЗФО. Сверено 20.10.2026.
+// RussiaLoppet 2027: ЦФО и СЗФО. Сверено 15.11.2026.
 // Общие данные главной страницы и atlas-art-review; источники — в каждой гонке.
 // «Сияние Севера» отсутствует в общем календаре и списке регионального кубка
 // на дату сверки; это не подтверждение отмены самой гонки.
 window.VARGI_RACE_CALENDAR = {
-  "checkedOn": "2026-10-20",
+  "checkedOn": "2026-11-15",
   "source": "https://russialoppet.ru/events/2027/",
   "races": [
     {
@@ -96,6 +96,21 @@ window.VARGI_RACE_CALENDAR = {
     },
     {
       "group": "Февраль",
+      "d": "14",
+      "m": "фев",
+      "year": "2027",
+      "name": "Марафон МВТУ",
+      "city": "ЦФО · Москва",
+      "status": "soon",
+      "program": [
+        {
+          "label": "14 февраля · классический стиль · 50 км",
+          "href": "https://russialoppet.ru/events/mvtu2027.html"
+        }
+      ]
+    },
+    {
+      "group": "Февраль",
       "d": "20",
       "m": "фев",
       "year": "2027",
@@ -159,21 +174,6 @@ window.VARGI_RACE_CALENDAR = {
     },
     {
       "group": "Февраль",
-      "d": "21",
-      "m": "фев",
-      "year": "2027",
-      "name": "Марафон МВТУ",
-      "city": "ЦФО · Москва",
-      "status": "soon",
-      "program": [
-        {
-          "label": "21 февраля · классический стиль · 51/34/17 км",
-          "href": "https://russialoppet.ru/events/mvtu2027.html"
-        }
-      ]
-    },
-    {
-      "group": "Февраль",
       "d": "27",
       "m": "фев",
       "year": "2027",
@@ -229,8 +229,7 @@ window.VARGI_RACE_CALENDAR = {
           "label": "28 февраля · классический стиль · 50/25 км",
           "href": "https://russialoppet.ru/events/murmanskcl2027.html"
         }
-      ],
-      "note": "Регистрация на RussiaRunning откроется 1 ноября 2026 года."
+      ]
     },
     {
       "group": "Март",
@@ -297,28 +296,49 @@ window.VARGI_RACE_CALENDAR = {
       "year": "2027",
       "name": "Марафон МГУ",
       "city": "ЦФО · Московская область, Красногорск",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "13 марта · свободный стиль · 50 км",
           "href": "https://russialoppet.ru/events/msu2027.html"
         }
+      ],
+      "registrations": [
+        {
+          "label": "Регистрация · 13 марта",
+          "href": "https://russialoppet.ru/registration/marathon-msu2027/"
+        }
       ]
     },
     {
       "group": "Март",
-      "d": "20",
+      "d": "20–21",
       "m": "мар",
       "year": "2027",
       "name": "Кубок Устьи",
       "city": "СЗФО · Архангельская область, Малиновка",
-      "status": "soon",
+      "status": "available",
       "program": [
         {
           "label": "20 марта · свободный стиль · 50/25/10 км",
           "href": "https://russialoppet.ru/events/ustya2027.html"
+        },
+        {
+          "label": "21 марта · классический стиль · 25 км",
+          "href": "https://russialoppet.ru/events/ustyacl2027.html"
         }
-      ]
+      ],
+      "registrations": [
+        {
+          "label": "Регистрация · 20 марта · свободный стиль",
+          "href": "https://russialoppet.ru/registration/ustya2027/"
+        },
+        {
+          "label": "Регистрация · 21 марта · классический стиль",
+          "href": "https://russialoppet.ru/registration/ustyacl2027/"
+        }
+      ],
+      "note": "Свободный стиль — 20 марта, классический — 21 марта. Оба дня указаны в Северо-Западном Малом кубке команд. Классическая гонка совпадает по дате с Апатитским марафоном."
     },
     {
       "group": "Март",
@@ -360,5 +380,6 @@ window.VARGI_RACE_CALENDAR = {
         }
       ]
     }
-  ]
+  ],
+  "regionalSource": "https://russialoppet.ru/cups/region-teams-cup/2027/"
 };
