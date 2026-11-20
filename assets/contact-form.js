@@ -5,6 +5,8 @@
   var message = (params.get('message') || '').slice(0, 3500);
   var form = new URL(base);
   form.searchParams.set('theme', 'dark');
+  // Keep prefills (including board ads) out of the plain contact/join drafts.
+  form.searchParams.set('form:cache_key', message ? 'vargi-contact-prefill-v1' : 'vargi-contact-v1');
   form.searchParams.set('vargi_camp', 'contact');
   form.searchParams.set('vargi_join', '');
   form.searchParams.set('answer_choices_9008994414934764', '');

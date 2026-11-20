@@ -5,6 +5,8 @@
   var requested = new URLSearchParams(window.location.search).get('format');
   var form = new URL(base);
   form.searchParams.set('theme', 'dark');
+  // Yandex restores unfinished answers by form ID unless this cache is isolated.
+  form.searchParams.set('form:cache_key', 'vargi-join-v1');
   form.searchParams.set('vargi_camp', 'contact');
   form.searchParams.set('vargi_join', '1');
   form.searchParams.set('answer_choices_96193', '85175');
