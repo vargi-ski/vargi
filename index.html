@@ -668,10 +668,10 @@
 }
 </script>
   <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
-  <link rel="stylesheet" href="/assets/site-shortcuts.css?v=20261120-original-eyes">
+  <link rel="stylesheet" href="/assets/site-shortcuts.css?v=20261120-round-join">
   <link rel="stylesheet" href="/assets/camp-promo.css?v=20261014-mobile-clear">
 </head>
-<body class="site-shortcuts-page">
+<body class="site-shortcuts-page has-pack-join">
 
 <!-- ===== HEADER ===== -->
 <header id="hdr">
@@ -717,12 +717,23 @@
   </div>
 </section>
 
-<nav class="site-shortcuts site-shortcuts--with-join" aria-label="Быстрые переходы">
+<nav class="site-shortcuts" aria-label="Быстрые переходы">
   <a class="site-shortcuts-link site-shortcuts-link--shop" href="/shop/" data-goal="shop_dock_click" aria-label="Магазин стаи — фирменная экипировка"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Магазин</span></a>
   <a class="site-shortcuts-link" href="/board/" data-goal="classifieds_dock_tab" aria-label="Барахолка стаи — частные объявления"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Барахолка</span></a>
-  <a class="site-shortcuts-link site-shortcuts-link--join" href="/join/" data-goal="join_dock_click"><img class="site-shortcuts-eyes" src="/assets/vargi-eyes-mark.svg" width="104" height="40" alt="" aria-hidden="true"><span>Вступить в стаю</span></a>
   <a class="site-shortcuts-link site-shortcuts-link--training" href="/training-plan/" data-goal="mobile_training_cta_click" aria-label="Обсудить подготовку с Артемом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 20 8-16 10 16H3Z"/><path d="m8 10 3 3 3-4"/></svg><span>Подготовка</span></a>
 </nav>
+
+<a class="pack-join-fab" href="/join/" data-goal="join_dock_click" aria-label="Вступить в стаю">
+  <span class="pack-join-fab__disc" aria-hidden="true">
+    <svg class="pack-join-fab__eyes" viewBox="0 0 315 180" width="64" height="37" focusable="false">
+      <svg x="0" y="0" width="190" height="180" viewBox="35 30 185 180"><image href="/assets/vargi-eyes-mark.svg" width="570" height="215"/></svg>
+      <svg x="125" y="0" width="190" height="180" viewBox="350 30 185 180"><image href="/assets/vargi-eyes-mark.svg" width="570" height="215"/></svg>
+    </svg>
+    <span class="pack-join-fab__label">Вступить</span>
+    <img class="pack-join-fab__face" src="/assets/vargi-wolf-snarl.webp" width="240" height="240" alt="" decoding="async">
+  </span>
+  <span class="pack-join-fab__tip" aria-hidden="true">Вступить в стаю</span>
+</a>
 
 <hr class="track">
 
@@ -974,7 +985,7 @@
   </div>
 </footer>
 
-<script src="/assets/site-shortcuts.js?v=20261003" defer></script>
+<script src="/assets/site-shortcuts.js?v=20261120-round-join" defer></script>
 
 <!-- ===== OVERLAY (lightbox + modal) ===== -->
 <div class="overlay" id="overlay">
@@ -1868,5 +1879,6 @@ window.VARGI_ANALYTICS = {
   <script src="/assets/camp-promo.js?v=20261012-from" defer></script>
 </body>
 </html>
+
 
 
