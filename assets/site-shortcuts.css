@@ -7,6 +7,8 @@
 .site-shortcuts-link:focus-visible{outline:2px solid #fff;outline-offset:4px}
 .site-shortcuts-link[aria-current="page"]{outline:1px solid #bce8fc;outline-offset:3px}
 .site-shortcuts-link--training{display:none}
+.site-shortcuts-link--join{flex-direction:column;justify-content:center;gap:4px;min-height:88px;border-color:#8fd0ef;background:#0d202b;color:#f0f9ff;font-size:14px;text-align:center}
+.site-shortcuts-link--join svg{width:84px;height:40px;fill:initial;stroke:none;overflow:hidden;mix-blend-mode:screen}
 .site-shortcuts[hidden]{display:none!important}
 body:has(dialog[open],.overlay.show,#burger[aria-expanded="true"]) .site-shortcuts{visibility:hidden;pointer-events:none}
 @media(min-width:1000px){.site-shortcuts-page main.wrap,.site-shortcuts-page main .wrap,.site-shortcuts-page>section .wrap{max-width:min(var(--maxw,1180px),calc(100% - 328px))}}
@@ -16,6 +18,10 @@ body:has(dialog[open],.overlay.show,#burger[aria-expanded="true"]) .site-shortcu
   .site-shortcuts-link{min-width:0;min-height:56px;flex-direction:column;justify-content:center;gap:5px;padding:7px 3px;border-color:transparent;border-radius:9px;box-shadow:none;font-size:12px;white-space:nowrap}
   .site-shortcuts-link svg{width:19px;height:19px}
   .site-shortcuts-link--training{display:flex}
+  .site-shortcuts--with-join .site-shortcuts-link--training{display:none}
+  .site-shortcuts--with-join .site-shortcuts-link--join{min-height:56px;gap:2px;padding:4px 2px;border-color:#639db9;font-size:14px;white-space:normal;line-height:1.1}
+  .site-shortcuts-link--join svg{width:62px;height:26px}
   .site-shortcuts-link[aria-current="page"]{outline-offset:0;outline-color:#679eb8}
 }
 @media(prefers-reduced-motion:reduce){.site-shortcuts-link{transition:none}}
+

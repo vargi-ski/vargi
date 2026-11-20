@@ -668,7 +668,7 @@
 }
 </script>
   <link rel="stylesheet" href="/assets/brand-wordmark.css?v=20261002">
-  <link rel="stylesheet" href="/assets/site-shortcuts.css?v=20261003">
+  <link rel="stylesheet" href="/assets/site-shortcuts.css?v=20261120-join">
   <link rel="stylesheet" href="/assets/camp-promo.css?v=20261014-mobile-clear">
 </head>
 <body class="site-shortcuts-page">
@@ -717,9 +717,10 @@
   </div>
 </section>
 
-<nav class="site-shortcuts" aria-label="Быстрые переходы">
+<nav class="site-shortcuts site-shortcuts--with-join" aria-label="Быстрые переходы">
   <a class="site-shortcuts-link site-shortcuts-link--shop" href="/shop/" data-goal="shop_dock_click" aria-label="Магазин стаи — фирменная экипировка"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l1 14H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg><span>Магазин</span></a>
   <a class="site-shortcuts-link" href="/board/" data-goal="classifieds_dock_tab" aria-label="Барахолка стаи — частные объявления"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg><span>Барахолка</span></a>
+  <a class="site-shortcuts-link site-shortcuts-link--join" href="/join/" data-goal="join_dock_click"><svg viewBox="830 340 180 86" aria-hidden="true"><image href="/assets/shop-winter-jacket-vargi.webp" width="1254" height="1254"/></svg><span>Вступить в стаю</span></a>
   <a class="site-shortcuts-link site-shortcuts-link--training" href="/training-plan/" data-goal="mobile_training_cta_click" aria-label="Обсудить подготовку с Артемом"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m3 20 8-16 10 16H3Z"/><path d="m8 10 3 3 3-4"/></svg><span>Подготовка</span></a>
 </nav>
 
@@ -1363,7 +1364,7 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
       <div class="reserve-role">Набор открыт</div>
       <div class="reserve-name">Здесь можешь быть ты</div>
       <p>Заполни короткую анкету и расскажи, почему хочешь идти со стаей.</p>
-      <button class="btn" type="button" data-reserve-join>Стать частью стаи →</button>
+      <a class="btn" href="/join/?format=expanded" data-goal="reserve_application_open">Вступить в стаю</a>
     </article>`;
     const photo=item.photo
       ? `<img src="${item.photo}" alt="${item.name}" loading="lazy" decoding="async"${item.photoPosition ? ` style="object-position:${item.photoPosition}"` : ""}>`
@@ -1395,7 +1396,6 @@ const el = (t,c)=>{const e=document.createElement(t); if(c)e.className=c; return
   const step=()=>track.firstElementChild.getBoundingClientRect().width+parseFloat(getComputedStyle(track).columnGap);
   prev.onclick=()=>track.scrollBy({left:-step(),behavior:"smooth"});
   next.onclick=()=>track.scrollBy({left:step(),behavior:"smooth"});
-  $("#reserveJoin [data-reserve-join]").addEventListener("click",openReserveForm);
   track.addEventListener("scroll",updateArrows,{passive:true});
   updateArrows();
   addEventListener("resize",updateArrows);
@@ -1786,15 +1786,6 @@ try {
 } catch (error) {
   console.warn("VARGI map could not render; other page sections remain available.", error);
 }
-function openReserveForm(){
-  const message=[
-    "Здравствуйте! Хочу вступить в расширенный состав ВАРГИ.",
-    "", "Мой город: ...", "Опыт в лыжах и марафонах: ...",
-    "Профиль RussiaLoppet — если есть: ...", "Почему хочу в ВАРГИ: ..."
-  ].join("\n");
-  if(window.vargiTrack) window.vargiTrack("reserve_application_open");
-  window.location.assign("/contact/#message="+encodeURIComponent(message));
-}
 function openOrder(name){
   const interestText=encodeURIComponent(`Здравствуйте! Хочу первым узнать о выходе «${name}» ВАРГИ и условиях заказа.`);
   showOverlay(`<div class="modal"><h3>Первый дроп ВАРГИ</h3><p>Оставьте интерес к «${name}». Когда готовые образцы пройдут проверку, пришлём реальные фотографии, характеристики и условия заказа.</p>
@@ -1877,3 +1868,4 @@ window.VARGI_ANALYTICS = {
   <script src="/assets/camp-promo.js?v=20261012-from" defer></script>
 </body>
 </html>
+

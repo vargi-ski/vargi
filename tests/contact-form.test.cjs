@@ -15,6 +15,8 @@ test('plain contact route explicitly replaces camp routing and empty prefill fie
   const result=links();
   for(const url of [result.direct,result.embedded]) {
     assert.equal(url.searchParams.get('vargi_camp'),'contact');
+    assert.equal(url.searchParams.get('vargi_join'),'');
+    assert.equal(url.searchParams.get('answer_choices_9008994414934764'),'');
     assert.equal(url.searchParams.has('message'),true);
     assert.equal(url.searchParams.get('message'),'');
     assert.equal(url.searchParams.has('answer_choices_96193'),true);
@@ -54,3 +56,4 @@ test('contact links route correctly even when site JavaScript is disabled',()=>{
     assert.equal(url.searchParams.get('answer_choices_96193'),'');
   }
 });
+

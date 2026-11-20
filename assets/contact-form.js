@@ -6,6 +6,8 @@
   var form = new URL(base);
   form.searchParams.set('theme', 'dark');
   form.searchParams.set('vargi_camp', 'contact');
+  form.searchParams.set('vargi_join', '');
+  form.searchParams.set('answer_choices_9008994414934764', '');
   form.searchParams.set('answer_choices_96193', '');
   form.searchParams.set('message', message);
   document.getElementById('openForm').href = form.href;
@@ -15,3 +17,4 @@
   if (message) telegram.searchParams.set('text', message);
   document.getElementById('telegramContact').href = telegram.href;
 })();
+
