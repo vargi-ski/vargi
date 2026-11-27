@@ -4,7 +4,6 @@ const fs = require('node:fs');
 const vm = require('node:vm');
 const path = require('node:path');
 const {buildMessage, linksFor} = require('../assets/camp-signup.js');
-const {isActive,isDismissed,isExcluded,END_AT,COOLDOWN} = require('../assets/camp-promo.js');
 const base = {room:'double',participants:1,level:'marathon',comment:''};
 
 test('application carries exact dates, package, room, experience and Unicode comments', () => {
@@ -32,21 +31,27 @@ test('application carries exact dates, package, room, experience and Unicode com
 test('rejects invalid choices, fractional counts and overly long comments', () => {
   for (const data of [{room:'__proto__'},{level:'missing'},{participants:0},{participants:1.5},{participants:21},{comment:'я'.repeat(501)}]) assert.throws(()=>buildMessage({...base,...data}));
 });
-test('promo excludes application/contact/admin flows and remains on public entries', () => {
-  for (const url of ['/camps/first-snow/','/camps/first-snow/signup/','/board/submit/','/board/admin/','/shop/order/','/privacy.html','/contact/','/analytics-dashboard/']) assert.equal(isExcluded(url,''),true,url);
-  for (const url of ['/','/team/','/camps/','/shop/','/board/']) assert.equal(isExcluded(url,''),false,url);
-  assert.equal(isExcluded('/','#signup'),true);
-  assert.equal(isExcluded('/','#message=hello'),true);
+const read = file => fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
+test('upcoming trips and the Murmansk report are separate; old signup cannot collect an application', () => {
+  const home=read('index.html'), calendar=read('camps/index.html'), report=read('camps/first-snow/index.html'), oldSignup=read('camps/first-snow/signup/index.html');
+  assert.match(home, /Предстоящие кэмпы/);
+  assert.match(home, /href="\/camps\/(?:#upcoming)?"/);
+  assert.doesNotMatch(home, /href="\/camps\/first-snow/);
+  assert.match(calendar, /id="upcoming"/);
+  assert.match(calendar, /href="\/camps\/first-snow\/"/);
+  assert.match(report, /Фотоотчёт скоро/);
+  assert.match(oldSignup, /0;\s*url=\/camps\/first-snow\//i);
+  assert.match(oldSignup, /noindex/);
+  for (const html of [calendar,report,oldSignup]) assert.doesNotMatch(html, /<form\b|<iframe\b|forms\.yandex\.ru|assets\/camp-signup|href="[^"]*first-snow\/signup/i);
 });
-test('promo respects Moscow start time and exact cooldown boundary', () => {
-  assert.equal(END_AT,Date.parse('2026-11-25T21:00:00Z'));
-  assert.equal(isActive(END_AT-1),true);
-  assert.equal(isActive(END_AT),false);
-  const dismissed=Date.parse('2026-10-12T12:00:00Z');
-  assert.equal(isDismissed(String(dismissed),dismissed+COOLDOWN-1),true);
-  assert.equal(isDismissed(String(dismissed),dismissed+COOLDOWN),false);
-  assert.equal(isDismissed(null,dismissed),false);
-  assert.equal(isDismissed('broken',dismissed),false);
+test('no sitemap page loads the retired popup, even on devices with an incorrect clock', () => {
+  for (const [,loc] of read('sitemap.xml').matchAll(/<loc>([^<]+)<\/loc>/g)) {
+    const pathname=new URL(loc).pathname.slice(1);
+    const file=!pathname || pathname.endsWith('/') ? pathname+'index.html' : pathname;
+    assert.doesNotMatch(read(file), /(?:src|href)="[^"]*camp-promo\.(?:js|css)/, file);
+  }
+  const docAccess=()=>{throw new Error('retired popup attempted to access the document');};
+  vm.runInNewContext(read('assets/camp-promo.js'),{get document(){return docAccess();},get window(){return docAccess();}});
 });
 
 function fixture(storageThrows=false) {

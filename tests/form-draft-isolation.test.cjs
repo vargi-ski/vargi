@@ -47,7 +47,7 @@ test('draft routing ignores caller-supplied keys and preserves the valid join dr
   assert.equal(new URL(result.contactForm.src).searchParams.get('form:cache_key'), new URL(pairs().contact[0]).searchParams.get('form:cache_key'));
 });
 test('no-JavaScript fallback links use the same isolated draft stores', () => {
-  for (const [kind, file] of Object.entries({join: 'join/index.html', contact: 'contact/index.html', camp: 'camps/first-snow/signup/index.html'})) {
+  for (const [kind, file] of Object.entries({join: 'join/index.html', contact: 'contact/index.html'})) {
     const html = fs.readFileSync(path.join(__dirname, '..', file), 'utf8');
     const links = Array.from(html.matchAll(/(?:href|src)="(https:\/\/forms\.yandex\.ru\/u\/6aacf2a849af472ed76c9d3d[^\"]*)"/g));
     assert.ok(links.length > 0, file);

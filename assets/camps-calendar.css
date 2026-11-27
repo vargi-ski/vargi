@@ -1,0 +1,27 @@
+/* Calendar and reports share the site's typography and ice-blue wordmark. */
+.camp-journal {min-height:100vh;display:flex;flex-direction:column}
+.camp-journal main {flex:1}
+.camp-journal :focus-visible {outline:2px solid var(--ice-hi);outline-offset:4px}
+.journal-skip {position:absolute;z-index:30;left:1rem;top:0;padding:.6rem 1rem;transform:translateY(-120%);background:var(--ice-hi);color:var(--bg)}
+.journal-skip:focus {transform:none}
+.journal-hero {scroll-margin-top:66px;padding:1.4rem 0 clamp(2.5rem,6vw,5rem);background:radial-gradient(ellipse at 82% 20%,#132736 0%,transparent 55%),var(--bg)}
+.journal-hero .breadcrumbs {margin-bottom:clamp(1.5rem,4vw,3rem)}
+.journal-split {display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);align-items:center;gap:clamp(1.5rem,5vw,4.5rem)}
+.journal-landscape {width:100%;height:auto;aspect-ratio:2/1;object-fit:cover;object-position:center 45%;border-radius:8px}
+.camp-journal .eyebrow {font-size:.875rem;color:var(--ice-hi)}
+.camp-journal h1 {font-size:clamp(2.25rem,5.1vw,4.2rem);overflow-wrap:break-word}
+.journal-reports {border-top:1px solid var(--line);padding:clamp(2rem,5vw,4rem) 0}
+.journal-reports h2 {font-size:clamp(1.6rem,3vw,2.25rem);margin-bottom:1.3rem}
+.journal-entry {display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:1.25rem 0;border-block:1px solid var(--line2)}
+.journal-entry strong {font:500 clamp(1.3rem,3vw,1.75rem)/1.3 Oswald,Impact,sans-serif}
+.journal-entry:hover strong,.journal-entry:focus-visible strong {color:var(--ice-hi);text-decoration:underline;text-underline-offset:.2em}
+.journal-date {display:block;color:var(--muted);font-size:1rem;margin-top:.25rem}
+.journal-status {font-size:.94rem;font-weight:600;color:var(--ice-hi)}
+.journal-report {padding:clamp(2rem,5vw,4.5rem) 0}
+.journal-report .journal-date {padding-left:.85rem;border-left:2px solid var(--ice);margin-bottom:1.4rem;color:var(--ink)}
+.journal-back {display:inline-block;margin-top:1.4rem;padding:.4rem 0;color:var(--ice-hi);text-decoration:underline;text-underline-offset:.2em}
+@media (max-width:680px) {
+ .journal-split {grid-template-columns:1fr}
+ .journal-landscape {aspect-ratio:2.5/1}
+ .journal-entry {align-items:flex-start;flex-direction:column;gap:.6rem}
+}

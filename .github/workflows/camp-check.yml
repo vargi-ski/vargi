@@ -1,9 +1,9 @@
-name: Camp signup checks
+name: Camp pages and signup checks
 on:
   push:
-    paths: ['camps/**', 'assets/camp-*.js', 'assets/camp-*.css', 'tests/camp.test.cjs', '.github/workflows/camp-check.yml']
+    paths: ['index.html', 'sitemap.xml', 'camps/**', 'assets/camp-*.js', 'assets/camp-*.css', 'tests/camp.test.cjs', '.github/workflows/camp-check.yml']
   pull_request:
-    paths: ['camps/**', 'assets/camp-*.js', 'assets/camp-*.css', 'tests/camp.test.cjs', '.github/workflows/camp-check.yml']
+    paths: ['index.html', 'sitemap.xml', 'camps/**', 'assets/camp-*.js', 'assets/camp-*.css', 'tests/camp.test.cjs', '.github/workflows/camp-check.yml']
 permissions:
   contents: read
 jobs:
