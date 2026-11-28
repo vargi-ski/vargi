@@ -141,7 +141,7 @@
     photo.src = product.img;
     photo.alt = product.name;
     photo.style.backgroundColor = product.bg || '#0b1015';
-    row.querySelector('.product-material').textContent = product.material || product.desc;
+    row.querySelector('.product-material').textContent = product.material || product.shortDesc || product.desc;
     row.querySelector('.stock-note').textContent = product.preorder
       ? (product.preorderRelease ? 'Доступен предзаказ. Плановая дата выпуска — ' + product.preorderRelease + '.' : product.preorderLeadTime ? 'Товар закончился. Возможен предзаказ. Срок — ' + product.preorderLeadTime + '.' : 'Доступен предзаказ. Размер и срок согласуем при подтверждении заказа.') + ' При предзаказе — предоплата 50% стоимости товара.'
       : 'В наличии: ' + Object.entries(product.stock || {}).filter(function (entry) { return entry[1] > 0; }).map(function (entry) { return entry[0] + ' — ' + entry[1] + ' шт.'; }).join(' · ');
@@ -162,6 +162,7 @@
     });
     sizeSelect.hidden = customSize; sizeSelect.disabled = customSize; sizeSelect.required = !customSize;
     customSizeInput.hidden = !customSize; customSizeInput.disabled = !customSize; customSizeInput.required = customSize && !allowsMeasurements(product);
+    customSizeInput.inputMode = product.sizeInputMode || 'text';
     customSizeInput.placeholder = isCap ? 'Например, 58' : 'Например, M'; customSizeInput.value = '';
     row.querySelector('.size-label').htmlFor = (customSize ? customSizeInput : sizeSelect).id;
     sizeSelect.setCustomValidity(''); customSizeInput.setCustomValidity('');
@@ -241,7 +242,8 @@
     var total = order.reduce(function (sum, line) { return sum + line.product.basePrice * line.quantity; }, 0);
     var lines = order.map(function (line, index) {
       var sizeLabel = line.product.sizeKind === 'cap' ? 'обхват головы' : 'размер';
-      return (index + 1) + '. ' + line.product.name + ' — ' + sizeLabel + ': ' + line.size + (line.measurements.length ? '; мерки — ' + line.measurements.join(', ') : '') + '; ' + line.quantity + ' шт. × ' + rub(line.product.basePrice) + ' = ' + rub(line.product.basePrice * line.quantity) + (line.product.preorder ? '; ПРЕДЗАКАЗ, ' + preorderTiming(line.product) + '; предоплата 50% стоимости товара после подтверждения заказа' : '; наличие подтвердим при обработке заявки');
+      var sizeText = line.product.sizeKind === 'cap' && /^\d+(?:[.,]\d+)?$/.test(line.size) ? line.size + ' см' : line.size;
+      return (index + 1) + '. ' + line.product.name + ' — ' + sizeLabel + ': ' + sizeText + (line.measurements.length ? '; мерки — ' + line.measurements.join(', ') : '') + '; ' + line.quantity + ' шт. × ' + rub(line.product.basePrice) + ' = ' + rub(line.product.basePrice * line.quantity) + (line.product.preorder ? '; ПРЕДЗАКАЗ, ' + preorderTiming(line.product) + '; предоплата 50% стоимости товара после подтверждения заказа' : '; наличие подтвердим при обработке заявки');
     });
     var message = ['ЗАКАЗ ЭКИПИРОВКИ ВАРГИ', '', lines.join('\n'), '', 'Стоимость товаров: ' + rub(total) + '.', 'Цены фиксированные. Доставка не включена и рассчитывается отдельно. Наличие, доставка и оплата — после согласования.', '', 'Комментарий к заказу (если нужен):'].join('\n');
     if (message.length > 6000) { error.textContent = 'Сократите описание размеров и повторите оформление.'; error.hidden = false; return; }

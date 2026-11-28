@@ -60,7 +60,7 @@ test('controller intercepts submit before native required-field validation and k
   assert.equal((html.match(/type="text" class="measurement"/g)||[]).length,4);
 });
 
-function checkoutFixture() {
+function checkoutFixture(order = [{product:{...stock,name:'Тестовая футболка',basePrice:1000},size:'M'}]) {
   const source=fs.readFileSync(path.join(__dirname,'../assets/shop-order.js'),'utf8');
   const elements=new Map();
   const get=id=>{
@@ -71,21 +71,25 @@ function checkoutFixture() {
     });
     return elements.get(id);
   };
-  const product={...stock,name:'Тестовая футболка',basePrice:1000};
-  const quantity={valueAsNumber:1,max:2,validity:{valid:true}};
-  const row={querySelector(selector){return {
-    '.quantity':quantity,'.preorder-measurements':{disabled:true},'.help-size':{checked:false}
-  }[selector];}};
+  const rows=order.map(line=>{
+    const inputs=Object.entries(line.measurements || {}).map(([measurement,value])=>({dataset:{measurement},value}));
+    const fields={'.quantity':{valueAsNumber:1,max:99,validity:{valid:true}},
+      '.preorder-measurements':{disabled:!line.measurements,querySelectorAll:()=>inputs},
+      '.help-size':{checked:!!line.help}};
+    return {line,querySelector:selector=>fields[selector],querySelectorAll:selector=>selector==='.measurement' ? inputs : []};
+  });
   let confirmed=true;
   const root={confirm:()=>confirmed};
   const builder=get('builder');
   const scope=vm.createContext({URL,window:root,root,document:{getElementById:get,createElement:()=>({})},
     builder,checkout:get('checkout'),items:{replaceChildren(){},querySelector:()=>({focus(){}})},
     lastMessage:'',formBase:'https://forms.yandex.ru/u/6aad189e84227c2dd4dbd7a6',ready:true,
-    rows:()=>[row],productFor:()=>product,quantityFor:()=>1,sizeInputFor:()=>({value:'M'}),
-    resolveSize,measurementsFor:()=>[],rub:n=>n+' ₽',
+    rows:()=>rows,productFor:row=>row.line.product,quantityFor:()=>1,sizeInputFor:row=>({value:row.line.size || ''}),
+    resolveSize,parseMeasurement,money:new Intl.NumberFormat('ru-RU'),rub:n=>n+' ₽',
     clearErrors(){},remember(){},refresh(){},initialItem(){},showError(){throw Error('unexpected validation failure');}
   });
+  vm.runInContext(source.slice(source.indexOf('  function measurementsFor('),source.indexOf('  function clearErrors(')),scope);
+  vm.runInContext(source.slice(source.indexOf('  function preorderTiming('),source.indexOf('  function stockTotal(')),scope);
   vm.runInContext(source.slice(source.indexOf("  builder.addEventListener('submit'"),source.indexOf('  function initialItem()')),scope);
   const resetStart=source.indexOf("  document.getElementById('resetOrder').addEventListener");
   vm.runInContext(source.slice(resetStart,source.indexOf('\n  ready = true;',resetStart)),scope);
@@ -111,4 +115,27 @@ test('cancelling a new order keeps the existing contact form',()=>{
   const f=checkoutFixture();f.submit();f.edit();f.confirm(false);f.reset();f.submit();
   assert.equal(f.get('orderForm').srcWrites.length,1);
   assert.equal(f.get('orderForm').srcRemovals,0);
+});
+
+test('race hat and light training jacket reach the shop form together with measured sizes and the correct total',()=>{
+  const ctx={window:{}};
+  vm.runInNewContext(fs.readFileSync(path.join(__dirname,'../assets/shop-catalog.js'),'utf8'),ctx);
+  const products=Object.fromEntries(ctx.window.VARGI_SHOP.map(product=>[product.id,product]));
+  const hat=products['race-hat'], jacket=products['light-training-jacket'];
+  assert.ok(hat?.preorder && !hat.soon);
+  assert.ok(jacket?.preorder && !jacket.soon);
+  const f=checkoutFixture([{product:hat,size:'57,5'},{product:jacket,measurements:{'рост':'180','обхват груди':'100'}}]);
+  f.submit();
+  const frame=new URL(f.get('orderForm').src), direct=new URL(f.get('openOrderForm').href);
+  const message=direct.searchParams.get('message');
+  assert.equal(direct.origin,'https://forms.yandex.ru');
+  assert.equal(direct.pathname,'/u/6aad189e84227c2dd4dbd7a6');
+  assert.equal(frame.searchParams.get('iframe'),'1');
+  assert.equal(frame.searchParams.get('message'),message);
+  assert.ok(message.includes(hat.name+' — обхват головы: 57,5 см'));
+  assert.ok(message.includes(jacket.name+' — размер: Подобрать по указанным меркам; мерки — рост: 180 см, обхват груди: 100 см'));
+  assert.match(message,/1 шт\. × 1450 ₽ = 1450 ₽/);
+  assert.match(message,/1 шт\. × 15000 ₽ = 15000 ₽/);
+  assert.match(message,/Стоимость товаров: 16450 ₽/);
+  assert.equal(products['down-jacket'].basePrice,18000);
 });
